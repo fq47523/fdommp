@@ -1,0 +1,21 @@
+{% load  static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/dist/css/AdminLTE.min.css' %}">
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+    {% block body %}{% endblock %}
+
+
+
+    <script src="{% static 'js/jquery-1.12.4.min.js'%}"></script>
+    <script src="{% static '/js/bootstrap.js'%}"></script>
+    {% block js %}{% endblock %}
+</body>
+</html>

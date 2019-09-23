@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/plugins/codemirror/codemirror.css"/>
+    <link rel="stylesheet" href="/static/plugins/codemirror/darcula.css"/>
+</head>
+<body>
+    <div id="conf_id" style="display: none">{{ confd_id }}</div>
+    <div id="host_ip">{{ host_ip.0.h_ip }}</div>
+    <div id="conf_name">{{ conf_name }}</div>
+    <div id="file_path">{{ file_path }}</div>
+
+    <form id="filepost">
+
+        <textarea  id="te" name="te">{{ file_obj }}</textarea>
+    </form>
+    <button onclick="modify_file_post()">保存</button>
+
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/plugins/codemirror/codemirror.js"></script>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("te"), {
+            mode: "yaml",    //实现groovy代码高亮
+            //mode: "text/x-java", //实现Java代码高亮
+            lineNumbers: true,	//显示行号
+            theme: "darcula",	//设置主题
+            //lineWrapping: true,	//代码折叠
+            //foldGutter: true,
+            //gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            //matchBrackets: true,	//括号匹配
+            lineWrapping: true,
+            //readOnly: true,        //只读
+        });
+
+        function modify_file_post() {
+            editor.save()
+            var req_url = '{% url 'confd:confd_edit' '00000'%}'
+            var url = req_url.replace('00000',$('#conf_id').text())
+            $.post(url,
+                {'file':$("#te").val(), 'conf_name':$('#conf_name').text(),'host_ip':$('#host_ip').text(),'file_path':$('#file_path').text()},
+                function (data) {
+                    if (data.rcode == 200){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                        window.parent.window.refreshes_parent_table();
+                    }
+                }
+                );
+        };
+
+    </script>
+</body>
+</html>

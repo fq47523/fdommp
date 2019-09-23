@@ -1,0 +1,158 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+
+{% endblock %}
+{
+{% block body %}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="box">
+                    <div class="box-header">
+                      <div>
+                          <button class="btn btn-primary"  onclick="crontab_add()">新增任务</button>
+
+                      </div>
+
+                    </div>
+                </div>
+
+                <div class="box-body">
+                    <table  class="table  table-hover">
+                        <thead>
+                            <tr class="success">
+                                <th>选择</th>
+                                <th>序号</th>
+                                <th>任务名</th>
+                                <th>分</th>
+                                <th>时</th>
+                                <th>日</th>
+                                <th>月</th>
+                                <th>周</th>
+                                <th>命令</th>
+                                <th>主机</th>
+                                <th>操作</th>
+
+
+
+                            </tr>
+                        </thead>
+
+                        <tbody id="tb">
+                            {% for crontab in  crontab_obj %}
+                            <tr class="active">
+                                <td><input type="checkbox" /></td>
+                                <td>{{ crontab.id }}</td>
+                                <td>{{ crontab.jobname }}</td>
+                                <td>{{ crontab.minute }}</td>
+                                <td>{{ crontab.hour }}</td>
+                                <td>{{ crontab.day }}</td>
+                                <td>{{ crontab.month }}</td>
+                                <td>{{ crontab.weekday }}</td>
+                                <td>{{ crontab.jobcli }}</td>
+
+                                <td>
+                                    <ul class="list-unstyled crontab_hosts">
+                                        {% for host in crontab.cron_host.all %}
+                                        <li>
+                                            <a href="{% url 'hosts:crontab_host'  host.h_id  %}">{{ host }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+
+
+
+                                <td>
+                                    <a class="btn btn-primary btn-xs" onclick="crontab_add_host(this)">add</a>
+                                    <a class="btn btn-primary btn-xs" onclick="crontab_edit(this)">编辑</a>
+                                    <a class="btn btn-danger btn-xs" onclick="crontab_del(this)">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script>
+        //function crontab_add() {
+        //    window.open('{% url 'hosts:crontab_add' %}','newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
+
+        //}
+
+        function crontab_add() {
+            layer.open({
+                type: 2,
+                title: '新增主机信息',
+                closeBtn: 1,
+                area: ['800px', '480px'],
+                shadeClose: true, //点击遮罩关闭
+                content: ['{% url 'hosts:crontab_add' %}'],
+            });
+        };
+
+
+
+
+
+        function crontab_add_host(obj) {
+            var job_name = $(obj).parent().siblings().eq(2).text()
+            var req_url = '{% url 'hosts:crontab_add_host' 'default' %}'
+            var url = req_url.replace('default',job_name)
+
+            window.open(url,'newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
+
+        }
+
+
+
+
+        function crontab_edit(obj) {
+            var job_name = $(obj).parent().siblings().eq(2).text()
+            var req_url = '{% url 'hosts:crontab_edit' 'default' %}'
+            var url = req_url.replace('default',job_name)
+
+
+            window.open(url,'newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
+
+        }
+
+        function crontab_del(obj) {
+            var crontab_jobname = $(obj).parent().siblings().eq(2).text()
+            var crontab_hosts = []
+            $(obj).parent().prev().children().find('li').each(function () {
+                crontab_hosts.push($(this).children().text())
+            })
+            if (confirm("确定删除任务"+crontab_jobname+"以及"+crontab_hosts+"上的crontab？")){
+
+                $.post('{% url 'hosts:crontab_del' %}',{'crontab_jobname':crontab_jobname,'crontab_hosts':crontab_hosts},function (data) {
+                    if (data == 200){
+                        window.location.reload();
+                    }
+                })
+            }
+
+        }
+
+
+    </script>
+{% endblock %}

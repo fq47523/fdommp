@@ -1,0 +1,105 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+
+{% endblock %}
+
+
+{% block body %}
+    <div id="conf_id" style="display: none">{{ conf_id }}</div>
+
+
+    <table id="table">
+
+    </table>
+
+{% endblock %}
+
+{% block js %}
+
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script>
+
+
+
+        $(document).ready(function() {
+            $('#table').bootstrapTable({
+                url: '{% url 'confd:confd_rollback'%}',
+                method: 'POST',
+                striped: true,
+                resizable: true,
+                pagination: true,
+                sidePagination: 'server',
+                pageNumber: 1,
+                pageSize: 10,
+                pageList: [10, 'All'],
+                search: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                queryParams: function queryParams(params) {
+                    //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    var temp = JSON.stringify({
+                        rows: params.limit,                         //页面大小
+                        page: (params.offset / params.limit)+1,   //页码
+                        sort: params.sort,      //排序列名
+                        sortOrder: params.order, //排位命令（desc，asc）
+                        conf_id: $('#conf_id').text()
+                    });
+
+                    return temp;
+                },
+                columns: [{
+                    field: 'cuh_id',
+                    title: 'cuh_id'
+                }, {
+                    field: 'conf_id',
+                    title: 'conf_id'
+                },  {
+                    field: 'backup_ver',
+                    title: 'backup_ver'
+                }, {
+                    field: 'backup_date',
+                    title: 'backup_date'
+                },{
+                    field: 'Button',
+                    title: 'caozuo',
+                    events:'operateEvents',
+                    formatter:'AddFunctionAlty',
+                }]
+
+
+            });
+        });
+
+        function AddFunctionAlty() {
+            return ['<button id="confd_edit" type="button" class="btn btn-default">编辑文件</button> &nbsp;&nbsp;',
+                '<button id="confd_rollback" type="button" class="btn btn-default">rollback</button> &nbsp;&nbsp;'].join('')
+
+        }
+
+        window.operateEvents = {
+            "click #confd_edit":function (e,value,row,index) {
+
+
+            },
+            "click #confd_rollback":function (e,value,row,index) {
+                conf_rollback(row.conf_id,row.backup_ver)
+                console.log(row.conf_id,row.backup_ver)
+            }
+        }
+
+
+        function conf_rollback(conf_id,backup_ver) {
+            $.post('{% url 'confd:confd_rollback'%}',{'rollback':'True','conf_id':conf_id,'backup_ver':backup_ver})
+        }
+
+
+    </script>
+
+{% endblock %}

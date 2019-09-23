@@ -1,0 +1,85 @@
+
+{% extends "base_body.html" %}
+{% load  static %}
+
+{% block link_1%}
+    <link rel="stylesheet" href="{% static '/plugins/bootstrap-table/dist/bootstrap-table.css' %}">
+{% endblock %}
+
+{% block body %}
+
+
+    <table data-toggle="table" data-url="data1.json">
+     <thead>
+         <tr>
+             <th data-field="id">Item ID</th>
+             <th data-field="name">Item Name</th>
+             <th data-field="price">Item Price</th>
+         </tr>
+     </thead>
+    </table>
+
+    <a id="test" title="
+    2018-10-09 00:02:02.091 [ERROR] [HDFSCollector_model_yzdj] com.cy.plugin.collector.hdfs.HdfsCollectorPlugin$HdfsCollector - list files in current partition error. curPartition: opt_date=201810070200, alreadyReadFileName: 000001_0
+org.apache.hadoop.ipc.RemoteException: Operation category READ is not supported in state standby. Visit https://s.apache.org/sbnn-error
+	at org.apache.hadoop.hdfs.server.namenode.ha.StandbyState.checkOperation(StandbyState.java:88)
+	at org.apache.hadoop.hdfs.server.namenode.NameNode$NameNodeHAContext.checkOperation(NameNode.java:1835)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkOperation(FSNamesystem.java:1479)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getListingInt(FSNamesystem.java:5108)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getListing(FSNamesystem.java:5095)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.getListing(NameNodeRpcServer.java:888)
+	at org.apache.hadoop.hdfs.server.namenode.AuthorizationProviderProxyClientProtocol.getListing(AuthorizationProviderProxyClientProtocol.java:336)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.getListing(ClientNamenodeProtocolServerSideTranslatorPB.java:630)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:617)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1073)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:2217)
+	at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:2213)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1917)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2211)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
+	at com.sun.proxy.$Proxy73.getListing(Unknown Source)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.getListing(ClientNamenodeProtocolTranslatorPB.java:573)
+	at sun.reflect.GeneratedMethodAccessor60.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
+	at com.sun.proxy.$Proxy74.getListing(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSClient.listPaths(DFSClient.java:2086)
+	at org.apache.hadoop.hdfs.DFSClient.listPaths(DFSClient.java:2069)
+	at org.apache.hadoop.hdfs.DistributedFileSystem.listStatusInternal(DistributedFileSystem.java:791)
+	at org.apache.hadoop.hdfs.DistributedFileSystem.access$700(DistributedFileSystem.java:106)
+	at org.apache.hadoop.hdfs.DistributedFileSystem$18.doCall(DistributedFileSystem.java:853)
+	at org.apache.hadoop.hdfs.DistributedFileSystem$18.doCall(DistributedFileSystem.java:849)
+	at org.apache.hadoop.fs.FileSystemLinkResolver.resolve(FileSystemLinkResolver.java:81)
+	at org.apache.hadoop.hdfs.DistributedFileSystem.listStatus(DistributedFileSystem.java:860)
+	at org.apache.hadoop.fs.FileSystem.listStatus(FileSystem.java:1517)
+	at org.apache.hadoop.fs.FileSystem.listStatus(FileSystem.java:1557)
+	at com.cy.plugin.collector.hdfs.HdfsCollectorPlugin$HdfsCollector.readCurPartition(HdfsCollectorPlugin.java:200)
+	at com.cy.plugin.collector.hdfs.HdfsCollectorPlugin$HdfsCollector.collect(HdfsCollectorPlugin.java:111)
+	at com.cy.bifrost.core.runner.TimingCollectorRunner$CollectorProcess.run(TimingCollectorRunner.java:130)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+" style="float: right">jjjjjjjjjjjjjjjj</a>
+
+{% endblock%}
+
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-table/dist/bootstrap-table.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-table/dist/locale/bootstrap-table-zh-CN.js' %}"></script>
+    <script>
+        var test1 = $('#test').val().substring(0,10)
+        $('#test').val(test1)
+    </script>
+{% endblock %}

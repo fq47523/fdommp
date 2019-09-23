@@ -1,0 +1,186 @@
+{% extends "base_body.html" %}
+
+
+
+{% block body %}
+    <section class="content">
+
+      <!-- Default box -->
+      <div class="box">
+
+        <div class="box-header with-border">
+            {% for host in host_obj %}
+                <h4>crontab主机：{{ host.h_ip }}</h4>
+            {% endfor %}
+        </div>
+
+        <div class="box-body">
+            <table  class="table  table-hover">
+                <thead>
+                    <tr class="success">
+                        <th>id</th>
+                        <th>JobName</th>
+                        <th>minute</th>
+                        <th>hour</th>
+                        <th>day</th>
+                        <th>month</th>
+                        <th>weekday</th>
+                        <th>jobcli</th>
+                        <th>status</th>
+                        <th>Action</th>
+
+
+                    </tr>
+                </thead>
+
+            <tbody id="tb">
+                {% for host in host_obj %}
+                    {% for host_crontab in host.crontab_set.all %}
+                        <tr class="active">
+                            <td style="display: none">{{ host.h_ip }}</td>
+                            <td>{{ host_crontab.id }}</td>
+                            <td>{{ host_crontab.jobname }}</td>
+                            <td>{{ host_crontab.minute }}</td>
+                            <td>{{ host_crontab.hour }}</td>
+                            <td>{{ host_crontab.day }}</td>
+                            <td>{{ host_crontab.month }}</td>
+                            <td>{{ host_crontab.weekday }}</td>
+                            <td>{{ host_crontab.jobcli }}</td>
+                            {% for ci in crontab_status_obj %}
+                                {% if host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 1 %}
+                                    <td style="color: green">Run</td>
+                                {% elif  host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 2 %}
+                                    <td style="color: yellow">Pause</td>
+
+                                {% elif  host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 99 %}
+                                    <td style="color: red">Suspend</td>
+                                {% endif %}
+
+
+                                {%  if host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 1 %}
+
+                                    <td>
+                                        <a class="btn btn-primary btn-xs"   style="pointer-events: none" onclick="cron_init(this)" disabled="disabled">init</a>
+                                        <a class="btn btn-primary btn-xs" onclick="cron_pause(this)">pause</a>
+                                        <a class="btn btn-primary btn-xs" style="pointer-events: none" onclick="cron_continue(this)" disabled="disabled">continue</a>
+                                        <a class="btn btn-danger btn-xs" onclick="cron_del(this)">delete</a>
+
+                                    </td>
+
+
+                                {%  elif host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 2 %}
+
+                                    <td>
+                                        <a class="btn btn-primary btn-xs"   style="pointer-events: none" onclick="cron_init(this)" disabled="disabled">init</a>
+                                        <a class="btn btn-primary btn-xs" style="pointer-events: none" onclick="cron_pause(this)" disabled="disabled">pause</a>
+                                        <a class="btn btn-primary btn-xs"  onclick="cron_continue(this)" >continue</a>
+                                        <a class="btn btn-danger btn-xs" onclick="cron_del(this)">delete</a>
+                                    </td>
+
+
+                                {%  elif host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 99 %}
+
+                                    <td>
+                                        <a class="btn btn-primary btn-xs" onclick="cron_init(this)">init</a>
+                                        <a class="btn btn-primary btn-xs" style="pointer-events: none" onclick="cron_pause(this)" disabled="disabled">pause</a>
+                                        <a class="btn btn-primary btn-xs"  style="pointer-events: none" onclick="cron_continue(this)" disabled="disabled">continue</a>
+                                        <a class="btn btn-danger btn-xs" onclick="cron_del(this)">delete</a>
+                                    </td>
+
+
+                                {% endif %}
+
+
+
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+
+
+            </tbody>
+        </table>
+        </br>
+        <a class="btn btn-default btn-xs" href="{% url 'hosts:crontab_list' %}">返回</a>
+        </div>
+
+      </div>
+    </section>
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+
+
+
+
+    <script>
+        function cron_init(obj) {
+            var ip = $(obj).parent().siblings().eq(0).text();
+            var job_name = $(obj).parent().siblings().eq(2).text();
+
+
+            $(obj).parent().prev().empty();
+            $(obj).parent().prev().append('<img src="/static/icon/loading.gif">')
+
+            $.post('{% url 'hosts:crontab_host_action' %}',{'ip':ip,'job_name':job_name,'type':'cron_init'},function (data) {
+                if (data == 200){
+                     window.location.reload();
+                }
+            })
+        }
+
+        function cron_pause(obj) {
+            var ip = $(obj).parent().siblings().eq(0).text();
+            var job_name = $(obj).parent().siblings().eq(2).text();
+
+            $(obj).parent().prev().empty();
+            $(obj).parent().prev().append('<img src="/static/icon/loading.gif">')
+
+            $.post('{% url 'hosts:crontab_host_action' %}',{'ip':ip,'job_name':job_name,'type':'cron_pause'},function (data) {
+                if (data == 200){
+                     window.location.reload();
+                }
+            })
+        }
+
+        function cron_continue(obj) {
+            var ip = $(obj).parent().siblings().eq(0).text();
+            var job_name = $(obj).parent().siblings().eq(2).text();
+
+            $(obj).parent().prev().empty();
+            $(obj).parent().prev().append('<img src="/static/icon/loading.gif">')
+
+            $.post('{% url 'hosts:crontab_host_action' %}',{'ip':ip,'job_name':job_name,'type':'cron_continue'},function (data) {
+                if (data == 200){
+                     window.location.reload();
+                }
+            })
+        }
+
+
+
+        function cron_del(obj) {
+            var ip = $(obj).parent().siblings().eq(0).text();
+            var job_name = $(obj).parent().siblings().eq(2).text();
+            if (confirm("确定在"+ip+"上执行"+job_name+"的删除？")){
+                console.log(ip,job_name)
+                $.post('{% url 'hosts:crontab_host_action' %}',{'ip':ip,'job_name':job_name,'type':'cron_delete'},function (data) {
+                    if (data.status == 200 && data.host_cron_count != 0){
+                        window.location.reload();
+                    }
+                    else {
+                        window.location.href = '../../apps/hosts/automate_crontab/';
+                    }
+                })
+            }
+
+        }
+
+    </script>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{#    {% for k,v in result.items %}#}
+{#        {% if k == 'ok' %}#}
+{#            {{ v }}#}
+{#            {% for kk,vv in vv.items %}#}
+{#                <div>{{ vv.status }}</div>#}
+{#            {% endfor %}#}
+{#        {% endif %}#}
+
+    {% for k,v in  result.status.items %}
+        <div>{{ k }}</div>
+        <div>{{ v }}</div>
+        <br>
+    {% endfor %}
+</body>
+</html>

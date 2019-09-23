@@ -1,0 +1,109 @@
+{% extends 'base_form.html' %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
+{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="box box-info">
+            <div class="row">
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                <div class="col-md-6">
+
+                    <form id="crontab_edit_form" class="form-horizontal">
+                        <div class="box-body">
+                        <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.jobname.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.jobname }}<span id="error_s_name"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.minute.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.minute }}<span id="error_s_type"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.hour.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.hour}}<span id="error_h_server"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.day.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.day}}<span id="error_h_server"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.month.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.month}}<span id="error_h_server"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.weekday.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.weekday}}<span id="error_h_server"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.jobcli.label }}</label>
+                            <div class="col-sm-5">
+                                {{ Crontab_MF_Edit.jobcli}}<span id="error_h_server"></span>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <a class="btn btn-default pull-right" href="javascript:window.opener=null;window.close();">取消</a>
+                            <button id="crontab_edit_sub"  type="submit" class="btn btn-primary pull-right" >提交</button>
+                        </div>
+
+                {#        <div class="form-group">#}
+                {#            <label class="col-sm-2 control-label">{{ Crontab_MF_Edit.cron_host.label }}</label>#}
+                {#            <div class="col-sm-5">#}
+                {#                {{ Crontab_MF_Edit.cron_host}}<span id="error_h_server"></span>#}
+                {#            </div>#}
+                            {#        </div>#}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+{% endblock body %}
+
+{% block js %}
+
+    <script src="/static/plugins/select2/select2.full.min.js"></script>
+    <script>
+        $('#crontab_edit_sub').click(function () {
+            var job_name = '{{ job_name }}'
+            var req_url = '{% url 'hosts:crontab_edit' 'default' %}'
+            var url = req_url.replace('default',job_name)
+
+            $.post(url ,$('#crontab_edit_form').serialize())
+        })
+
+
+
+        $("#id_cron_host").select2({
+            placeholder: 'host',
+            multiple:true,
+            language: "zh-CN",
+            allowClear:true,
+            closeOnSelect:false,
+            theme: "classic",
+
+        });
+    </script>
+{% endblock js %}

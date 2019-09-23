@@ -1,0 +1,94 @@
+{% extends "base_form.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
+
+{% endblock %}
+
+{% block body %}
+    <section class="content">
+            <div class="box box-info">
+                <div class="row">
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form class="form-horizontal" id="server_add">
+                      <div class="box-body">
+                        <div class="form-group">
+                          <label for="inputEmail3" class="col-sm-2 control-label">{{ Service_MF_I.s_name.label }}</label>
+
+                          <div class="col-sm-5">
+                            {{ Service_MF_I.s_name }}<span class="error" id="error_s_name"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">{{ Service_MF_I.s_type.label }}</label>
+
+                          <div class="col-sm-5">
+                             {{ Service_MF_I.s_type }}<span class="error" id="error_s_type"></span>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">{{ Service_MF_I.h_server.label }}</label>
+
+                          <div class="col-sm-5">
+                             {{ Service_MF_I.h_server }}<span class="error" id="error_h_server"></span>
+                          </div>
+                        </div>
+
+                      </div>
+                      <!-- /.box-body -->
+                      <div class="box-footer">
+        {#                <button type="submit" class="btn btn-default">Cancel</button>#}
+                        <button id="post_serveradd" type="button" class="btn btn-info pull-right">提交</button>
+                      </div>
+                      <!-- /.box-footer -->
+                    </form>
+                </div>
+            </div>
+    </section>
+{% endblock %}
+
+
+
+
+{% block js %}
+    <script src="/static/plugins/select2/select2.full.min.js"></script>
+    <script>
+        $('#post_serveradd').click(function () {
+            $.post('{% url 'service:serviceadd'%}',$('#server_add').serialize(),function(data){
+
+                if (data.rcode == 200){
+
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                    window.parent.window.refreshes_parent_table();
+                }
+                else{
+                    var error_dic = JSON.parse(data.msg)
+
+                    $('.error').text('')
+                    for (var i in error_dic){
+
+                        var tmp='#error_'+ i +''
+
+                        $(tmp).text(error_dic[i][0].message);
+                    }
+                    }
+            })
+        })
+
+
+        $("#id_h_server").select2({
+            placeholder: 'host',
+            multiple:true,
+            language: "zh-CN",
+            allowClear:true,
+            closeOnSelect:false,
+            theme: "classic",
+
+        });
+
+    </script>
+
+{% endblock %}

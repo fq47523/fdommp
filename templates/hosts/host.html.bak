@@ -1,0 +1,286 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+{% endblock %}
+{% block daohang1 %}主机管理{% endblock %}
+{% block daohang2 %}主机列表{% endblock %}
+{% block body %}
+
+    <button class="btn btn-info" onclick="add_modal()">新增主机</button>
+    <table  class="table  table-hover">
+        <thead>
+            <tr class="success">
+                <th>选择</th>
+                <th>序号</th>
+                <th>主机名</th>
+                <th>ip</th>
+                <th>在线</th>
+                <th>状态</th>
+                <th>动作</th>
+            </tr>
+        </thead>
+
+        <tbody id="tb">
+            {% for index in  page_data %}
+            <tr class="active">
+                <td>
+                    <input type="checkbox" />
+                </td>
+                <td target="id" >{{ index.h_id }}</td>
+                <td target="host_name" >{{ index.h_name }}</td>
+                <td target="host_ip">{{ index.h_ip }}</td>
+                {% if  index.host_zabbix_set.all %}
+                    {% for ii in index.host_zabbix_set.all %}
+                            {% if  ii.za_action == 0 %}
+                                <td>在线</td>
+                            {% else %}
+                                <td>离线</td>
+                            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <td>未注册za</td>
+                {% endif %}
+
+                {% if  index.host_zabbix_set.all %}
+                    {% for ii in index.host_zabbix_set.all %}
+                            {% if  ii.za_action == 0 %}
+                                <td>CPU:{{ ii.za_cpu }} MEM:{{ ii.za_mem }} DISK:{{ ii.za_disk }}</td>
+                            {% else %}
+                                <td>CPU:{{ ii.za_cpu }} MEM:{{ ii.za_mem }} DISK:{{ ii.za_disk }}</td>
+                            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <td>未注册za</td>
+                {% endif %}
+                <td>
+                    <a class="btn btn-primary btn-xs" onclick="open_webssh(this)">ssh</a>
+{#                    <a class="btn btn-primary btn-xs h_edit">编辑</a>#}
+                    <a class="btn btn-primary btn-xs" onclick="edit_modal({{ index.h_id }})">编辑</a>
+                    <a class="btn btn-danger btn-xs host_del" hip={{ index.h_ip }}>删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <ul class="pagination pagination-xs">{{ page_str }}</ul>
+
+{#    <div id="i2" class="c2 hide">#}
+{#        <form id="host_edit_sub" class="form-horizontal">#}
+{#            <div class="form-group">#}
+{#                    <label class="col-sm-2 control-label">{{ host_modelform.h_name.label }}</label>#}
+{#                <div class="col-sm-5">#}
+{#                    {{ host_modelform.h_name }}<span id="error_h_name"></span>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div class="form-group">#}
+{#                <label class="col-sm-2 control-label">{{ host_modelform.h_ip.label }}</label>#}
+{#                <div class="col-sm-5">#}
+{#                    {{ host_modelform.h_ip }}<span id="error_h_ip"></span>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#        </form>#}
+{#        <button id="HideModel_edit" type="button" class="btn btn-default">取消</button>#}
+{#        <button id="host_edit_form"  type="submit" class="btn btn-primary host_edit_form" >更新</button>#}
+{#    </div>#}
+
+
+
+
+
+
+
+
+    <div id="i3" class="c2 hide">
+        <form id="host_add_sub" class="form-horizontal">
+            <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ host_modelform.h_name.label }}</label>
+                <div class="col-sm-5">
+                    {{ host_modelform.h_name }}<span id="error_h_name"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{ host_modelform.h_ip.label }}</label>
+                <div class="col-sm-5">
+                    {{ host_modelform.h_ip }}<span id="error_h_ip"></span>
+                </div>
+            </div>
+
+        </form>
+        <button id="HideModel_add" type="button" class="btn btn-default">取消</button>
+        <button id="host_add_form"  type="submit" class="btn btn-primary host_add_form" >提交</button>
+    </div>
+
+
+
+    <div id="i1" class="c1 hide"></div>
+
+    {% include 'modal_tpl.html' %}
+
+    <input id="ssh_ip" type="hidden" value=""/>
+
+
+
+
+{% endblock %}
+{% block js %}
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script>
+        $("#host_add").click(function () {
+            $("#i1,#i3").removeClass('hide');
+
+        })
+
+        $("#HideModel_add").click(function () {
+            $("#i1,#i3").addClass('hide');
+            $("#id_h_name,#id_h_ip").val("");
+            $("#h_id_edit").remove();
+            $("#error_h_name,#error_h_ip").empty();
+        })
+
+
+        $("#HideModel_edit").click(function () {
+            $("#i1,#i2").addClass('hide');
+            $("#id_h_name,#id_h_ip").val("");
+            $("#h_id_edit").remove();
+            $("#error_h_name,#error_h_ip").empty();
+        })
+
+
+
+
+        $(".host_add_form").click(function () {
+            $.ajax({
+                url: '{% url 'hosts:hostadd' %}',
+                dataType: 'JSON',
+                type: 'POST',
+                data: $('#host_add_sub').serialize(),
+                success: function (data) {
+                    if (data.sts){
+                        location.reload()
+                        console.log(data.sts)
+                    }
+                    else {
+                        var error_dic = JSON.parse(data.msg)
+                        console.log (error_dic)
+                        for (var i in error_dic){
+                            console.log (i)
+                            var tmp='#error_'+ i +''
+
+                            $(tmp).text(error_dic[i][0].message);
+                        }
+                    }
+                }
+            })
+        })
+
+        $(".h_edit").click(function () {
+            $("#i1,#i2").removeClass('hide');
+            var hid = $(this).parent().siblings().eq(1).text()
+            var hid_input = "<input id=h_id_edit name=edit_id style='display: none;' value=" + hid + ">"
+            var hname = $(this).parent().siblings().eq(2).text()
+            var hip = $(this).parent().siblings().eq(3).text()
+
+
+            $("#i2").find("input[name=h_name]").val(hname)
+            $("#i2").find("input[name=h_ip]").val(hip)
+            $("#i2").children().append(hid_input)
+        })
+
+        $(".host_edit_form").click(function () {
+            $.ajax({
+                {#url: '{% url 'hosts:hostedit' %}',#}
+                dataType: 'JSON',
+                type: 'POST',
+                data: $('#host_edit_sub').serialize(),
+                success: function (data) {
+                    if (data.sts){
+                        location.reload()
+                        console.log(data.sts)
+                    }
+                    else {
+                        var error_dic = JSON.parse(data.msg)
+                        console.log (error_dic)
+                        for (var i in error_dic){
+                            console.log (i)
+                            var tmp='#error_'+ i +''
+
+                            $(tmp).text(error_dic[i][0].message);
+                        }
+                    }
+                }
+            })
+        })
+
+
+
+
+        $(".host_del").click(function () {
+            var hip = $(this).attr("hip")
+            $('button[data-target="#s_window"]').click()
+            $(".deleteHaulBtn").click(function () {
+                $.ajax({
+                    url:"{% url 'hosts:hostdel' %}",
+                    dataType:"JSON",
+                    type:"GET",
+                    data:{"hip":hip},
+                    success: function (data) {
+                        if (data.status == 'succeed'){
+                            location.reload()
+                        }
+                    }
+                })
+            })
+        })
+
+
+        function open_webssh(obj) {
+            $('#ssh_ip').val('')
+            var ssh_ip = $(obj).parent().parent().find('[target=host_ip]').text()
+            $('#ssh_ip').val(ssh_ip)
+            window.open('http://192.168.79.134:8080/wssh/','newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
+        }
+
+
+        function edit_modal(h_id){
+            var req_url = '{% url 'hosts:hostedit' '00000' %}'
+            var url = req_url.replace('00000',h_id)
+            layer.open({
+            type: 2,
+            title: '修改主机信息',
+            closeBtn: 1,
+            area: ['800px', '400px'],
+            shadeClose: true, //点击遮罩关闭
+            content: [url],
+
+            });
+        };
+
+
+        function add_modal(){
+
+            layer.open({
+            type: 2,
+            title: '新增主机信息',
+            closeBtn: 1,
+            area: ['800px', '400px'],
+            shadeClose: true, //点击遮罩关闭
+            content: ['{% url 'hosts:hostadd' %}'],
+
+            });
+        };
+
+
+
+
+
+    </script>
+{% endblock %}
+

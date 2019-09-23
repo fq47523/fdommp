@@ -1,0 +1,53 @@
+{% extends 'base_form.html' %}
+
+{% block css %}{% endblock %}
+
+{% block body %}
+
+    <section class="content">
+        <div class="box box-info">
+            <div class="row">
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                <div class="col-md-6">
+                    <form id="crontab_edit_form" class="form-horizontal">
+                        <div class="box-body">
+                            {{ Crontab_Add_Host }}
+                        </div>
+
+                        <div class="box-footer">
+                            <a class="btn btn-default pull-right" href="javascript:window.opener=null;window.close();">取消</a>
+                            <button id="crontab_edit_sub"  type="submit" class="btn btn-primary pull-right" >提交</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        $(function () {
+            $('#id_cron_host li').each(function () {
+                if ($(this).children().children().is(':checked')){
+                    $(this).children().children().attr('disabled','disabled')
+                }
+            })
+        })
+
+
+        $('#crontab_edit_sub').click(function () {
+            var job_name = '{{ job_name }}'
+            var req_url = '{% url 'hosts:crontab_add_host' 'default' %}'
+            var url = req_url.replace('default',job_name)
+
+            $.post(url ,$('#crontab_edit_form').serialize())
+        })
+    </script>
+{% endblock js %}

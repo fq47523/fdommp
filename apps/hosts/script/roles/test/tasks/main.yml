@@ -1,0 +1,8 @@
+---
+  - name: simulate install app
+    shell: 'date > /tmp/install.log'
+  - name: simulate copy file
+    template: src=api.j2 dest=/tmp/api.conf
+  - name: simulate start service
+    shell: 'date > /tmp/service.log'
+

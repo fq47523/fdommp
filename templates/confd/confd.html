@@ -1,0 +1,217 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+
+{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="box">
+                    <div class="box-header">
+                      <div>
+                          <button class="btn btn-primary"  onclick="add_modal()">新增配置</button>
+                      </div>
+
+                    </div>
+                </div>
+
+                <div class="box-body">
+                    <table id="table"></table>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script>
+
+
+
+        $(document).ready(function() {
+            $('#table').bootstrapTable({
+                url: '{% url 'confd:confd_list'%}',
+                method: 'POST',
+                striped: true,
+                resizable: true,
+                pagination: true,
+                sidePagination: 'server',
+                pageNumber: 1,
+                pageSize: 2,
+                pageList: [2, 4, 6, 'All'],
+                search: true,
+                showRefresh: true,
+                showToggle: true,
+                showColumns: true,
+                queryParams: function queryParams(params) {
+                    //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    var temp = JSON.stringify({
+                        rows: params.limit,                         //页面大小
+                        page: (params.offset / params.limit)+1,   //页码
+                        sort: params.sort,      //排序列名
+                        sortOrder: params.order //排位命令（desc，asc）
+                    });
+
+                    return temp;
+                },
+                columns: [{
+                    field: 'no',
+                    title: '序号',
+                    sortable: true,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var options = $('#table').bootstrapTable('getOptions');
+                        return options.pageSize * (options.pageNumber - 1) + index + 1;
+                        }
+                },{
+                    field: 'conf_id',
+                    title: 'conf_id',
+                    visible: false,
+                }, {
+                    field: 'create_date',
+                    title: '创建时间',
+                    sortable: true,
+                    align: 'center',
+                }, {
+                    field: 'edit_date',
+                    title: '编辑时间'
+                }, {
+                    field: 'server_type',
+                    title: '配置类型',
+
+                },{
+                    field: 'hostip',
+                    title: 'IP'
+
+                },{
+                    field: 'conf_name',
+                    title: '配置名'
+                }, {
+                    field: 'conf_path',
+                    title: '路径'
+                }, {
+                    field: 'current_ver',
+                    title: '当前版本'
+                }, {
+                    field: 'modified_ver',
+                    title: '修改版本'
+                }, {
+                    field: 'Button',
+                    title: '操作',
+                    events:'operateEvents',
+                    formatter:'AddFunctionAlty',
+                }]
+
+
+            });
+        });
+
+        function AddFunctionAlty() {
+            return ['<button id="confd_edit" type="button" class="btn btn-default">编辑</button> &nbsp;&nbsp;',
+                '<button id="confd_init" type="button" class="btn btn-default">下发</button> &nbsp;&nbsp;',
+                '<button id="confd_rollback" type="button" class="btn btn-default">回滚</button> &nbsp;&nbsp;',
+                '<button id="confd_del" type="button" class="btn btn-default">删除</button>'].join('')
+
+        }
+
+        window.operateEvents = {
+            "click #confd_edit":function (e,value,row,index) {
+                console.log(row.hostip[0],row.conf_path)
+                edit_modal(row.conf_id)
+
+            },
+            "click #confd_init":function (e,value,row,index) {
+                conf_init(row.conf_id,row.hostip[0],row.server_type[0],row.conf_name,row.conf_path)
+
+            },
+            "click #confd_rollback":function (e,value,row,index) {
+                conf_rollback(row.conf_id,row.conf_name)
+            },
+
+            "click #confd_del":function (e,value,row,index) {
+                conf_del(row.conf_id,row.hostip[0],row.conf_name)
+
+            }
+        }
+
+        function add_modal() {
+            layer.open({
+                type: 2,
+                title: '新增主机信息',
+                closeBtn: 1,
+                area: ['800px', '480px'],
+                shadeClose: true, //点击遮罩关闭
+                content: ['{% url 'confd:confd_add' %}'],
+            });
+        };
+
+        function edit_modal(confd_id) {
+            var req_url = '{% url 'confd:confd_edit' '00000'%}'
+            var url = req_url.replace('00000',confd_id)
+            layer.open({
+                type: 2,
+                title: '新增主机信息',
+                closeBtn: 1,
+                area: ['800px', '480px'],
+                shadeClose: true, //点击遮罩关闭
+                content: [url],
+            });
+        };
+
+        function conf_init(conf_id,ip,server_type,name,path) {
+
+            $.post('{% url 'confd:confd_init' %}',{"conf_id":conf_id,"host_ip":ip,"server_type":server_type,"conf_name":name,"conf_path":path})
+
+        };
+
+        function conf_rollback(conf_id,conf_name) {
+            var req_url = '{% url 'confd:confd_rollback' %}'
+            layer.open({
+                type: 2,
+                title: conf_name+'回滚列表',
+                closeBtn: 1,
+                area: ['800px', '480px'],
+                shadeClose: true, //点击遮罩关闭
+                content: req_url+'?conf_id='+conf_id,
+            });
+        }
+
+
+
+        function conf_del(conf_id,hostip,conf_name) {
+            if(confirm("确定删除"+conf_id+"这台主机吗？")) {
+                $.post('{% url 'confd:confd_del' %}',{"conf_id":conf_id,"hostip":hostip,"conf_name":conf_name},function(data){
+                    if (data.sts == 200){
+                        $("#table").bootstrapTable('refresh');
+                    }
+                })
+            }
+        };
+
+
+
+        function refreshes_parent_table() {
+            $("#table").bootstrapTable('refresh');
+        }
+
+    </script>
+
+{% endblock %}

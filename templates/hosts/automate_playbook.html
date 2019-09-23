@@ -1,0 +1,203 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/css/AdminLTE.css"/>
+    <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+{% endblock %}
+
+
+
+{% block daohang1 %}主机管理{% endblock %}
+{% block daohang2 %}zdh-playbook{% endblock %}
+{% block body %}
+<section class="content">
+      <div class="box box-default">
+        <div class="box-header with-border">
+          <div class="box-tools pull-right">
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="row">
+
+            <div class="col-md-5">
+            <form id="form1" action="#" method="post">
+                    {% csrf_token %}
+              <div class="form-group">
+                <label>选择主机</label>
+                <select id="mserver" name="mserver" class="form-control select2" multiple="multiple" data-placeholder="选择主机(host)" style="width: 100%;">
+                    {% for host in hosts %}
+                        <option value="{{ host.za_ip }}">{{ host.za_ip }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>选主机组</label>
+                <select id="mgroup" name="mgroup" class="form-control" multiple="multiple" data-placeholder="选择组(group)" style="width: 100%;">
+                    {% for group in all_group %}
+                        <option value="{{ group.name }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Playbook</label>
+                <select id="splaybook" name="splaybook" class="form-control" multiple="multiple" data-placeholder="Playbook" style="width: 100%;">
+                    <option></option>
+                    {% for file in playbook_list %}
+                        <option value="{{ file }}">{{ file}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Roles</label>
+                <select id="mroles" name="mroles" class="form-control" multiple="multiple" data-placeholder="Playbook Roles" style="width: 100%;">
+                    <option></option>
+                    {% for dir in playbook_roles_list %}
+                        <option value="{{ dir }}">{{ dir}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Role Vars</label>
+                  	<span class="fa fa-info-circle" data-html="true" title="Role变量用法"
+                    data-container="body" data-toggle="popover" data-placement="right"
+                    data-content="1、此项为可选项<br>
+                                  2、不为空将覆盖role的vars/main.yml<br>
+                                  3、多选role覆盖所有的vars/main.yml<br>
+                                  4、写法与role vars相同（不用写---）<br>
+                                  user: tomcat<br>
+                                  password: 1234567<br>
+                                  webport: 8080<br>
+                                  shutdown: 8005"></span>
+                <textarea id="mvars" name="mvars" class="form-control" placeholder="enter key for spilting vars" rows="1"></textarea>
+              </div>
+              <!-- /.form-group -->
+            <div class="btn btn-group" style="padding-left: 0">
+            <a id="playbook_submit" class="btn btn-primary">执行任务</a>
+               </div>
+                <!-- /.form-group -->
+
+            <div class="btn btn-group" style="padding-left: 0">
+                 <a id="hostsync" style="display: none;" class="btn btn-success" href="#" onclick="return sync();">同步数据</a>
+            </div>
+            <div class="btn btn-group" style="padding-left: 0">
+            <a class="btn btn-default" href="" target="myframe">上次结果</a>
+               </div>
+            </form>
+            </div>
+            <!-- /.col -->
+
+            <div class="col-md-6">
+              <div class="form-group">
+              <!-- /.form-group -->
+                <div class="right" id="frame1">
+                    <iframe name="myframe" id="myframe" style="display: block" width="550" height="400" frameborder="0"></iframe>
+                </div>
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.box-body -->
+
+      </div>
+    </div>
+    </section>
+        <!-- /.content -->
+
+{% endblock %}
+
+{% block js %}
+    <script src="/static/js/adminlte.min.js"></script>
+    <script src="/static/plugins/select2/select2.full.min.js"></script>
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script>
+        $(function () {
+    //Initialize Select2 Elements
+    $("#mserver").select2().on("select2:select", function () { $("#mgroup").prop("disabled", true); });
+    $("#mserver").select2({theme: "classic",}).on("select2:unselect", function () { $("#mgroup").prop("disabled", false); });
+    $("#mgroup").select2().on("select2:select", function () { $("#mserver").prop("disabled", true); });
+    $("#mgroup").select2().on("select2:unselect", function () { $("#mserver").prop("disabled", false); });
+    $("#mroles").select2().on("select2:select", function () { $("#splaybook").prop("disabled", true); });
+    $("#mroles").select2({theme: "classic",multiple:false,}).on("select2:unselect", function () { $("#splaybook").prop("disabled", false); });
+    $("#splaybook").select2().on("select2:select", function () { $("#mroles").prop("disabled", true); });
+    $("#splaybook").select2().on("select2:select", function () { $("#mvars").prop("disabled", true); });
+    $("#splaybook").select2().on("select2:unselect", function () { $("#mroles").prop("disabled", false); });
+    $("#splaybook").select2({theme: "classic",multiple:false,}).on("select2:unselect", function () { $("#mvars").prop("disabled", false); });
+
+    $("#command_submit").click(function(){
+
+        if ($('#mcommand').val() == "") {
+            layer.msg('请填写正确的ansible命令!');
+            return false;
+        }
+        var obj = $('#mcommand').val();
+
+        if(confirm("确认执行"+obj+'?')){
+
+            var index = layer.load(1, {
+                shade: [0.5,'#f4f4f4'] //0.1透明度的白色背景
+            });
+        }
+
+        else
+            return false;
+    });
+
+  $("#playbook_submit").click(function(){
+
+    if ($('#mserver').val() == null && $('#mgroup').val() == null) {
+        layer.msg("请选目标服务器或组!");
+        return false;
+    }
+    if ($('#splaybook').val() == null && $('#mroles').val() == null) {
+        layer.msg("请选要执行的Roles或Playbook!");
+        return false;
+    }
+    var obj = $('#mserver').val() || $('#mgroup').val();
+    var act = $('#mroles').val() || $('#splaybook').val();
+
+    if(confirm("确定在"+obj+"上执行"+act+"？")) {
+        var iii = layer.load(2)
+        $.ajax({
+            //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{% url 'hosts:playbook' %}",
+                data: $('#form1').serialize(),
+                success: function (data) {
+                    if (data == '200'){
+                        layer.close(iii)
+                            $('#myframe').attr('src',"{% url 'hosts:playbook_result' 'playbook' %}")
+                        }
+                },
+                error : function() {
+{#                    alert("执行异常！");#}
+                }
+            });
+    }
+    else
+        return false;
+
+  });
+});
+    </script>
+
+    <script>
+function checkBlur(){
+    if ($('#mcommand').val() == "") {
+        document.getElementById("mroles").removeAttribute('disabled');
+        document.getElementById("splaybook").removeAttribute('disabled');
+        document.getElementById("mgroup").removeAttribute('disabled');
+        document.getElementById("mserver").removeAttribute('disabled');
+    }
+}
+function checkFocus(){
+    document.getElementById("mroles").setAttribute('disabled','disabled');
+    document.getElementById("splaybook").setAttribute('disabled','disabled');
+    document.getElementById("mserver").setAttribute('disabled','disabled');
+    document.getElementById("mgroup").setAttribute('disabled','disabled');
+}
+</script>
+{% endblock %}

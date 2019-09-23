@@ -1,0 +1,184 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+{% endblock %}
+
+{% block daohang1 %}服务管理{% endblock %}
+{% block daohang2 %}服务列表{% endblock %}
+{% block body %}
+
+    <button  class="btn btn-info" onclick="add_modal()">新增服务</button>
+    <table  class="table  table-hover">
+        <thead>
+            <tr class="success">
+                <th>选择</th>
+                <th>序号</th>
+                <th>名称</th>
+                <th>类型</th>
+                <th>关联</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+
+        <tbody id="tb">
+            {% for index in  server_list_obj %}
+            <tr class="active">
+                <td><input type="checkbox" /></td>
+                <td target="id" >{{ index.s_id }}</td>
+                <td target="service_name" ><a href='{% url 'service:service_control_list' index.s_name index.s_type %}'>{{ index.s_name }}</a></td>
+                <td target="service_type">{{ index.s_type }}</td>
+                <td>
+                    <ul class="list-unstyled">
+                        {% if  index.h_server.all %}
+                            {% for ii in index.h_server.all %}
+                                <li>{{ ii.h_ip }}</li>
+                            {% endfor %}
+                        {% else %}
+                            <li>暂无关联数据</li>
+                        {% endif %}
+                    </ul>
+                </td>
+
+                <td>
+{#                    <a class="btn btn-primary btn-xs" href="{% url 'service:service_operation'  index.s_id '1'%}">编辑</a>#}
+                    <a class="btn btn-primary btn-xs" onclick="edit_modal({{ index.s_id }})">编辑</a>
+                    <a class="btn btn-danger btn-xs" href="{% url 'service:service_operation'  index.s_id '2'%}">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <div id="i1" class="c1 hide"></div>
+    <div id="i2" class="c2 hide">
+        <form id="server_add_sub" class="form-horizontal">
+            <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ server_obj.s_name.label }}</label>
+                <div class="col-sm-5">
+                    {{ server_obj.s_name }}<span id="error_s_name"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{ server_obj.s_type.label }}</label>
+                <div class="col-sm-5">
+                    {{ server_obj.s_type }}<span id="error_s_type"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{ server_obj.h_server.label }}</label>
+                <div class="col-sm-5">
+                    {{ server_obj.h_server }}<span id="error_h_server"></span>
+                </div>
+            </div>
+        </form>
+        <button id="HideModel" type="button" class="btn btn-default">取消</button>
+        <button id="server_add_form"  type="submit" class="btn btn-primary" >提交</button>
+    </div>
+
+{#    <form action="server.html" method="POST">#}
+{##}
+{#        <!--前台提交{"name":"lesson","value":"1"}给后台识别-->#}
+{#        <select name="host_ip" size="1">#}
+{#            <option selected="selected">主机选择</option>#}
+{#            {% for i in host_list %}#}
+{#            <option value={{ i.ip }}>{{ i.ip }}</option>#}
+{#            {% endfor %}#}
+{#        </select>#}
+{##}
+{#        <select name="host_server" size="1">#}
+{#            <option selected="selected">服务选择</option>#}
+{#            {% for i in host_list %}#}
+{#                {% for ii in i.server %}#}
+{#            <option value={{ ii }}>{{ ii }}</option>#}
+{#                    {% endfor %}#}
+{#            {% endfor %}#}
+{#        </select>#}
+{##}
+{#        <select name="host_action" size="1">#}
+{#            <option selected="selected">动作选择</option>#}
+{#            <option value="start">开启</option>#}
+{#            <option value="stop">停止</option>#}
+{#            <option value="restart">重启</option>#}
+{#        </select>#}
+{##}
+{#        <p><input type="submit" value="执行"/></p>#}
+{##}
+{#        <div>#}
+{#            <textarea style="height: 400px;width: 500px">{{ outprint }}</textarea>#}
+{#        </div>#}
+{##}
+{#    </form>#}
+{% endblock %}
+
+{% block js %}
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script>
+    $("#server_add").click(function () {
+        $("#i1,#i2").removeClass('hide');
+    })
+
+    $("#HideModel").click(function () {
+        $("#i1,#i2").addClass('hide');
+        $("#id_s_name,#id_s_type").val("");
+    })
+
+    $("#server_add_form").click(function () {
+        $.ajax({
+            url: '{% url 'service:serviceadd' %}',
+            dataType: 'JSON',
+            type: 'POST',
+            data: $('#server_add_sub').serialize(),
+            success: function (data) {
+                if (data.sts){
+                    location.reload()
+                    console.log(data.sts)
+                }
+                else {
+                    var error_dic = JSON.parse(data.msg)
+                    console.log (error_dic)
+                    for (var i in error_dic){
+                        console.log (i)
+                        var tmp='#error_'+ i +''
+
+                        $(tmp).text(error_dic[i][0].message);
+                    }
+                }
+            }
+        })
+    })
+
+    function add_modal(){
+        var req_url = '{% url 'service:serviceadd' %}'
+        {#var url = req_url.replace('00000',s_id)#}
+        layer.open({
+        type: 2,
+        title: '修改主机信息',
+        closeBtn: 1,
+        area: ['800px', '400px'],
+        shadeClose: true, //点击遮罩关闭
+        content: [req_url],
+
+        });
+    };
+
+
+
+
+    function edit_modal(s_id){
+        var req_url = '{% url 'service:service_operation' '00000' '1'%}'
+        var url = req_url.replace('00000',s_id)
+        layer.open({
+        type: 2,
+        title: '修改主机信息',
+        closeBtn: 1,
+        area: ['800px', '400px'],
+        shadeClose: true, //点击遮罩关闭
+        content: [url],
+
+        });
+    };
+
+    </script>
+{% endblock %}

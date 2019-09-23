@@ -1,0 +1,211 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+{% endblock %}
+
+{% block body %}
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="box">
+                    <div class="box-header">
+                      <div>
+
+                          <button class="btn btn-primary" onclick="add_modal()">新增主机</button>
+                      </div>
+
+                    </div>
+                </div>
+
+                <div class="box-body">
+                    <table id="table"></table>
+
+                    <input id="ssh_ip" type="hidden" value=""/>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script>
+
+        $(document).ready(function() {
+            $('#table').bootstrapTable({
+                url: '{% url 'hosts:hostlist'%}',
+                method: 'POST',
+                striped: true,
+                resizable: true,
+                pagination: true,
+                sidePagination: 'server',
+                pageNumber: 1,
+                pageSize: 2,
+                pageList: [2, 4, 6, 'All'],
+                search: true,
+                showRefresh: true,
+                showToggle: true,
+                showColumns: true,
+                queryParams: function queryParams(params) {
+                    //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    var temp = JSON.stringify({
+                        rows: params.limit,                         //页面大小
+                        page: (params.offset / params.limit)+1,   //页码
+                        sort: params.sort,      //排序列名
+                        sortOrder: params.order //排位命令（desc，asc）
+                    });
+
+                    return temp;
+                },
+                columns: [{
+                    field: 'no',
+                    title: '序号',
+                    sortable: true,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var options = $('#table').bootstrapTable('getOptions');
+                        return options.pageSize * (options.pageNumber - 1) + index + 1;
+                        }
+                }, {
+                    field: 'h_id',
+                    title: '主机id',
+                    sortable: true,
+                    align: 'center',
+                    visible: false,
+                }, {
+                    field: 'h_name',
+                    title: '主机名'
+                }, {
+                    field: 'h_ip',
+                    title: 'ip地址',
+                    style:'white-space: pre-line',
+                    cellStyle:{
+                        css:{'white-space': 'pre-line'}
+                    }
+                },{
+                    field: 'h_status',
+                    title: '状态'
+
+                },{
+                    field: 'h_cpu',
+                    title: 'CPU'
+                }, {
+                    field: 'h_mem',
+                    title: 'MEM'
+                }, {
+                    field: 'h_disk',
+                    title: 'DISK'
+                }, {
+                    field: 'Button',
+                    title: '操作',
+                    events:'operateEvents',
+                    formatter:'AddFunctionAlty'
+                }]
+
+
+            });
+        });
+
+        function AddFunctionAlty() {
+            return ['<button id="tbssh" type="button" class="btn btn-default">ssh</button> &nbsp;&nbsp;',
+                '<button id="tbedit" type="button" class="btn btn-default">edit</button> &nbsp;&nbsp;',
+                '<button id="tbdel" type="button" class="btn btn-default">del</button>'].join('')
+
+        }
+
+        function open_webssh(row) {
+            $('#ssh_ip').val('')
+            $('#ssh_ip').val(row)
+            window.open('http://192.168.79.134:8080/wssh/','newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
+        }
+
+
+
+        function add_modal(){
+
+            layer.open({
+            type: 2,
+            title: '新增主机信息',
+            closeBtn: 1,
+            area: ['800px', '400px'],
+            shadeClose: true, //点击遮罩关闭
+            content: ['{% url 'hosts:hostadd' %}'],
+
+            });
+        };
+
+
+
+        function edit_modal(h_id){
+            var req_url = '{% url 'hosts:hostedit' '00000' %}'
+            var url = req_url.replace('00000',h_id)
+            layer.open({
+            type: 2,
+            title: '修改主机信息',
+            closeBtn: 1,
+            area: ['800px', '400px'],
+            shadeClose: true, //点击遮罩关闭
+            content: [url],
+
+            });
+        };
+
+        function del_modal(h_ip){
+            if(confirm("确定删除"+h_ip+"这台主机吗？")) {
+                $.ajax({
+                    url:"{% url 'hosts:hostdel' %}",
+                    dataType:"JSON",
+                    type:"GET",
+                    data:{"hip":h_ip},
+                    success: function (data) {
+                        if (data.status == 'succeed'){
+                            $("#table").bootstrapTable('refresh');
+                        }
+                    }
+                })
+            }
+        }
+
+
+
+
+
+        window.operateEvents = {
+            "click #tbssh":function (e,value,row,index) {
+                open_webssh(row.h_ip)
+
+            },
+            "click #tbedit":function (e,value,row,index) {
+                edit_modal(row.h_id)
+
+            },
+            "click #tbdel":function (e,value,row,index) {
+                del_modal(row.h_ip)
+
+            }
+        }
+
+        function refreshes_parent_table() {
+            $("#table").bootstrapTable('refresh');
+        }
+
+
+
+    </script>
+{% endblock %}
+

@@ -1,0 +1,178 @@
+{% extends "base_body.html" %}
+{% block daohang1 %}日志管理{% endblock %}
+{% block daohang2 %}平台日志{% endblock %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/css/AdminLTE.css"/>
+
+{% endblock %}
+
+
+{% block body %}
+    <section class="content">
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <form  id="ops_log" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">类型</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="log_type" id="menu_one">
+                                <option value="default" id="psl">请选择</option>
+
+                                {% for k,v in menu.menu_one.items %}
+                                <option value={{ k }}>{{ v }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">模块</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="log_module" id="menu_two">
+
+                            </select>
+                        </div>
+                        从
+                        <input type="text" class="Wdate" name="start_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                        至
+                        <input type="text" class="Wdate" name="end_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                        <button id="ops_log_search" type="button">检索</button>
+                    </div>
+                </form>
+            </div>
+        <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+{#                    <div class="col-md-5">#}
+                        <table  class="table  table-hover">
+                            <thead>
+                                <tr class="success">
+
+                                    <th>序号</th>
+                                    <th>时间</th>
+                                    <th>用户</th>
+                                    <th>类型</th>
+                                    <th>模块</th>
+                                    <th>描述</th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody id="tb">
+
+                                <tr class="active">
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <ul id="paging_init" class="pagination pagination-xs">{{ page_str}}</ul>
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="application/javascript" src="/static/plugins/DatePicker/WdatePicker.js"></script>
+    <script src="/static/js/adminlte.min.js"></script>
+    <script>
+
+
+        function serializeJSON(form)
+        {
+           var o = {};
+           var a = $(form).serializeArray();
+           $.each(a, function() {
+               if (o[this.name]) {
+                   if (!o[this.name].push) {
+                       o[this.name] = [o[this.name]];
+                   }
+                   o[this.name].push(this.value || '');
+               } else {
+                   o[this.name] = this.value || '';
+               }
+           });
+
+           return o;
+        };
+
+
+
+        $("#menu_one").change(function () {
+            var menu_one_select = $(this).val()
+
+            $.post('/logger/platform/',{'change_action':menu_one_select}).done(function (res) {
+
+                var content='';
+                $.each(res,function (k,v) {
+
+                    if (k == 'reseting'){
+                            $("#tb").empty()
+                        }else{
+                            content += '<option value='+ k +'>'+ v +'</option>'
+                        }
+
+
+
+                })
+
+                $('#menu_two').html(content)
+            })
+        })
+
+        $('#ops_log_search').click(function () {
+            var ops_log_action_json = JSON.stringify(serializeJSON('#ops_log'))
+
+            $.post('/logger/platform/',{'ops_log_action':ops_log_action_json},function (callback_data) {
+
+
+                if (callback_data.sts == '500'){
+                    alert('哥们输入内容呀')
+                }else {
+                    var content='';
+                    $.each(JSON.parse(callback_data.ret),function (i,n) {
+
+                        {#console.log(callback_list[index].fields.log_type)#}
+                        content += '<tr class="active"><td>' + i + '</td><td>'+ n.fields.create_time +'</td><td>'+ n.fields.user +'</td><td>'+n.fields.log_type +'</td><td>'+n.fields.module+'</td><td>'+n.fields.description+'</td></tr>'
+
+                    })
+                    $('#paging_init').html(callback_data.page_str)
+
+                    $("#tb").html(content)
+
+
+                }
+
+            },'json')
+
+        })
+
+        function post_page_data(obj) {
+            var pageing =  $(obj).attr('target')
+            var ops_log_action_json = JSON.stringify(serializeJSON('#ops_log'))
+            $.post('/logger/platform/',{'ops_log_action':ops_log_action_json,'p':pageing},function (pageing_callback_data) {
+                 var content='';
+
+                $.each(JSON.parse(pageing_callback_data.ret),function (i,n) {
+
+                    {#console.log(callback_list[index].fields.log_type)#}
+                    content += '<tr class="active"><td>' + i + '</td><td>'+ n.fields.create_time +'</td><td>'+ n.fields.user +'</td><td>'+n.fields.log_type +'</td><td>'+n.fields.module+'</td><td>'+n.fields.description+'</td></tr>'
+
+                })
+
+                $("#tb").html(content)
+
+                $('#paging_init').html(pageing_callback_data.page_str)
+            })
+        }
+
+
+
+
+    </script>
+{% endblock %}

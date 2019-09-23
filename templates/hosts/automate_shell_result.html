@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    {% for k,v in result.items %}
+        {% if k == 'success' %}
+            {% for kk,vv in v.items %}
+                <div>{{ kk }}</div>
+                <div>开始时间:{{ vv.start }}</div>
+                <div>结束时间:{{ vv.end }}</div>
+                <h6>结果输出:</h6>
+                {% for i in  vv.stdout_lines %}
+                    <div>{{ i }}</div>
+                {% endfor %}
+                </br>
+            {% endfor %}
+        {% endif %}
+
+    {% endfor %}
+</body>
+</html>

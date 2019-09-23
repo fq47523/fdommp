@@ -1,0 +1,148 @@
+{% extends "base_body.html" %}
+
+{% block daohang1 %}服务管理{% endblock %}
+{% block daohang2 %}服务列表{% endblock %}
+{% block daohang3 %}服务控制{% endblock %}
+
+{% block body %}
+
+    <table  class="table  table-hover">
+        <thead>
+            <tr class="success">
+                <th>选择</th>
+                <th>ID</th>
+                <th>主机名</th>
+                <th>IP</th>
+                <th>服务</th>
+                <th>状态</th>
+                <th>动作</th>
+            </tr>
+        </thead>
+
+        <tbody id="tb">
+        {% for i in server_m_host_obj.h_server.all %}
+            <tr class="active">
+                <td>
+                    <input type="checkbox" name="check"/>
+                </td>
+                <td target="s_type" style="display: none;">{{ server_type }}</td>
+                <td target="id" >{{ i.h_id }}</td>
+                <td target="host_name" >{{ i.h_name }}</td>
+                <td target="host_ip">{{ i.h_ip }}</td>
+                <td target="host_server">{{ server_name }}</td>
+                {% if  server_status_obj %}
+                    {% for server_status in  server_status_obj%}
+                        {% if  i.h_ip == server_status.server_host %}
+                            {% if  server_status.server_status == 1 %}
+                                <td>RUN</td>
+                            {% elif  server_status.server_status == 2 %}
+                                <td>STOP</td>
+                            {% elif  server_status.server_status == 2 %}
+                                <td>failed</td>
+                            {% elif  server_status.server_status == 4 %}
+                                <td>unreachable</td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <td>sync</td>
+                {% endif %}
+
+                <td>
+                    <a class="btn btn-primary btn-xs restart" target="restarted">重启</a>
+                    <a class="btn btn-primary btn-xs stop" target="stopped">停止</a>
+                    <a class="btn btn-primary btn-xs start" target="started">开启</a>
+                    <a class="btn btn-primary btn-xs">日志(预留)</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button id="bat_restart" class="btn btn-default btn-xs" bat_target="restarted">批量重启</button>
+    <button id="bat_stop" class="btn btn-default btn-xs" bat_target="stopped">批量停止</button>
+    <button id="bat_start"class="btn btn-default btn-xs" bat_target="started">批量开启</button>
+    <a class="btn btn-default btn-xs" href="{% url 'service:servicelist' %}">返回</a>
+
+
+
+    <div class="modal " id="s_window">                                              <!--modal模态框区块声明，show表示模态框显示 -->
+        <div class="modal-dialog">                                              <!--modal-dialog模态框窗口区域声明 -->
+            <div class="modal-content">                                         <!--modal-content模态框内容区域声明 -->
+                <div class="modal-header">                                      <!--modal-header模态框内容头部区域样式-->
+                    <button type="button" class="close" data-dismiss="modal">   <!--close模态框内容头部区域关闭按钮样式，data-dismiss="modal"事件点击后关闭模态框-->
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title">命令行输出</h4>                        <!--modal-title模态框内容头部区域标题样式-->
+                </div>
+                <div class="modal-body">                                        <!--modal-body设置模态框主体样式-->
+                    <p id="s_content"></p>
+                </div>
+                <div class="modal-footer">                                      <!--modal-footer设置模态框底部样式 -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button style="display: none" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#s_window" data-backdrop="true"></button>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+    $('.restart,.stop,.start').click(function () {
+        {#$('button[data-target="#s_window"]').click();#}
+        {#$("#s_content").text('');#}
+        $(this).parent().siblings().eq(6).empty();
+        $(this).parent().siblings().eq(6).append('<img src="/static/icon/loading.gif">')
+
+        var server_type = $(this).parent().siblings().eq(1).text()
+        var ip = $(this).parent().siblings().eq(4).text()
+        var server = $(this).parent().siblings().eq(5).text()
+        var action = $(this).attr('target')
+
+
+        $.ajax({
+            url: "{% url 'service:service_control_action' %}",
+            dataType: "JSON",
+            type: "POST",
+            data: {"ip":ip,"server":server,"action":action,"server_type":server_type},
+            success: function (data) {
+
+                {#$("#s_content").text(data.result)#}
+                if (data.result != 200){
+                    $(this).parent().siblings().eq(6).empty();
+                    $(this).parent().siblings().eq(6).append('error')
+                }
+                else {
+                    window.location.reload();
+                }
+            }
+        })
+    })
+
+    $('#bat_stop,#bat_restart,#bat_start').click(function(){
+        $('button[data-target="#s_window"]').click();
+        $("#s_content").text('');
+        var checkID = [];
+        var action = $(this).attr('bat_target');
+        $("input[name='check']:checked").each(function(i){
+            var dic = {};
+                dic['t'] = $(this).parent().siblings().eq(0).text();
+                dic['h'] = $(this).parent().siblings().eq(3).text();
+                dic['s'] = $(this).parent().siblings().eq(4).text();
+                dic['a'] = action;
+                checkID[i] = dic;
+        });
+        {#console.log(checkID)#}
+        $.post("{% url 'service:service_control_action' %}",{'bat_cli':JSON.stringify(checkID)},function(data){
+            var bat_cli_json = data.bat_cli
+            for (var i in bat_cli_json){
+
+                $("#s_content").append(bat_cli_json[i].result + '<br/>');
+            };
+        },'json');
+    })
+    </script>
+{% endblock %}
+

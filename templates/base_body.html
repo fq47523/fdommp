@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}风动运维平台{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/dist/css/AdminLTE.min.css' %}">
+    <link rel="stylesheet" href="/static/css/bs-style.css"/>
+    {% block link_1 %}{% endblock %}
+</head>
+<body>
+{#    <ol class="breadcrumb">#}
+{#        <li><a href="#">{% block daohang1 %}{% endblock %}</a></li>#}
+{#        <li><a href="#">{% block daohang2 %}{% endblock %}</a></li>#}
+{#        <li><a href="#">{% block daohang3 %}{% endblock %}</a></li>#}
+{#    </ol>#}
+    {% block body %}{% endblock %}
+
+
+
+
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+
+    {% block js %}{% endblock %}
+
+
+</body>
+</html>

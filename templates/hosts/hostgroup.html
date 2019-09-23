@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;" />
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+</head>
+<body>
+
+
+
+
+    <button id="celery_exec" style="background-color: green" onclick="celery_exec()" c_id="">celery_exec</button>
+    <button id="celery_result" style="background-color: green" onclick="celery_result()" >celery_result</button>
+
+    <textarea id="result"></textarea>
+
+
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script>
+
+        function celery_exec(){
+            $('#result').append('')
+            $.get('{% url 'hosts:hostgroup' %}',{'celery_test':'exec'},function(result){
+                $('#celery_exec').attr('c_id',result.celery_id)
+            })
+        }
+
+        function celery_result() {
+
+            $.post('{% url 'hosts:hostgroup' %}',{'celery_id':$('#celery_exec ').attr('c_id')},function(result){
+                console.log(result.result.success)
+                $('#result').append(JSON.stringify(result.result.success))
+            })
+
+        }
+
+
+
+    </script>
+</body>
+</html>

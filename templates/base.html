@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}风动运维平台{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/static/css/bs-style.css"/>
+    {% block link_1 %}{% endblock %}
+</head>
+<body>
+
+
+    <div class="pg_head">
+        <div class="pg_head pg_logo">
+            <a href="#">
+                <img src="/static/icon/logo.png" class="img-rounded"/>
+                <span  style="font-size: 20px;">风洞运维管理平台</span>
+            </a>
+        </div>
+        <div class="pg_head pg_user">
+            <div class="dropdown">
+                <button style="background-color: #f48942" class="btn  dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{ username }}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#">更改密码</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">注销</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="pg_body">
+
+        <div class="pg_body pg_body_left">
+            <div class="pg_body_left_item">
+                <a class="pg_body_left_header" href="{% url 'accounts:dashboard' %}">平台总览</a>
+            </div>
+
+
+            <div class="pg_body_left_item">
+                <div  class="pg_body_left_header pg_body_left_bc">主机管理</div>
+                <div class="meun_content hide">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="/apps/hosts/hostgroup/">主机组</a></li>
+                        <li><a href="{% url 'hosts:hostlist' %}">主机列表</a></li>
+                        <li><a href="{% url 'hosts:shell' %}">zdh-shell</a></li>
+                        <li><a href="{% url 'hosts:playbook' %}">zdh-playbook</a></li>
+                        <li><a href="{% url 'hosts:crontab_list' %}">zdh-crontab</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pg_body_left_item">
+                <div  class="pg_body_left_header pg_body_left_bc">服务管理</div>
+                <div class="meun_content hide">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="{% url 'service:servicelist' %}">服务列表</a></li>
+                        <li><a href="{% url 'service:tpl' %}">虚位以待</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pg_body_left_item">
+                <div  class="pg_body_left_header pg_body_left_bc">监控管理</div>
+                <div class="meun_content hide">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a id='tt2019'target="monitor.html">监控信息</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pg_body_left_item">
+                <div  class="pg_body_left_header pg_body_left_bc">日志管理</div>
+                <div class="meun_content hide">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="{% url 'logger:platform_log' %}">平台日志</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pg_body_left_item">
+                <div  class="pg_body_left_header pg_body_left_bc">发布管理</div>
+                <div class="meun_content hide">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="server.html">虚位以待</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pg_body_left_item">
+                <div  class="pg_body_left_header pg_body_left_bc">接口管理</div>
+                <div class="meun_content hide">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="api-manage.html">接口信息</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                        <li><a href="#">虚位以待</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div  id="ttt2019" class="pg_body pg_body_right">
+            <ol class="breadcrumb">
+                <li><a href="#">{% block daohang1 %}{% endblock %}</a></li>
+                <li><a href="#">{% block daohang2 %}{% endblock %}</a></li>
+                <li><a href="#">{% block daohang3 %}{% endblock %}</a></li>
+            </ol>
+            {% block pg_body_right %}{% endblock %}
+
+        </div>
+
+        <div class="pg_body pg_body_footer">
+            <span>Copyright 409 风洞 © 2019-2020 . All rights reserved.</span>
+            <span style="float: right"><b>Version</b> 1.23</span>
+        </div>
+    </div>
+
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+
+    <script>
+        $(".pg_body_left_header").click(function () {
+        var v = $(this).next().removeClass('hide').parent().siblings().find(".meun_content").addClass('hide');
+        })
+
+        $("#tt2019").click(function () {
+            var href = $("#tt2019").attr('target');
+            console.log(href)
+            $("#ttt2019").load(href)
+        })
+
+
+    </script>
+
+    {% block js %}{% endblock %}
+
+
+</body>
+</html>

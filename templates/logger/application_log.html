@@ -1,0 +1,208 @@
+{% extends "base_body.html" %}
+{% block daohang1 %}日志管理{% endblock %}
+{% block daohang2 %}平台日志{% endblock %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/css/AdminLTE.css"/>
+    <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+{% endblock %}
+
+
+{% block body %}
+    <section class="content">
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <form  id="ops_log" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">类型</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="log_type" id="menu_one">
+                                <option value="default" id="psl">请选择</option>
+
+                                {% for host_ip in menu.menu_one.iplist %}
+                                <option value={{ host_ip }}>{{ host_ip }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">模块</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="log_module" id="menu_two">
+
+                            </select>
+                        </div>
+                        从
+                        <input type="text" class="Wdate" name="start_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                        至
+                        <input type="text" class="Wdate" name="end_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                        <button id="ops_log_search" type="button">检索</button>
+                    </div>
+                </form>
+            </div>
+        <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+{#                    <div class="col-md-5">#}
+                    <table id="table"></table>
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="application/javascript" src="/static/plugins/DatePicker/WdatePicker.js"></script>
+    <script src="/static/js/bootstrap-table.js"></script>
+    <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script src="/static/js/adminlte.min.js"></script>
+    <script>
+
+        $(document).ready(function() {
+            initTable();
+            $('#ops_log_search').bind("click", initTable);
+        });
+
+        function initTable() {
+            $('#table').bootstrapTable('destroy');
+            $('#table').bootstrapTable({
+                url: '{% url 'logger:application_log'%}',
+                method: 'POST',
+                striped: true,
+                resizable: true,
+                pagination: true,
+                sidePagination: 'server',
+                pageNumber: 1,
+                pageSize: 2,
+                pageList: [2, 4, 6, 'All'],
+                search: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                queryParams: function queryParams(params) {
+                    //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    var temp = JSON.stringify({
+                        rows: params.limit,                         //页面大小
+                        page: (params.offset / params.limit)+1,   //页码
+                        sort: params.sort,      //排序列名
+                        sortOrder: params.order, //排位命令（desc，asc）
+                        action: JSON.stringify(serializeJSON('#ops_log'))
+                    });
+
+                    return temp;
+                },
+                columns: [{
+                    field: 'ip',
+                    title: 'Item ID',
+                    sortable: true,
+                    align: 'center',
+                }, {
+                    field: 'logdate',
+                    title: 'Item Name',
+                    cellStyle:{css:{'min-width': '180px'}}
+                }, {
+                    field: 'level',
+                    title: 'log level',
+                }, {
+                    field: 'message',
+                    title: 'Item Price',
+                    cellStyle:{
+                        css:{'white-space': 'pre-line'}
+                    },
+                    formatter: formatterStatus
+                },]
+
+
+            });
+        }
+
+        function serializeJSON(form)
+        {
+           var o = {};
+           var a = $(form).serializeArray();
+           $.each(a, function() {
+               if (o[this.name]) {
+                   if (!o[this.name].push) {
+                       o[this.name] = [o[this.name]];
+                   }
+                   o[this.name].push(this.value || '');
+               } else {
+                   o[this.name] = this.value || '';
+               }
+           });
+
+           return o;
+        };
+
+
+
+        $("#menu_one").change(function () {
+            var menu_one_select = $(this).val()
+
+            $.get('{% url 'logger:application_log' %}',{'change_action':menu_one_select}).done(function (res) {
+
+                var content='';
+                $.each(res,function (k,v) {
+                    console.log(k,v)
+                    if (k == 'reseting'){
+                            $("#tb").empty()
+                        }else{
+                            for (var i in v){
+                                content += '<option value='+ v[i] +'>'+ v[i] +'</option>'
+                            }
+
+                        }
+
+                })
+
+                $('#menu_two').html(content)
+            })
+        })
+
+    //先定义一个全局变量count
+    var count = -1;
+    console.log(count)
+    var formatterStatus = function (value) {
+    //没有内容的时候显示“-”
+
+                var temp = "";
+                if (value == '') {
+                    var temp = "-";
+                }
+                else {
+                    temp = value;
+                }
+    //有内容时，内容大于50字符则大于的部分隐藏，点击Show More 显示内容
+                var text = value;
+                var flag = text.length > 50 ? true : false;
+                if (flag) {
+                    count = count + 1;
+                    console.log(count)
+                    temp = "<p>" + text.substring(0, 600)
+                        + "<span id='hide" + count + "' style='display:none'>" + text.substring(600) + "</span>"
+                        + "<a href='javascript:;' id='open" + count + "' onclick='showhide(" + count + ")'>...Show more</a></p>"
+                }
+
+                return temp;
+            }
+    function showhide(count) {
+        if ($("#open" + count).text() == "...Show more") {
+            $("#open" + count).text("Pick up");
+            $("#hide" + count).show();
+        } else {
+            $("#open" + count).text("...Show more");
+            $("#hide" + count).hide();
+        }
+    }
+
+
+
+
+
+
+    </script>
+{% endblock %}

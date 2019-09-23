@@ -1,0 +1,6 @@
+---
+- hosts: '{{ h }}'
+  remote_user: root
+  tasks:
+    - name: test web exec playbook
+      shell: 'date "+%Y-%m-%d %H:%M:%S" > /tmp/playbook.log'

@@ -1,0 +1,166 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/css/AdminLTE.css"/>
+    <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+{% endblock %}
+{% block daohang1 %}主机管理{% endblock %}
+{% block daohang2 %}zdh{% endblock %}
+{% block body %}
+
+        <!-- Main content -->
+    <section class="content">
+      <div class="box box-default">
+        <div class="box-header with-border">
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="row">
+
+            <div class="col-md-5">
+            <form action="#" method="post" id="form1">
+
+              <div class="form-group">
+                <label>选择主机</label>
+                <select id="mserver" name="mserver" class="form-control select2" multiple="multiple" data-placeholder="选择主机(host)" style="width: 100%;">
+                        {% for host in hosts %}
+                        <option value={{ host.za_ip }}>{{ host.za_ip }}</option>
+                        {% endfor %}
+
+
+                </select>
+              </div>
+              <div class="form-group">
+                <label>选择属组</label>
+                <select id="mgroup" name="mgroup" class="form-control select2" multiple="multiple" data-placeholder="选择属组(group)" style="width: 100%;">
+
+
+
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Scripts</label>
+                <select id="mscripts" name="mscripts" class="form-control select2" multiple="multiple" data-placeholder="scripts" style="width: 100%;">
+                    <option value=""></option>
+                    {% for filename in script_list %}
+                        <option value={{ filename }}>{{ filename }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Scripts Args</label>
+                <input type="text" id="margs" name="mscripts-margs" class="form-control" placeholder="args1 args2..." style="width: 100%;">
+              </div>
+            <div class="form-group ">
+                  <label>Shell Command</label>
+                  <textarea onblur="return checkBlur()" onfocus="checkFocus()" style="padding-bottom: 15px;" id="mcommand" name="mcommand" rows="1" class="form-control" placeholder="use enter spilt and command"></textarea>
+                </div>
+              <!-- /.form-group -->
+                        <div class="btn btn-group" style="padding-left: 0">
+            <a id="shell_submit" class="btn btn-primary">执行任务</a>
+{#               <a id="shell_submit" class="btn btn-primary"  href="automate_result.html?type=shell" target="myframe">执行任务</a>#}
+                        </div>
+            <div class="btn btn-group" style="padding-left: 0">
+            <a class="btn btn-default" href="{% url 'hosts:shell_result' 'shell' %}" target="myframe">上次结果</a>
+{#                <a class="btn btn-default" href="" target="myframe">上次结果</a>#}
+               </div>
+                            <!-- /.form-group -->
+            </form>
+            </div>
+                      <div class="col-md-6">
+              <div class="form-group">
+              <!-- /.form-group -->
+                <div class="right" id="frame1">
+                    <iframe  name="myframe" id="myframe" width="600" height="400" frameborder="0"></iframe>
+                </div>
+            </div>
+            <!-- /.col -->
+          <!-- /.row -->
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
+      </div>
+    </section>
+        <!-- /.content -->
+
+
+
+
+{% endblock %}
+{% block js %}
+    <script src="/static/js/adminlte.min.js"></script>
+    <script src="/static/plugins/select2/select2.full.min.js"></script>
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script>
+
+
+            $("#mserver").select2({theme: "classic",}).on("select2:select", function () { $("#mgroup").prop("disabled", true); });
+            $("#mserver").select2({theme: "classic",}).on("select2:unselect", function () { $("#mgroup").prop("disabled", false); });
+            $("#mgroup").select2().on("select2:select", function () { $("#mserver").prop("disabled", true); });
+            $("#mgroup").select2().on("select2:unselect", function () { $("#mserver").prop("disabled", false); });
+            $("#mscripts").select2().on("select2:select", function () { $("#mcommand").prop("disabled", true); });
+            $("#mscripts").select2({theme: "classic",multiple:false,}).on("select2:unselect", function () { $("#mcommand").prop("disabled", false); });
+
+
+            function checkBlur(){
+                if ($('#mcommand').val() == "") {
+                    document.getElementById("mscripts").removeAttribute('disabled');
+                    document.getElementById("margs").removeAttribute('disabled');
+                }
+            }
+
+            function checkFocus(){
+                document.getElementById("mscripts").setAttribute('disabled','disabled');
+                document.getElementById("margs").setAttribute('disabled','disabled');
+            }
+
+
+
+
+
+
+            $('#shell_submit').click(function () {
+                if ($('#mserver').val() == null && $('#mgroup').val() == null) {
+                    layer.msg("请选目标服务器或组!");
+                    return false;
+                }
+                if ($('#mscripts').val() == null && $('#mcommand').val() == "") {
+                    layer.msg("请选要执行的Scripts或shell command!");
+                    return false;
+                }
+                var obj = $('#mserver').val() || $('#mgroup').val();
+                var act = $('#mscripts').val() || $('#mcommand').val();
+
+                if (confirm("确定在"+obj+"上执行"+act+"？")){
+                    var iii = layer.load(2)
+                    $.post('{% url 'hosts:shell' %}',$('#form1').serialize(),function (data) {
+
+                        if (data == '200'){
+                        layer.close(iii)
+                            $('#myframe').attr('src',"{% url 'hosts:shell_result' 'shell' %}")
+                        }
+                    })
+
+                }
+
+            })
+
+
+
+
+            {#$("#mserver").select2({#}
+            {#        placeholder: 'host',#}
+            {#        multiple:true,#}
+            {#        language: "zh-CN",#}
+            {#        allowClear:true,#}
+            {#        closeOnSelect:false,#}
+            {#        theme: "classic",#}
+            {#    });#}
+
+
+
+
+    </script>
+{% endblock %}

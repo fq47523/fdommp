@@ -1,0 +1,89 @@
+{% extends "base_form.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
+
+{% endblock %}
+
+{% block body %}
+{#    <form action="{% url 'service:service_operation'  sid '3'%}"  method="POST">#}
+{#        <div>{{ Service_MF_I}}</div>#}
+{#    <input type="submit">#}
+{#    </form>#}
+{#<a href="{% url 'service:servicelist' %}">返回</a>#}
+
+
+
+
+
+    <section class="content">
+            <div class="box box-info">
+                <div class="row">
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form class="form-horizontal" id="server_edit">
+                      <div class="box-body">
+                        <div class="form-group">
+                          <label for="inputEmail3" class="col-sm-2 control-label">{{ Service_MF_I.s_name.label }}</label>
+
+                          <div class="col-sm-5">
+                            {{ Service_MF_I.s_name }}<span id="error_h_name"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">{{ Service_MF_I.s_type.label }}</label>
+
+                          <div class="col-sm-5">
+                             {{ Service_MF_I.s_type }}<span id="error_h_ip"></span>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="inputPassword3" class="col-sm-2 control-label">{{ Service_MF_I.h_server.label }}</label>
+
+                          <div class="col-sm-5">
+                             {{ Service_MF_I.h_server }}<span id="error_h_ip"></span>
+                          </div>
+                        </div>
+
+                      </div>
+                      <!-- /.box-body -->
+                      <div class="box-footer">
+        {#                <button type="submit" class="btn btn-default">Cancel</button>#}
+                        <button id="post_serveredit" type="button" class="btn btn-info pull-right">更新</button>
+                      </div>
+                      <!-- /.box-footer -->
+                    </form>
+                </div>
+            </div>
+    </section>
+
+{% endblock %}
+
+{% block js %}
+    <script src="/static/plugins/select2/select2.full.min.js"></script>
+    <script>
+        $('#post_serveredit').click(function () {
+            $.post('{% url 'service:service_operation'  sid '3'%}',$('#server_edit').serialize(),function(data){
+                if (data == 200){
+
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                    window.parent.window.refreshes_parent_table();
+
+                }
+            })
+        })
+
+        $("#id_h_server").select2({
+            placeholder: 'host',
+            multiple:true,
+            language: "zh-CN",
+            allowClear:true,
+            closeOnSelect:false,
+            theme: "classic",
+
+        });
+
+    </script>
+{% endblock %}

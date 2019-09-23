@@ -1,0 +1,112 @@
+{% extends 'base_form.html' %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
+{% endblock %}
+
+
+
+{% block body %}
+
+    <section class="content">
+        <div class="box box-info">
+            <div class="row">
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                <div class="col-md-6">
+                    <form id="conf_add_form" class="form-horizontal">
+                        <div class="box-body">
+                            <div class="form-group">
+                                    <label class="col-sm-2 control-label">{{ Confd_MF_init.conf_name.label }}</label>
+                                <div class="col-sm-5">
+                                    {{ Confd_MF_init.conf_name }}<span id="error_s_name"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ Confd_MF_init.conf_path.label }}</label>
+                                <div class="col-sm-5">
+                                    {{ Confd_MF_init.conf_path }}<span id="error_s_type"></span>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ Confd_MF_init.conf_service.label }}</label>
+                                <div class="col-sm-5">
+                                    {{ Confd_MF_init.conf_service}}<span id="error_h_server"></span>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ Confd_MF_init.conf_host.label }}</label>
+                                <div class="col-sm-5">
+                                    {{ Confd_MF_init.conf_host}}<span id="error_h_server"></span>
+                                </div>
+                            </div>
+
+                            <div class="box-footer">
+                                <a class="btn btn-default pull-right" href="javascript:window.opener=null;window.close();">取消</a>
+                                <button id="conf_add_sub"  type="submit" class="btn btn-primary pull-right" >提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock body %}
+
+{% block js %}
+
+    <script src="/static/plugins/select2/select2.full.min.js"></script>
+    <script>
+        $("#id_conf_host").select2({
+            placeholder: 'host',
+            multiple:false,
+            language: "zh-CN",
+            allowClear:true,
+            closeOnSelect:false,
+            theme: "classic",
+        });
+
+        $("#id_conf_service").select2({
+            placeholder: 'host',
+            multiple:false,
+            language: "zh-CN",
+            allowClear:true,
+            closeOnSelect:false,
+            theme: "classic",
+        });
+
+
+
+        $('#conf_add_sub').click(function () {
+            $.post('{% url 'confd:confd_add' %}',$('#conf_add_form').serialize(),function (Callback) {
+
+                if (Callback.rcode == 200){
+
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                    window.parent.window.refreshes_parent_table();
+                }
+                else{
+                    var error_dic = JSON.parse(data.msg)
+
+                    $('.error').text('')
+                    for (var i in error_dic){
+
+                        var tmp='#error_'+ i +''
+
+                        $(tmp).text(error_dic[i][0].message);
+                    }
+                }
+            })
+
+        })
+
+    </script>
+{% endblock js %}

@@ -1,0 +1,21 @@
+    <div class="modal " id="s_window">                                              <!--modal模态框区块声明，show表示模态框显示 -->
+        <div class="modal-dialog modal-sm">                                              <!--modal-dialog模态框窗口区域声明 -->
+            <div class="modal-content">                                         <!--modal-content模态框内容区域声明 -->
+                <div class="modal-header">                                      <!--modal-header模态框内容头部区域样式-->
+                    <button type="button" class="close" data-dismiss="modal">   <!--close模态框内容头部区域关闭按钮样式，data-dismiss="modal"事件点击后关闭模态框-->
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title">警告！！！</h4>                        <!--modal-title模态框内容头部区域标题样式-->
+                </div>
+                <div class="modal-body">                                        <!--modal-body设置模态框主体样式-->
+                    <p>删除后将不可逆，请确认是否删除?</p>
+                </div>
+                <div class="modal-footer">                                      <!--modal-footer设置模态框底部样式 -->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger deleteHaulBtn">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button style="display: none" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#s_window" data-backdrop="true"></button>
