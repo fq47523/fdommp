@@ -18,7 +18,5 @@ django.setup()
 # print (f.sections_value('debug','DEBUG'))
 
 
-print (settings.BROKER)
-
-
+print (settings.BROKER111)
 
