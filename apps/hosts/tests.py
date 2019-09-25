@@ -18,5 +18,8 @@ django.setup()
 # print (f.sections_value('debug','DEBUG'))
 
 
-print (settings.BROKER111)
+import re
+
+a = 'attachment; filename=fdommp-master.zip'
+print (re.findall('filename=(.*)',a))
 
