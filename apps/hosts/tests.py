@@ -18,8 +18,6 @@ django.setup()
 # print (f.sections_value('debug','DEBUG'))
 
 
-import re
-
-a = 'attachment; filename=fdommp-master.zip'
-print (re.findall('filename=(.*)',a))
+from tasks.tasks import add
+add.delay(1,1)
 
