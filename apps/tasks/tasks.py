@@ -18,6 +18,8 @@ from datetime import timedelta
 	worker ：启动类型（进程）
 	-B ：启动定时任务
 	-l ：控制台输出日志级别
+	celery multi start w1 -A fdommp  -l info --logfile=/home/fuqing/PycharmProjects/fdommp/logs/celery.log
+	celery multi stop w1
 '''
 
 app.conf.beat_schedule = {
