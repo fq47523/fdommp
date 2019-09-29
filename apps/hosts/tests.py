@@ -11,13 +11,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fdommp.settings")
 import django
 django.setup()
 
+from api.serializers import AssetsSerializer
+from assets.models import Asset
 
-# from  utils._get_config import ConfigR
-#
-# f = ConfigR()
-# print (f.sections_value('debug','DEBUG'))
+snippets = Asset.objects.all()
+serializer = AssetsSerializer(snippets, many=True)
+print (serializer.data)
 
-
-from tasks.tasks import add
-add.delay(1,1)
 

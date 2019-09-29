@@ -14,13 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import re_path
+from django.urls import re_path,path
 from api import views
+from api.apps_api import assets_api
+
 
 app_name = 'api'
 
 urlpatterns = [
     re_path('dashboard/(?P<type>\w+)/', views.dashboard_data, name='dashboard'),
+    path("assetslist/",assets_api.AssetsList.as_view(),name='api-assetslist')
 
 
 ]
