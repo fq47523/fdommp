@@ -11,3 +11,11 @@ class AssetsList(APIView):
         snippets = Asset.objects.all()
         serializer = serializers.AssetsSerializer(snippets, many=True)
         return Response(serializer.data)
+    def post(self,request, format=None):
+        data = request.data
+        print (data)
+        serializer = serializers.AssetsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(200)
