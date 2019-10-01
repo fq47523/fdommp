@@ -162,18 +162,10 @@
             }, );
         }
 
-        {#function add_modal(){#}
-        {##}
-        {#    layer.open({#}
-        {#    type: 2,#}
-        {#    title: '新增主机信息',#}
-        {#    closeBtn: 1,#}
-        {#    area: ['800px', '400px'],#}
-        {#    shadeClose: true, //点击遮罩关闭#}
-        {#    content: ['{% url 'hosts:hostadd' %}'],#}
-        {##}
-        {#    });#}
-        //};
+        function add_modal(){
+            window.open('{% url 'assets:assets_add' %}')
+
+        };
 
 
     </script>

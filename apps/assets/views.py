@@ -86,6 +86,15 @@ class AnsibleAssetCreateOrUpdate(View,AssetManage,AnsibleAssetsSetup):
 
         return HttpResponse(200)
 
+
+class AssetManualAdd(View):
+    def get(self,request, *args, **kwagrs):
+        return render(request,'assets/asset_add.html')
+
+
+
+
+
 class AutoAssetCreateOrUpdate(View):
     '''处理cmdb客户端发送的数据，新增或更新资产'''
     def post(self,request,*args,**kwargs):

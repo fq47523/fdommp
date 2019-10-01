@@ -23,6 +23,8 @@ urlpatterns = [
     path('collect/',views.AutoAssetCreateOrUpdate.as_view()),
     path('list/', views.AssetView.as_view(),name='assets_list'),
     path('detail/',views.AssetDetailView.as_view(),name='assets_detail'),
+    path('add/',views.AssetManualAdd.as_view(),name='assets_add'),
     path('sync/',views.AnsibleAssetCreateOrUpdate.as_view(),name='assets_sync'),
+
 
 ]
