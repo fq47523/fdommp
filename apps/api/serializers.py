@@ -12,14 +12,28 @@ class AssetsSerializer(serializers.ModelSerializer):
                   'contract', 'purchase_day', 'expire_day', 'price', 'approved_by',
                   'memo', 'c_time', 'm_time',)
 
+
+
+class AssetsServerSerializer(serializers.ModelSerializer):
+    asset = AssetsSerializer(required=False)
+
+    class Meta:
+        model = Server
+        fields = ('id', 'asset', 'sub_asset_type', 'created_by', 'hosted_on', 'model',
+                  'raid_type', 'username', 'passwd', 'sshport', 'keyfile',
+                  'sudo_passwd', 'kernel', 'selinux', 'os_type', 'os_distribution',
+                  'os_release')
+
+
     def create(self, data):
-        if(data.get('sn')):
-            # assets_data = data.pop('assets')
-            print (data)
-            assets = Asset.objects.create(**data)
-            print (assets)
+        # print (data)
+        if(data.get('asset')):
+            assets_data = data.pop('asset')
+            print ('assets_data:',assets_data)
+            asset = Asset.objects.create(**assets_data)
+            print ('asset_obj:',asset)
         else:
-            assets = Asset()
-        # data['assets'] = assets;
-        server = Server.objects.create(**{'asset':assets})
+            asset = Asset()
+        data['asset'] = asset;
+        server = Server.objects.create(**data)
         return server
