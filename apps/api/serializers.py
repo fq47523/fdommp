@@ -28,7 +28,7 @@ class AssetsServerSerializer(serializers.ModelSerializer):
 
 
     def create(self, data):
-        # print (data)
+        print (data)
         if(data.get('asset')):
             assets_data = data.pop('asset')
             print ('assets_data:',assets_data)
@@ -36,6 +36,6 @@ class AssetsServerSerializer(serializers.ModelSerializer):
             print ('asset_obj:',asset)
         else:
             asset = Asset()
-        data['asset'] = asset;
+        data['asset'] = asset
         server = Server.objects.create(**data)
         return server
