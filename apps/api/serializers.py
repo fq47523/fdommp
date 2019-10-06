@@ -4,8 +4,8 @@ from assets.models import Asset,Server
 
 
 class AssetsSerializer(serializers.ModelSerializer):
-    c_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    m_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    # c_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    # m_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = Asset
@@ -25,6 +25,7 @@ class AssetsServerSerializer(serializers.ModelSerializer):
                   'raid_type', 'username', 'passwd', 'sshport', 'keyfile',
                   'sudo_passwd', 'kernel', 'selinux', 'os_type', 'os_distribution',
                   'os_release')
+
 
 
     def create(self, data):
