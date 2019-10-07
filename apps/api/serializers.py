@@ -4,8 +4,8 @@ from assets.models import Asset,Server
 
 
 class AssetsSerializer(serializers.ModelSerializer):
-    # c_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    # m_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    c_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+    m_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
 
     class Meta:
         model = Asset
