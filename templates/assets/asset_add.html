@@ -15,33 +15,159 @@
                     <!-- /.box-header -->
                     <!-- form start -->
                 <div class="col-md-6">
-                    <form id="conf_add_form" class="form-horizontal">
+                    <form id="AddAsset" class="form-horizontal">
                         <div class="box-body">
                             <div class="form-group"><label class="col-sm-2 control-label">必选</label></div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">asset_type</label>
+                                <label class="col-sm-2 control-label">*asset_type</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" name="asset_assets_type" id='assets_type_select'>
+                                        <option value="">select</option>
+                                        {% for i in meun.asset_type %}
+									    <option value="{{ i.0 }}" name="asset_assets_type">{{ i.1 }}</option>
+					                    {% endfor %}
+								    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">*name</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" name="asset_name"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">*sn</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" name="asset_sn"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">business_unit</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">name</label>
+                                <label class="col-sm-2 control-label">*status</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" name="asset_status" id='status'>
+                                        <option value="">select</option>
+                                        {% for i in meun.asset_status %}
+									    <option value="{{ i.0 }}" name="asset_status">{{ i.1 }}</option>
+					                    {% endfor %}
+								    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">manufacturer</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
                                 </div>
                             </div>
 
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">*manage_ip</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">admin</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">idc</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">contract</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">purchase_day</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">expire_day</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">price</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">approved_by</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">tags</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" name="tags" id='tags'>
+                                        <option value="">select</option>
+                                        {% for i in meun.tag %}
+									    <option value="{{ i.id }}">{{ i.name }}</option>
+					                    {% endfor %}
+								    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">memo</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                </div>
+                            </div>
 
 
 
 
                             <div class="form-group"><label class="col-sm-2 control-label">可选</label></div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">name</label>
+                                <label class="col-sm-2 control-label">sub_asset_type</label>
                                 <div class="col-sm-5">
-                                    <input type="text" class="form-control" placeholder="请输入主机名" maxlength="16"><span id="error_s_name"></span>
+                                    <select class="form-control" name="server_sub_asset_type" id='tags'>
+                                        <option value="">select</option>
+                                        {% for i in meun.server_type %}
+									    <option value="{{ i.id }}">{{ i.name }}</option>
+					                    {% endfor %}
+								    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">created_by</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" placeholder="请输入主机名" readonly  unselectable="on" name="server_created_by" value="manual">
                                 </div>
                             </div>
 
@@ -49,7 +175,7 @@
 
                             <div class="box-footer">
                                 <a class="btn btn-default pull-right" href="javascript:window.opener=null;window.close();">取消</a>
-                                <button id="conf_add_sub"  type="submit" class="btn btn-primary pull-right" >提交</button>
+                                <button  type="button" class="btn btn-primary pull-right" onclick="AddAssetData()">提交</button>
                             </div>
 
 
@@ -69,5 +195,85 @@
 
 
 {% block js %}
+    <script>
+	function getFormData (form, filler) {
+		var assets = {};
+		var server = {};
+		var net = {};
+		for (var i = 0; i < form.length; ++i) {
+			var name = form[i].name;
+			var value = form[i].value;
+			if (name.length == 0)
+				continue;
+			try {
+				value  = value.replace(/\n/g,'<br/>');
+				console.log('vvv:'+value)
+			}catch (e) {
+				alert(e);
+			}
+			if (value.length == 0) {
+				if ((typeof filler != 'string') || (filler.length == 0))
+					continue;
+				else
+					value = filler;
+			}
+			let assetStart = name.indexOf("asset_");
+			let serverStart = name.indexOf("server_");
+			let netStart = name.indexOf("net_");
+			console.log('b1:'+assetStart,'b2:'+serverStart)
+			if (assetStart==0){
+				var asz = "assets."+name.replace("asset_","")+" = '" + value + "'";
+				console.log('aaa:'+asz)
+				try {
+					eval(asz);
+				} catch (e) {
+					alert(e);
+				}
+			}
+			else if(serverStart==0){
+				var ssz = "server."+name.replace("server_","")+" = '" + value + "'";
+				try {
+					eval(ssz);
+				} catch (e) {
+					alert(e);
+				}
+			}
+			else if(netStart==0){
+				var nsz = "net."+name.replace("net_","")+" = '" + value + "'";
+				try {
+					eval(nsz);
+				} catch (e) {
+					alert(e);
+				}
+			}
+			else if(netStart==0){
+				var nsz = "net."+name.replace("net_","")+" = '" + value + "'";
+				try {
+					eval(nsz);
+				} catch (e) {
+					alert(e);
+				}
+			}
+
+		}
+		if (assets.assets_type == "server" || assets.assets_type=="vmser"){
+			server.assets = assets;
+			return server;
+		}
+		else {
+			net.assets = assets;
+			return net;
+		}
+	}
+
+        function AddAssetData() {
+            var asset_data = getFormData(document.getElementById('AddAsset'),'');
+            console.log(JSON.stringify({'data':asset_data}))
+
+
+        }
+    </script>
+
+
 
 {% endblock %}

@@ -19,6 +19,22 @@ class AssetManage(object):
     def select_obj_asset(self,asset_id):
         return get_object_or_404(models.Asset,id=asset_id)
 
+    def meun(self):
+        asset = models.Asset()
+        server = models.Server()
+        bu = models.BusinessUnit.objects.all()
+        mf = models.Manufacturer.objects.all()
+        idc = models.IDC.objects.all()
+        tags = models.Tag.objects.all()
+        return {'asset_type':asset.asset_type_choice,
+                'asset_status':asset.asset_status,
+                'bu':bu,
+                'mf': mf,
+                'idc':idc,
+                'tag':tags,
+                'server_type':server.sub_asset_type_choice,
+                }
+
     def update_server_gailan_a(self,request, *args, **kwagrs):
         # print(request.POST,args[0])
         asset_type_data = request.POST.get('asset_type',None)

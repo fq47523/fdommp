@@ -87,9 +87,10 @@ class AnsibleAssetCreateOrUpdate(View,AssetManage,AnsibleAssetsSetup):
         return HttpResponse(200)
 
 
-class AssetManualAdd(View):
+class AssetManualAdd(View,AssetManage):
     def get(self,request, *args, **kwagrs):
-        return render(request,'assets/asset_add.html')
+
+        return render(request,'assets/asset_add.html',{'meun':self.meun()})
 
 
 
