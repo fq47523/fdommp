@@ -6,15 +6,19 @@ from rest_framework.response import Response
 from api import  serializers
 from assets.models import *
 
-class AssetsList(APIView):
+class AssetsAction(APIView):
     def get(self, request, format=None):
         snippets = Server.objects.all()
         serializer = serializers.AssetsServerSerializer(snippets, many=True)
         return Response(serializer.data)
 
     def post(self,request, format=None):
-        data = request.data
-        print ('request.data:',data)
+
+        if(request.data.get('data')):
+            data = request.data.get('data')
+        else:
+            data = request.data
+        print (data)
         serializer = serializers.AssetsServerSerializer(data=data)
 
         if serializer.is_valid():
