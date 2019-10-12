@@ -14,7 +14,6 @@ django.setup()
 from api.serializers import AssetsSerializer
 from assets.models import Asset,Server
 
-ass = Asset()
-for i in Asset.asset_type_choice:
-    print (i[0],i[1])
+a = Asset.objects.all().values_list('id')
+print (a)
 

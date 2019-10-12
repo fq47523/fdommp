@@ -43,6 +43,7 @@
                         <th>机房</th>
                         <th>更新日期</th>
                         <th>标签</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,6 +99,9 @@
                             {% empty %}
                               -
                             {% endfor %}
+                        </td>
+                        <td>
+                            <button type="button" onclick="del_asset({{ asset.id }},this)">delete</button>
                         </td>
                     </tr>
 
@@ -166,6 +170,33 @@
             window.open('{% url 'assets:assets_add' %}')
 
         };
+
+        function del_asset(id,obj) {
+            var  assetname = $(obj).parent().siblings().eq(3).text()
+            console.log(id,assetname)
+
+            layer.confirm('确认是否删除资产:'+assetname, {
+                btn: ['删除','取消'] //按钮
+            }, function(){
+                layer.msg('已提交', {icon: 1});
+                var req_url = '{% url 'api:api-assetaction' '00000'%}'
+                var url = req_url.replace('00000',id)
+                console.log(url)
+                $.ajax({
+                    dataType: "JSON",
+                    url:url,
+                    type:"DELETE",
+                    contentType: "application/json",
+                    success:function (response) {
+                        if (response.code == 202){
+                            location.reload()
+                        }
+                    }
+                })
+
+            });
+
+        }
 
 
     </script>

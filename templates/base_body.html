@@ -6,6 +6,9 @@
     <title>{% block title %}风动运维平台{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/bootstrap.css"/>
     <link rel="stylesheet" href="{% static 'adminlet-2.4.10/dist/css/AdminLTE.min.css' %}">
+    <link href="/static/plugins/pnotify/dist/pnotify.css" rel="stylesheet">
+    <link href="/static/plugins/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+    <link href="/static/plugins/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/bs-style.css"/>
     {% block link_1 %}{% endblock %}
 </head>
@@ -22,6 +25,8 @@
 
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/plugins/pnotify/dist/pnotify.js"></script>
+    <script src="/static/plugins/pnotify/dist/pnotify.buttons.js"></script>
 
     {% block js %}{% endblock %}
 

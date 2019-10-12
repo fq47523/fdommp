@@ -23,8 +23,8 @@ class AssetsAction(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(200)
+            return Response({'code':201}, status=status.HTTP_201_CREATED)
+        return Response(404)
 
     def put(self, request, id,format=None):
         data = request.data
@@ -56,10 +56,10 @@ class AssetsAction(APIView):
 
 
         try:
-            snippet = Server.objects.get(id=id)
-        except Server.DoesNotExist:
+            snippet = Asset.objects.get(id=id)
+        except Asset.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        Asset.objects.filter(id=snippet.asset.id).delete()
+        Asset.objects.filter(id=snippet.id).delete()
 
-        return Response(status.HTTP_202_ACCEPTED)
+        return Response({'code':202},status.HTTP_202_ACCEPTED)

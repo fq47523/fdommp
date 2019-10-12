@@ -17,12 +17,12 @@
                 <div class="col-md-6">
                     <form id="AddAsset" class="form-horizontal">
                         <div class="box-body">
-                            <div class="form-group"><label class="col-sm-2 control-label">必选</label></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">资产</label></div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">*asset_type</label>
+                                <label class="col-sm-2 control-label"><span style="color: red">*</span>asset_type</label>
                                 <div class="col-sm-5">
-                                    <select class="form-control" name="asset_assets_type" id='assets_type_select'>
+                                    <select class="form-control" name="asset_assets_type">
                                         <option value="">select</option>
                                         {% for i in meun.asset_type %}
 									    <option value="{{ i.0 }}" name="asset_assets_type">{{ i.1 }}</option>
@@ -32,14 +32,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">*name</label>
+                                <label class="col-sm-2 control-label"><span style="color: red">*</span>name</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" placeholder="请输入主机名" name="asset_name"><span id="error_s_name"></span>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">*sn</label>
+                                <label class="col-sm-2 control-label"><span style="color: red">*</span>sn</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" placeholder="请输入主机名" name="asset_sn"><span id="error_s_name"></span>
                                 </div>
@@ -53,9 +53,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">*status</label>
+                                <label class="col-sm-2 control-label"><span style="color: red">*</span>status</label>
                                 <div class="col-sm-5">
-                                    <select class="form-control" name="asset_status" id='status'>
+                                    <select class="form-control" name="asset_status">
                                         <option value="">select</option>
                                         {% for i in meun.asset_status %}
 									    <option value="{{ i.0 }}" name="asset_status">{{ i.1 }}</option>
@@ -73,7 +73,7 @@
 
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">*manage_ip</label>
+                                <label class="col-sm-2 control-label"><span style="color: red">*</span>manage_ip</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control" placeholder="请输入主机名" name="asset_manage_ip"><span id="error_s_name"></span>
                                 </div>
@@ -132,7 +132,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">tags</label>
                                 <div class="col-sm-5">
-                                    <select class="form-control" name="tags" id='tags'>
+                                    <select class="form-control" name="tags">
                                         <option value="">select</option>
                                         {% for i in meun.tag %}
 									    <option value="{{ i.id }}">{{ i.name }}</option>
@@ -150,27 +150,53 @@
 
 
 
-
-                            <div class="form-group"><label class="col-sm-2 control-label">可选</label></div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">sub_asset_type</label>
-                                <div class="col-sm-5">
-                                    <select class="form-control" name="server_sub_asset_type" id='tags'>
-                                        <option value="">select</option>
-                                        {% for i in meun.server_type %}
-									    <option value="{{ i.0 }}">{{ i.1 }}</option>
-					                    {% endfor %}
-								    </select>
+                                <div class="form-group"><label class="col-sm-2 control-label">服务器</label></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">sub_asset_type</label>
+                                    <div class="col-sm-5">
+                                        <select class="form-control" name="server_sub_asset_type">
+                                            <option value="">select</option>
+                                            {% for i in meun.server_type %}
+                                            <option value="{{ i.0 }}">{{ i.1 }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">created_by</label>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" placeholder="请输入主机名" readonly  unselectable="on" name="server_created_by" value="manual">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">created_by</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" placeholder="请输入主机名" readonly  unselectable="on" name="server_created_by" value="manual">
+                                    </div>
                                 </div>
-                            </div>
 
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><span style="color: red">*</span>username</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" placeholder="请输入主机名"  name="server_username" >
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><span style="color: red">*</span>passwd</label>
+                                    <div class="col-sm-5">
+                                        <input type="password" class="form-control" placeholder="请输入主机名"  name="server_passwd" >
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><span style="color: red">*</span>sshport</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" placeholder="请输入主机名"  name="server_sshport" value="22">
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
 
 
                             <div class="box-footer">
@@ -268,24 +294,50 @@
 		}
 	}
 
-        function AddAssetData() {
-            var asset_data = getFormData(document.getElementById('AddAsset'),'');
+    function AddAssetData() {
+	    var asset_from  = document.getElementById('AddAsset')
+        var required = ['asset_assets_type','asset_name','asset_sn','asset_status','asset_manage_ip',
+            'server_username','server_passwd','server_sshport']
+	    for (var i=0;i<asset_from.length;i++){
+            var name = asset_from[i].name;
+            var value = asset_from[i].value;
+            idx = $.inArray(name, required);
+            if (idx >= 0 && value.length == 0){
+                new PNotify({
+                    title: 'Warning!',
+                    text: '请注意必填项不能为空~',
+                    type: 'warning',
+                    styling: 'bootstrap3'
+                });
+                return false;
+            };
 
-            $.ajax({
-                dataType: "JSON",
-                url:"{% url 'api:api-assetslist' %}",
-                type:"POST",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    'data':asset_data
-                }),
-                success:function (response) {
-                    console.log(response)
+        };
+
+
+        var asset_data = getFormData(asset_from,'');
+        console.log(asset_data)
+
+        $.ajax({
+            dataType: "JSON",
+            url:"{% url 'api:api-assetslist' %}",
+            type:"POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                'data':asset_data
+            }),
+            success:function (response) {
+                if (response.code == 201){
+                    if (confirm('提交完成，关闭当前页')){
+                        window.opener.location.reload()
+                        window.close()
+                    }
                 }
-            })
+            }
+        })
 
 
-        }
+    }
     </script>
 
 
