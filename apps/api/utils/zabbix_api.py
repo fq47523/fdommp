@@ -22,8 +22,12 @@ class Zabbix_API(object):
         return  self.Req_Post(data)
 
     def Req_Post(self,data):
-        r = requests.post(self.url, json=data)
-        rr = r.json()
+        try:
+            r = requests.post(self.url, json=data)
+            rr = r.json()
+        except Exception as e:
+            print (e)
+            return False
         return rr['result']
 
 
