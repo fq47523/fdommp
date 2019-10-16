@@ -5,7 +5,7 @@ from utils._auth import session_auth
 import json
 
 
-@session_auth
+
 def index(request):
     if request.method == 'GET':
         return render(request, 'webssh/index.html')

@@ -14,7 +14,7 @@ import json
 # Create your views here.
 
 
-@session_auth
+
 def host(request):
     # 返回主机列表，分页数据及标签
 
@@ -32,7 +32,7 @@ def host(request):
         return JsonResponse(host_paginf_date_ret)
 
 
-@session_auth
+
 def host_add(request):
     if request.method == "GET":
         host_modelform = Host_MF()
@@ -55,7 +55,7 @@ def host_add(request):
         return JsonResponse(add_host_status)
 
 
-@session_auth
+
 def host_edit(request,h_id):
     if request.method == "GET":
 
@@ -79,7 +79,7 @@ def host_edit(request,h_id):
 
             return HttpResponse(200)
 
-@session_auth
+
 def host_del(request):
     '''删除主机'''
     hip = request.GET.get('hip',None)

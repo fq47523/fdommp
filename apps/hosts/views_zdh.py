@@ -14,7 +14,7 @@ script = pwd + "/script/sh/"
 playbook = pwd + "/script/playbook/"
 playbook_roles = pwd + "/script/roles/"
 
-@session_auth
+
 def automate_shell(request):
     if request.method == 'GET':
         script_list = get_scripts(script)
@@ -48,7 +48,7 @@ def automate_shell(request):
 
             return HttpResponse('200')
 
-@session_auth
+
 def automate_playbook(request):
     if request.method == 'GET':
         playbook_list = get_scripts(playbook)
@@ -90,7 +90,7 @@ def automate_playbook(request):
 
 
 
-@session_auth
+
 def automate_shell_result(request,ansible_type):
     if request.method == 'GET':
         print (ansible_type)
@@ -102,7 +102,7 @@ def automate_shell_result(request,ansible_type):
 
             return render(request, 'hosts/automate_shell_result.html', {'result':data})
 
-@session_auth
+
 def automate_playbook_result(request,ansible_type):
     if request.method == 'GET':
         print (ansible_type)
@@ -119,7 +119,7 @@ def automate_playbook_result(request,ansible_type):
 
 
 
-@session_auth
+
 def automate_crontab(request):
     crontab_obj = models.Crontab.objects.all()
     return render(request, 'hosts/automate_crontab.html', {'crontab_obj':crontab_obj})
@@ -161,7 +161,7 @@ def automate_crontab_add(request):
 
         return render(request, 'hosts/automate_crontab_add.html', {'crontab_modelform':crontab_modelform})
 
-@session_auth
+
 def automate_crontab_add_host(request,job_name):
     if request.method == 'GET':
         crontab_obj = models.Crontab.objects.filter(jobname=job_name).first()
@@ -178,7 +178,7 @@ def automate_crontab_add_host(request,job_name):
 
         return HttpResponse(200)
 
-@session_auth
+
 def automate_crontab_edit(request,job_name):
     if request.method == 'POST':
         print (request.POST)
@@ -254,7 +254,7 @@ def automate_crontab_edit(request,job_name):
 
 
 
-@session_auth
+
 def automate_crontab_del(request):
     if request.method == 'POST':
         cron_jobname = request.POST.get('crontab_jobname',None)
@@ -281,14 +281,14 @@ def automate_crontab_del(request):
 
 
 
-@session_auth
+
 def automate_crontab_host(request,h_id):
     host_obj = models.Host.objects.filter(h_id=h_id)
     crontab_status_obj = models.Crontab_Status.objects.all()
     return render(request, 'hosts/automate_crontab_host.html', {'host_obj':host_obj, 'crontab_status_obj':crontab_status_obj})
 
 
-@session_auth
+
 def automate_crontab_host_action(request):
     if request.method == 'POST':
         print (request.POST)

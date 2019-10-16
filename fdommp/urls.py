@@ -30,5 +30,6 @@ urlpatterns = [
     path('wssh/', include('webssh.urls')),
     path('confd/', include('confd.urls')),
     path('assets/',include('assets.urls')),
+    re_path('^403/$', ul_view.Permission.as_view()),
 
 ]

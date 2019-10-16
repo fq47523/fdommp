@@ -14,7 +14,7 @@ import json
 # Create your views here.
 
 
-@session_auth
+
 def server(request):
     '''服务首页'''
 
@@ -31,7 +31,7 @@ def server(request):
 
 
 
-@session_auth
+
 def server_add(request):
     if request.method == 'GET':
         Service_MF_I = Service_MF()
@@ -65,7 +65,7 @@ def server_add(request):
 
 
 
-@session_auth
+
 def server_operation(request,sid,type):
     '''服务编辑'''
     if request.method == "GET":
@@ -119,7 +119,7 @@ def server_operation(request,sid,type):
             else:
                 return HttpResponse('你想搞什么')
 
-@session_auth
+
 def server_control_list(request,s_name,s_type):
     '''控制Linux主机中的应用服务'''
 

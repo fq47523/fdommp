@@ -58,6 +58,9 @@ class Asset(models.Model):
         verbose_name = '资产总表'
         verbose_name_plural = "资产总表"
         ordering = ['-c_time']
+        permissions = (
+            ("assets_read", "读取权限"),
+        )
 
 
 class Server(models.Model):

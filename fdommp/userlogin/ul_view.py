@@ -1,12 +1,10 @@
 from django.contrib import auth
-from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect,JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import permission_required
-from django.utils.decorators import method_decorator
+
 
 
 
@@ -50,3 +48,18 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('/login')
+
+
+
+class Permission(View):
+    def get(self, request, *args, **kwagrs):
+        return render(request, 'error/403.html', {"user": request.user})
+
+    def put(self, request, *args, **kwagrs):
+        return JsonResponse({'msg': "你没有权限操作此项", "code": 403, 'data': []})
+
+    def post(self, request, *args, **kwagrs):
+        return JsonResponse({'msg': "你没有权限操作此项", "code": 403, 'data': []})
+
+    def delete(self, request, *args, **kwagrs):
+        return JsonResponse({'msg': "你没有权限操作此项", "code": 403, 'data': []})
