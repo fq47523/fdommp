@@ -20,9 +20,9 @@ from accounts import views
 app_name = 'accounts'
 
 urlpatterns = [
-    path('login/', views.login, name='login'),
-    path('index/', views.index, name='index'),
+    # path('login/', views.login, name='login'),
+    # path('index/', views.index, name='index'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('logout/', views.logout, name='logout'),
+    # path('logout/', views.logout, name='logout'),
 
 ]

@@ -2,6 +2,11 @@ from django.shortcuts import render,redirect
 from accounts import models
 from utils._auth import session_auth
 
+
+
+
+
+
 # Create your views here.
 
 
@@ -38,7 +43,7 @@ def logout(request):
     request.session.clear()
     return redirect('/accounts/login/')
 
-@session_auth
+
 def dashboard(request):
     '''dashboard首页'''
     return render(request, 'accounts/dashboard.html')

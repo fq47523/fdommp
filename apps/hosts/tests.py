@@ -11,9 +11,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fdommp.settings")
 import django
 django.setup()
 
-from api.serializers import AssetsSerializer
-from assets.models import Asset,Server
+from git import  Repo
 
-a = Asset.objects.all().values_list('id')
-print (a)
+url = 'https://github.com/fq47523/fdommp-dockerfile.git'
+gitpath = '/tmp/testgit'
 
+
+# Repo.clone_from(url, gitpath,multi_options=['--depth=1'])
+git_repo = Repo(gitpath)
+print (git_repo.branches)
+print (git_repo.tags)

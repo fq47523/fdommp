@@ -9,7 +9,7 @@
         <script src="/static/js/bootstrap.js"></script>
     </head>
     <body>
-        <form action="{% url 'accounts:login' %}" method="POST">
+        <form  method="POST">
 
             <div class="mycenter">
             <div class="mysign">
@@ -30,21 +30,22 @@
                 <div class="col-lg-10"></div>
                 <div class="col-lg-10">
                     <button type="submit" class="btn btn-success col-lg-12">登录</button>
-                    <span>{{ error_msg }}</span>
+                    <span>{{ login_error_info }}</span>
                 </div>
             </div>
         </div>
         </form>
 
-    <script>
-        var _topWin = window;
-        while (_topWin != _topWin.parent.window) {
-		    _topWin = _topWin.parent.window;
-	    }
-	    if (window != _topWin)
-		_topWin.document.location.href = '{% url 'accounts:login' %}';
-
-    </script>
+{#    <script>#}
+{#        #}
+{#        var _topWin = window;#}
+{#        while (_topWin != _topWin.parent.window) {#}
+{#		    _topWin = _topWin.parent.window;#}
+{#	    }#}
+{#	    if (window != _topWin)#}
+{#		_topWin.document.location.href = '{% url 'accounts:login' %}';#}
+{#        #}
+{#    </script>#}
 
 
     </body>
