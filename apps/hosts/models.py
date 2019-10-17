@@ -1,6 +1,8 @@
 from django.db import models
 import django.utils.timezone as timezone
 
+
+
 # Create your models here.
 class Host(models.Model):
     h_id = models.AutoField(primary_key=True)
@@ -22,8 +24,8 @@ class Host_zabbix(models.Model):
     za_cpu = models.FloatField()
     za_mem = models.FloatField()
     za_disk = models.FloatField()
-
-    h_extend = models.ForeignKey('Host', to_field='h_id', default=999, on_delete=models.CASCADE)
+    asset_extend = models.ForeignKey('assets.Asset', to_field='id', default=999, on_delete=models.CASCADE)
+    # h_extend = models.ForeignKey('Host', to_field='h_id', default=999, on_delete=models.CASCADE)
 
 class Service_zabbix(models.Model):
     za_ip = models.GenericIPAddressField(max_length=32, unique=True)
@@ -59,7 +61,7 @@ class Crontab(models.Model):
     month = models.CharField(max_length=32)
     weekday = models.CharField(max_length=32)
     jobcli = models.CharField(max_length=128)
-    cron_host = models.ManyToManyField('Host')
+    cron_host = models.ManyToManyField('assets.Asset')
 
 class Crontab_Status(models.Model):
     # job_status  = 1.生效 2.暂停

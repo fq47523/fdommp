@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponse
 from django.http import JsonResponse
 from hosts import models
 from hosts.models import Host
+from assets.models import Asset
 from hosts.modelform.host_modelform import Host_MF
 from utils._BT_pagination import BtPaging
 from utils._auth import session_auth
@@ -25,7 +26,7 @@ def host(request):
         page_json = json.loads(request.body)
         # page_json = {'rows':int(request.POST['rows']),'page':int(request.POST['page']),'sortOrder':request.POST['sortOrder']}
 
-        host_paginf_date = BtPaging(Host, page_json)
+        host_paginf_date = BtPaging(Asset, page_json)
         host_paginf_date_ret = host_paginf_date.host_paging()
 
 

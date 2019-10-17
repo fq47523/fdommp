@@ -4,6 +4,7 @@ from celery import  shared_task
 from celery.schedules import crontab
 from api.utils.ansible_api import ANSRunner
 from hosts import models
+from assets.models import Asset
 from api.utils.zabbix_api import Zabbix_API
 from utils._paramiko_example import SSH_CLIENT
 import time
@@ -103,7 +104,7 @@ def get_hosts_status():
     for za_host in za_list: # 遍历拼接好的za客户端数据,列表类型
 
         if za_host['za_action'] == 0:   # 0:活
-            host_obj = models.Host.objects.filter(h_ip=za_host['interfaces'][0]['ip']).first()
+            host_obj = Asset.objects.filter(manage_ip=za_host['interfaces'][0]['ip']).first()
             if host_obj:
                 hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
                 if not hz_obj:
@@ -126,7 +127,7 @@ def get_hosts_status():
             else:
                 pass
         elif za_host['za_action'] == 1: #1：死
-            host_obj = models.Host.objects.filter(h_ip=za_host['interfaces'][0]['ip']).first()
+            host_obj = Asset.objects.filter(manage_ip=za_host['interfaces'][0]['ip']).first()
             if host_obj:
                 hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
                 if not hz_obj:

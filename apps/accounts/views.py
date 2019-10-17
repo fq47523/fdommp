@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from accounts import models
 from utils._auth import session_auth
-
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -43,7 +43,7 @@ from utils._auth import session_auth
 #     request.session.clear()
 #     return redirect('/accounts/login/')
 
-
+@login_required
 def dashboard(request):
     '''dashboard首页'''
     return render(request, 'accounts/dashboard.html')

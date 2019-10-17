@@ -59,7 +59,7 @@
                                     <ul class="list-unstyled crontab_hosts">
                                         {% for host in crontab.cron_host.all %}
                                         <li>
-                                            <a href="{% url 'hosts:crontab_host'  host.h_id  %}">{{ host }}</a>
+                                            <a href="{% url 'hosts:crontab_host'  host.id  %}">{{ host }}</a>
                                         </li>
                                         {% endfor %}
                                     </ul>

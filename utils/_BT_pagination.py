@@ -47,18 +47,18 @@ class BtPaging(object):
                 try:
                     host_zabbix_obj = i.host_zabbix_set.all().values()
 
-                    gouzhao['h_id'] = i.h_id
-                    gouzhao['h_name'] = i.h_name
-                    gouzhao['h_ip'] = i.h_ip
+                    gouzhao['h_id'] = i.id
+                    gouzhao['h_name'] = i.sn
+                    gouzhao['h_ip'] = i.manage_ip
                     gouzhao['h_status'] = 'ok' if host_zabbix_obj[0]['za_action'] == 0 else 'not ok'
                     gouzhao['h_cpu'] = host_zabbix_obj[0]['za_cpu']
                     gouzhao['h_mem'] = host_zabbix_obj[0]['za_mem']
                     gouzhao['h_disk'] = host_zabbix_obj[0]['za_disk']
                     self.page_date_list.append(gouzhao)
                 except IndexError:
-                    gouzhao['h_id'] = i.h_id
-                    gouzhao['h_name'] = i.h_name
-                    gouzhao['h_ip'] = i.h_ip
+                    gouzhao['h_id'] = i.id
+                    gouzhao['h_name'] = i.sn
+                    gouzhao['h_ip'] = i.manage_ip
                     gouzhao['h_status'] = 'not zabbix-agentd'
                     gouzhao['h_cpu'] = '---'
                     gouzhao['h_mem'] = '---'

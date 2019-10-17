@@ -9,8 +9,8 @@
       <div class="box">
 
         <div class="box-header with-border">
-            {% for host in host_obj %}
-                <h4>crontab主机：{{ host.h_ip }}</h4>
+            {% for host in asset_obj %}
+                <h4>crontab主机：<span id="asset_ip">{{ host.manage_ip }}</span></h4>
             {% endfor %}
         </div>
 
@@ -34,7 +34,7 @@
                 </thead>
 
             <tbody id="tb">
-                {% for host in host_obj %}
+                {% for host in asset_obj %}
                     {% for host_crontab in host.crontab_set.all %}
                         <tr class="active">
                             <td style="display: none">{{ host.h_ip }}</td>
@@ -47,17 +47,17 @@
                             <td>{{ host_crontab.weekday }}</td>
                             <td>{{ host_crontab.jobcli }}</td>
                             {% for ci in crontab_status_obj %}
-                                {% if host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 1 %}
+                                {% if host.manage_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 1 %}
                                     <td style="color: green">Run</td>
-                                {% elif  host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 2 %}
+                                {% elif  host.manage_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 2 %}
                                     <td style="color: yellow">Pause</td>
 
-                                {% elif  host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 99 %}
-                                    <td style="color: red">Suspend</td>
+                                {% elif  host.manage_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 99 %}
+                                    <td style="color: red">uninitialized</td>
                                 {% endif %}
 
 
-                                {%  if host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 1 %}
+                                {%  if host.manage_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 1 %}
 
                                     <td>
                                         <a class="btn btn-primary btn-xs"   style="pointer-events: none" onclick="cron_init(this)" disabled="disabled">init</a>
@@ -68,7 +68,7 @@
                                     </td>
 
 
-                                {%  elif host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 2 %}
+                                {%  elif host.manage_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 2 %}
 
                                     <td>
                                         <a class="btn btn-primary btn-xs"   style="pointer-events: none" onclick="cron_init(this)" disabled="disabled">init</a>
@@ -78,7 +78,7 @@
                                     </td>
 
 
-                                {%  elif host.h_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 99 %}
+                                {%  elif host.manage_ip == ci.job_host and host_crontab.jobname == ci.job_name and ci.job_status == 99 %}
 
                                     <td>
                                         <a class="btn btn-primary btn-xs" onclick="cron_init(this)">init</a>
@@ -121,7 +121,7 @@
 
     <script>
         function cron_init(obj) {
-            var ip = $(obj).parent().siblings().eq(0).text();
+            var ip = $('#asset_ip').text();
             var job_name = $(obj).parent().siblings().eq(2).text();
 
 
@@ -136,7 +136,7 @@
         }
 
         function cron_pause(obj) {
-            var ip = $(obj).parent().siblings().eq(0).text();
+            var ip = $('#asset_ip').text();
             var job_name = $(obj).parent().siblings().eq(2).text();
 
             $(obj).parent().prev().empty();
@@ -150,7 +150,7 @@
         }
 
         function cron_continue(obj) {
-            var ip = $(obj).parent().siblings().eq(0).text();
+            var ip = $('#asset_ip').text();
             var job_name = $(obj).parent().siblings().eq(2).text();
 
             $(obj).parent().prev().empty();
@@ -166,7 +166,7 @@
 
 
         function cron_del(obj) {
-            var ip = $(obj).parent().siblings().eq(0).text();
+            var ip = $('#asset_ip').text();
             var job_name = $(obj).parent().siblings().eq(2).text();
             if (confirm("确定在"+ip+"上执行"+job_name+"的删除？")){
                 console.log(ip,job_name)

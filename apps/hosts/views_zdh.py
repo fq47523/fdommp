@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse
 from django.http import JsonResponse
 from hosts import models
+from assets.models import Asset
 from api.utils.ansible_api import *
 from utils._auth import session_auth
 from utils._get_files import get_scripts,get_roles
@@ -137,7 +138,7 @@ def automate_crontab_add(request):
         # crontab_weekday = request.POST.get('weekday')
         # crontab_jobcli = request.POST.get('jobcli')
         crontab_host = request.POST.getlist('cron_host')
-
+        print (crontab_host)
         Crontab_MF_obj = Crontab_MF(request.POST)
         if Crontab_MF_obj.is_valid():
             Crontab_MF_obj.save()
@@ -145,11 +146,11 @@ def automate_crontab_add(request):
 
 
             ansible_host_list = []
-            host_list = models.Host.objects.filter(h_id__in=crontab_host).values('h_ip')
+            host_list = Asset.objects.filter(id__in=crontab_host).values('manage_ip')
 
 
             for i in host_list:
-                ansible_host_list.append(i['h_ip'])
+                ansible_host_list.append(i['manage_ip'])
 
             for host in ansible_host_list:
                 models.Crontab_Status.objects.create(job_name=crontab_jobname, job_host=host, job_status=99)
@@ -171,10 +172,10 @@ def automate_crontab_add_host(request,job_name):
     if request.method == 'POST':
         hosts_id = request.POST.getlist('cron_host',None)
         crontab_obj = models.Crontab.objects.filter(jobname=job_name).first()
-        hosts_obj = models.Host.objects.filter(h_id__in=hosts_id)
+        hosts_obj = Asset.objects.filter(id__in=hosts_id)
         crontab_obj.cron_host.add(*hosts_obj)
         for host in hosts_obj.values():
-            models.Crontab_Status.objects.create(job_name=job_name, job_host=host['h_ip'], job_status=99)
+            models.Crontab_Status.objects.create(job_name=job_name, job_host=host['manage_ip'], job_status=99)
 
         return HttpResponse(200)
 
@@ -283,9 +284,9 @@ def automate_crontab_del(request):
 
 
 def automate_crontab_host(request,h_id):
-    host_obj = models.Host.objects.filter(h_id=h_id)
+    asset_obj = Asset.objects.filter(id=h_id)
     crontab_status_obj = models.Crontab_Status.objects.all()
-    return render(request, 'hosts/automate_crontab_host.html', {'host_obj':host_obj, 'crontab_status_obj':crontab_status_obj})
+    return render(request, 'hosts/automate_crontab_host.html', {'asset_obj':asset_obj, 'crontab_status_obj':crontab_status_obj})
 
 
 
@@ -400,7 +401,7 @@ def automate_crontab_host_action(request):
                     if vv['changed']:
 
                         models.Crontab_Status.objects.filter(job_name=cron_job_name, job_host=host_ip.replace('_', '.')).delete()
-                        host_obj = models.Host.objects.get(h_ip=host_ip.replace('_', '.'))
+                        host_obj = Asset.objects.get(manage_ip=host_ip.replace('_', '.'))
                         cron_obj = models.Crontab.objects.filter(jobname=cron_job_name)
                         host_obj.crontab_set.remove(*cron_obj)
                         host_cron_count = host_obj.crontab_set.count()
