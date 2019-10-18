@@ -110,7 +110,7 @@ class BtPaging(object):
             structure['create_date'] = i.create_date.strftime('%Y-%m-%d %H:%M:%S')
             structure['edit_date'] = i.edit_date.strftime('%Y-%m-%d %H:%M:%S')
             structure['server_type'] = [server_type['s_name'] for server_type in i.conf_service.all().values()]
-            structure['hostip'] = [host['h_ip'] for host in i.conf_host.all().values()]
+            structure['hostip'] = [host['manage_ip'] for host in i.conf_host.all().values()]
             structure['conf_name'] = i.conf_name
             structure['conf_path'] = i.conf_path
             structure['current_ver'] = i.current_ver

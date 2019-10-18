@@ -3,6 +3,7 @@ from django.shortcuts import HttpResponse
 from django.http import JsonResponse
 from django.views.generic import View
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 # from rest_framework import status
 from .modelform import GaiLanA,GaiLanB
@@ -14,7 +15,7 @@ from .dao import AssetManage,AutoNewAsset,AutoUpdateAsset,AnsibleAssetsSetup
 
 
 
-class AssetView(View,AssetManage):
+class AssetView(LoginRequiredMixin,View,AssetManage):
     '''获取资产列表与手动添加资产'''
     @method_decorator(permission_required('assets.assets_read','/403/'))
     def get(self,request,*args,**kwargs):

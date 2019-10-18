@@ -77,7 +77,7 @@ class Confd(models.Model):
     conf_path = models.CharField(max_length=64)
     current_ver = models.IntegerField(default=0)
     modified_ver = models.IntegerField(default=0)
-    conf_host = models.ManyToManyField('Host')
+    conf_host = models.ManyToManyField('assets.Asset')
     conf_service = models.ManyToManyField('Service')
 
 class Confd_Update_History(models.Model):
