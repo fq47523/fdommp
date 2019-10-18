@@ -36,16 +36,16 @@
         </div>
         </form>
 
-{#    <script>#}
-{#        #}
-{#        var _topWin = window;#}
-{#        while (_topWin != _topWin.parent.window) {#}
-{#		    _topWin = _topWin.parent.window;#}
-{#	    }#}
-{#	    if (window != _topWin)#}
-{#		_topWin.document.location.href = '{% url 'accounts:login' %}';#}
-{#        #}
-{#    </script>#}
+    <script>
+
+        var _topWin = window;
+        while (_topWin != _topWin.parent.window) {
+		    _topWin = _topWin.parent.window;
+	    }
+	    if (window != _topWin)
+		_topWin.document.location.href = '/login';
+
+    </script>
 
 
     </body>

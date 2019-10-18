@@ -91,7 +91,7 @@ class BtPaging(object):
                 structure['s_id'] = i.s_id
                 structure['s_name'] = i.s_name
                 structure['s_type'] = i.s_type
-                structure['s_host'] = [ host['h_ip'] for host in i.h_server.all().values()]
+                structure['s_host'] = [ host['manage_ip'] for host in i.h_server.all().values()]
 
                 self.page_date_list.append(structure)
 

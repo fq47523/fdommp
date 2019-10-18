@@ -39,7 +39,7 @@ class Service(models.Model):
     s_id = models.AutoField(primary_key=True)
     s_name = models.CharField(max_length=16,unique=True)
     s_type = models.CharField(max_length=16)
-    h_server = models.ManyToManyField('Host')
+    h_server = models.ManyToManyField('assets.Asset')
 
     def __str__(self):
         return self.s_name

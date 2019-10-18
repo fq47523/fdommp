@@ -36,6 +36,7 @@ def login(request):
 
             auth.login(request,user)
             request.session['username'] = username
+            request.session.set_expiry(3600)
             return HttpResponseRedirect('/')
         else:
             if request.method == "POST":

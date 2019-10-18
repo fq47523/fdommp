@@ -23,17 +23,6 @@ django.setup()
 # print (git_repo.branches)
 # print (git_repo.tags)
 
-from hosts.models import Host_zabbix
+from hosts.models import Service
 from assets.models import Asset
 
-dd = Asset.objects.get(manage_ip='192.168.79.134')
-
-
-Host_zabbix.objects.create(
-    za_ip='192.168.79.134',
-    za_action=0,
-    za_cpu=11,
-    za_mem=1,
-    za_disk=14,
-    asset_extend=dd
-)

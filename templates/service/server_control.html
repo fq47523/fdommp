@@ -29,18 +29,18 @@
                     <input type="checkbox" name="check"/>
                 </td>
                 <td target="s_type" style="display: none;">{{ server_type }}</td>
-                <td target="id" >{{ i.h_id }}</td>
-                <td target="host_name" >{{ i.h_name }}</td>
-                <td target="host_ip">{{ i.h_ip }}</td>
+                <td target="id" >{{ i.id }}</td>
+                <td target="host_name" >{{ i.sn }}</td>
+                <td target="host_ip">{{ i.manage_ip }}</td>
                 <td target="host_server">{{ server_name }}</td>
                 {% if  server_status_obj %}
                     {% for server_status in  server_status_obj%}
-                        {% if  i.h_ip == server_status.server_host %}
+                        {% if  i.manage_ip == server_status.server_host %}
                             {% if  server_status.server_status == 1 %}
                                 <td>RUN</td>
                             {% elif  server_status.server_status == 2 %}
                                 <td>STOP</td>
-                            {% elif  server_status.server_status == 2 %}
+                            {% elif  server_status.server_status == 3 %}
                                 <td>failed</td>
                             {% elif  server_status.server_status == 4 %}
                                 <td>unreachable</td>

@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse,redirect
 from django.http import JsonResponse
 from hosts import models
+from assets.models import Asset
 from hosts.models import Service
 from service.modelform.service_modelform import Service_MF
 from utils._auth import session_auth
@@ -48,8 +49,8 @@ def server_add(request):
             server_status['sts'] = True
             server_status['rcode'] = 200
 
-            host_ip = models.Host.objects.filter(h_id__in=s_host_id).values('h_ip')
-            host_ip_list = [i['h_ip'] for i in host_ip]
+            host_ip = Asset.objects.filter(id__in=s_host_id).values('manage_ip')
+            host_ip_list = [i['manage_ip'] for i in host_ip]
             # for i in host_ip:host_ip_list.append(i['h_ip'])
 
             # servicehealth = ServiceHealth(s_name,host_ip_list)
@@ -86,7 +87,7 @@ def server_operation(request,sid,type):
         if type == '3':   #服务修改
             Service_obj = models.Service.objects.filter(s_id=sid).first()
             old_hid = []
-            for i in Service_obj.h_server.all().values('h_id'):old_hid.append('{}'.format(i['h_id']))
+            for i in Service_obj.h_server.all().values('id'):old_hid.append('{}'.format(i['id']))
             new_hid = request.POST.getlist('h_server')
 
             print (request.POST)
@@ -98,19 +99,19 @@ def server_operation(request,sid,type):
                 del_host = [i for i in old_hid if i not in new_hid]
 
                 if del_host:
-                    host_ip = models.Host.objects.filter(h_id__in=del_host).values('h_ip')
+                    host_ip = Asset.objects.filter(id__in=del_host).values('manage_ip')
 
                     host_ip_list = []
 
-                    for i in host_ip:host_ip_list.append(i['h_ip'])
+                    for i in host_ip:host_ip_list.append(i['manage_ip'])
 
                     models.Service_Status.objects.filter(server_name=request.POST.get('s_name'),server_host__in=host_ip_list).delete()
 
                 add_host = [i for i in new_hid if i not in old_hid]
                 if add_host:
-                    host_ip = models.Host.objects.filter(h_id__in=add_host).values('h_ip')
+                    host_ip = Asset.objects.filter(id__in=add_host).values('manage_ip')
                     host_ip_list = []
-                    for i in host_ip: host_ip_list.append(i['h_ip'])
+                    for i in host_ip: host_ip_list.append(i['manage_ip'])
                     servicehealth = ServiceHealth(request.POST.get('s_name'), host_ip_list)
                     servicehealth.status_init()
 
@@ -143,7 +144,7 @@ def server_control_list(request,s_name,s_type):
 
 def server_control_action(request):
 
-
+    '''启停服务'''
     if request.method == "POST":
         ip = request.POST.get('ip',None)
         server = request.POST.get('server',None)
@@ -233,6 +234,7 @@ def server_control_action(request):
         #     return JsonResponse({"bat_cli":callback_list})
 
 def server_control_action_result(request):
+    '''启停服务log'''
     import redis
     pool = redis.ConnectionPool(decode_responses=True)
     rr = redis.Redis(connection_pool=pool)
