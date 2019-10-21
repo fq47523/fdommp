@@ -181,7 +181,7 @@
                 layer.msg('已提交', {icon: 1});
                 var req_url = '{% url 'api:api-assetaction' '00000'%}'
                 var url = req_url.replace('00000',id)
-                console.log(url)
+
                 $.ajax({
                     dataType: "JSON",
                     url:url,

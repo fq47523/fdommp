@@ -91,7 +91,12 @@
             var req_url = '{% url 'hosts:crontab_edit' 'default' %}'
             var url = req_url.replace('default',job_name)
 
-            $.post(url ,$('#crontab_edit_form').serialize())
+            $.post(url ,$('#crontab_edit_form').serialize(),function (data) {
+                if(data.status == 200){
+                    window.opener.location.reload()
+                    window.close()
+                }
+            })
         })
 
 

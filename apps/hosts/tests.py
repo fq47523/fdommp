@@ -26,3 +26,9 @@ django.setup()
 from hosts.models import Service
 from assets.models import Asset
 
+a = ['<服务器>  server: ubuntu','<服务器>  server: zabbix']
+
+c = [i.split()[2]  for i in a]
+print (c)
+dd = [i.manage_ip for i in Asset.objects.filter(sn__in=c)]
+print (dd)

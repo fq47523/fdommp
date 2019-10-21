@@ -84,9 +84,22 @@
     <script src="/static/plugins/select2/select2.full.min.js"></script>
     <script>
         $('#crontab_add_sub').click(function () {
-            $.post('{% url 'hosts:crontab_add' %}',$('#crontab_add_form').serialize(),function () {
+            $.post('{% url 'hosts:crontab_add' %}',$('#crontab_add_form').serialize(),function (data) {
 
-                window.close();
+               if (data.status == 200){
+                   parent.location.reload();
+                   var index = parent.layer.getFrameIndex(window.name);
+                   parent.layer.close(index);
+
+               }else {
+                   new PNotify({
+                    title: 'Warning!',
+                    text: 'post error~',
+                    type: 'warning',
+                    styling: 'bootstrap3'
+                });
+                   return false;
+               }
             })
 
         })

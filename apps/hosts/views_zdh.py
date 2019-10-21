@@ -138,7 +138,7 @@ def automate_crontab_add(request):
         # crontab_weekday = request.POST.get('weekday')
         # crontab_jobcli = request.POST.get('jobcli')
         crontab_host = request.POST.getlist('cron_host')
-        print (crontab_host)
+
         Crontab_MF_obj = Crontab_MF(request.POST)
         if Crontab_MF_obj.is_valid():
             Crontab_MF_obj.save()
@@ -155,7 +155,9 @@ def automate_crontab_add(request):
             for host in ansible_host_list:
                 models.Crontab_Status.objects.create(job_name=crontab_jobname, job_host=host, job_status=99)
 
-            return HttpResponse(200)
+            return JsonResponse({'status':200})
+        else:
+            return JsonResponse({'status': 500})
 
     if request.method == 'GET':
         crontab_modelform = Crontab_MF()
@@ -197,11 +199,12 @@ def automate_crontab_edit(request,job_name):
             cron_obj_sts = models.Crontab_Status.objects.all()
             for cron_obj in crontab_obj_new:
                 for host_ip in cron_obj.cron_host.all():
+                    print (host_ip)
                     ansible_host_list.append(str(host_ip))
 
 
                     for cron_obj_sts_obj in cron_obj_sts:
-                        print(host_ip,cron_obj_sts_obj.job_host,cron_obj_sts_obj.job_name,cron_obj_sts_obj.job_status,cron_res['jobname'])
+                        # print(host_ip,cron_obj_sts_obj.job_host,cron_obj_sts_obj.job_name,cron_obj_sts_obj.job_status,cron_res['jobname'])
                         if str(host_ip) in cron_obj_sts_obj.job_host and cron_obj_sts_obj.job_name == cron_res['jobname'] and cron_obj_sts_obj.job_status == 1:
                             rbt = ANSRunner([])
                             rbt.run_model(host_list=ansible_host_list,
@@ -246,7 +249,7 @@ def automate_crontab_edit(request,job_name):
                         else:
                             pass
 
-            return HttpResponse(200)
+            return JsonResponse({'status':200})
 
     if request.method == 'GET':
         crontab_obj = models.Crontab.objects.filter(jobname=job_name).first()
@@ -260,22 +263,24 @@ def automate_crontab_del(request):
     if request.method == 'POST':
         cron_jobname = request.POST.get('crontab_jobname',None)
         cron_hosts = request.POST.getlist('crontab_hosts[]',None)
+
         if cron_jobname  and cron_hosts:
-            print (cron_jobname,cron_hosts)
+            asset_sn = [i.split()[2] for i in cron_hosts]
+            asset_iplist = [i.manage_ip for i in Asset.objects.filter(sn__in=asset_sn)]
             rbt = ANSRunner([])
-            rbt.run_model(host_list=cron_hosts,
+            rbt.run_model(host_list=asset_iplist,
                           module_name='cron',
                           module_args='name=\"{}\" state=\"absent\"'.format(
                               cron_jobname,
 
                           )
                           )
-            data = rbt.get_model_result()
-            print(data)
+            #data = rbt.get_model_result()
+            # yuliu
 
-            models.Crontab.objects.filter(jobname=cron_jobname).delete()
-            models.Crontab_Status.objects.filter(job_name=cron_jobname).delete()
-            return HttpResponse(200)
+        models.Crontab.objects.filter(jobname=cron_jobname).delete()
+        models.Crontab_Status.objects.filter(job_name=cron_jobname).delete()
+        return HttpResponse(200)
 
 
 
