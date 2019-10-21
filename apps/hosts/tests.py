@@ -25,10 +25,9 @@ django.setup()
 
 from hosts.models import Service
 from assets.models import Asset
+from hosts.models import Crontab
 
-a = ['<服务器>  server: ubuntu','<服务器>  server: zabbix']
-
-c = [i.split()[2]  for i in a]
+old_hid = [1,3]
+new_hid = [2]
+c = [i for i in new_hid if i not in old_hid]
 print (c)
-dd = [i.manage_ip for i in Asset.objects.filter(sn__in=c)]
-print (dd)

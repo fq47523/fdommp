@@ -179,7 +179,7 @@ def automate_crontab_add_host(request,job_name):
         for host in hosts_obj.values():
             models.Crontab_Status.objects.create(job_name=job_name, job_host=host['manage_ip'], job_status=99)
 
-        return HttpResponse(200)
+        return JsonResponse({'status':200})
 
 
 def automate_crontab_edit(request,job_name):
@@ -199,13 +199,13 @@ def automate_crontab_edit(request,job_name):
             cron_obj_sts = models.Crontab_Status.objects.all()
             for cron_obj in crontab_obj_new:
                 for host_ip in cron_obj.cron_host.all():
-                    print (host_ip)
-                    ansible_host_list.append(str(host_ip))
+
+                    ansible_host_list.append(host_ip.manage_ip)
 
 
                     for cron_obj_sts_obj in cron_obj_sts:
                         # print(host_ip,cron_obj_sts_obj.job_host,cron_obj_sts_obj.job_name,cron_obj_sts_obj.job_status,cron_res['jobname'])
-                        if str(host_ip) in cron_obj_sts_obj.job_host and cron_obj_sts_obj.job_name == cron_res['jobname'] and cron_obj_sts_obj.job_status == 1:
+                        if host_ip.manage_ip in cron_obj_sts_obj.job_host and cron_obj_sts_obj.job_name == cron_res['jobname'] and cron_obj_sts_obj.job_status == 1:
                             rbt = ANSRunner([])
                             rbt.run_model(host_list=ansible_host_list,
                                           module_name='cron',
@@ -225,8 +225,8 @@ def automate_crontab_edit(request,job_name):
                                 for kk, vv in v.items():
                                     if vv['changed']:
                                         pass
-
-                        elif str(host_ip) in cron_obj_sts_obj.job_host and cron_obj_sts_obj.job_name == cron_res['jobname'] and cron_obj_sts_obj.job_status == 2:
+                        # yuliu
+                        elif host_ip.manage_ip in cron_obj_sts_obj.job_host and cron_obj_sts_obj.job_name == cron_res['jobname'] and cron_obj_sts_obj.job_status == 2:
                             rbt = ANSRunner([])
                             rbt.run_model(host_list=ansible_host_list,
                                           module_name='cron',
@@ -401,9 +401,11 @@ def automate_crontab_host_action(request):
             data = rbt.get_model_result()
             print (data)
             for k, v in data.items():
-                for kk, vv in v.items():
-                    host_ip = str(kk)
-                    if vv['changed']:
+                if k == 'success' and k:
+                    for kk, vv in v.items():
+                        host_ip = str(kk)
+                        print (vv)
+
 
                         models.Crontab_Status.objects.filter(job_name=cron_job_name, job_host=host_ip.replace('_', '.')).delete()
                         host_obj = Asset.objects.get(manage_ip=host_ip.replace('_', '.'))

@@ -99,6 +99,7 @@ def server_operation(request,sid,type):
                 del_host = [i for i in old_hid if i not in new_hid]
 
                 if del_host:
+                    print (del_host)
                     host_ip = Asset.objects.filter(id__in=del_host).values('manage_ip')
 
                     host_ip_list = []
@@ -109,6 +110,7 @@ def server_operation(request,sid,type):
 
                 add_host = [i for i in new_hid if i not in old_hid]
                 if add_host:
+                    print (add_host)
                     host_ip = Asset.objects.filter(id__in=add_host).values('manage_ip')
                     host_ip_list = []
                     for i in host_ip: host_ip_list.append(i['manage_ip'])

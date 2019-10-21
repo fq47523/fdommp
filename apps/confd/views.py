@@ -3,7 +3,8 @@ from django.http import JsonResponse
 import django.utils.timezone as timezone
 from confd.modelform.confd_modelform import Confd_MF
 from utils._BT_pagination import BtPaging
-from hosts.models import Confd,Host,Confd_Update_History
+from hosts.models import Confd,Confd_Update_History
+from assets.models import  Asset
 from api.utils.ansible_api import ANSRunner
 import json,os,shutil
 
@@ -40,7 +41,7 @@ def confd_add(request):
         conf_name = request.POST['conf_name']
         conf_file_path = request.POST['conf_path']
         host_id = request.POST['conf_host']
-        host_ip = [i['h_ip'] for i in Host.objects.filter(h_id=host_id).values('h_ip')]
+        host_ip = [i['manage_ip'] for i in Asset.objects.filter(id=host_id).values('manage_ip')]
 
         init_dir = serverconf_dir+host_ip[0]+'/{}/'.format(conf_name)
 

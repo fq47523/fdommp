@@ -17,7 +17,7 @@
 
                         <div class="box-footer">
                             <a class="btn btn-default pull-right" href="javascript:window.opener=null;window.close();">取消</a>
-                            <button id="crontab_edit_sub"  type="submit" class="btn btn-primary pull-right" >提交</button>
+                            <button id="crontab_edit_sub"  type="button" class="btn btn-primary pull-right" >提交</button>
                         </div>
                     </form>
                 </div>
@@ -47,7 +47,12 @@
             var req_url = '{% url 'hosts:crontab_add_host' 'default' %}'
             var url = req_url.replace('default',job_name)
 
-            $.post(url ,$('#crontab_edit_form').serialize())
+            $.post(url ,$('#crontab_edit_form').serialize(),function (data) {
+                if (data.status == 200){
+                    window.opener.location.reload();
+                    window.close();
+                }
+            })
         })
     </script>
 {% endblock js %}

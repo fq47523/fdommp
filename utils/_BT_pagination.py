@@ -120,7 +120,7 @@ class BtPaging(object):
 
         table_paging_data = {'total': int(self.page_data_count()), 'rows': self.page_date_list}
 
-
+        print (table_paging_data)
         return table_paging_data
 
 
