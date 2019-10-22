@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.urls import re_path,path
 from api import views
-from api.apps_api import assets_api
+from api.apps_api import assets_api,service_api
 
 
 app_name = 'api'
@@ -24,6 +24,7 @@ app_name = 'api'
 urlpatterns = [
     re_path('dashboard/(?P<type>\w+)/', views.dashboard_data, name='dashboard'),
     path("assetslist/",assets_api.AssetsAction.as_view(),name='api-assetslist'),
+    path("service/action/",service_api.ServiceAction.as_view()),
     re_path("assetaction/(?P<id>[0-9]+)/",assets_api.AssetsAction.as_view(),name='api-assetaction'),
 
 

@@ -27,7 +27,17 @@ from hosts.models import Service
 from assets.models import Asset
 from hosts.models import Crontab
 
-old_hid = [1,3]
-new_hid = [2]
-c = [i for i in new_hid if i not in old_hid]
-print (c)
+from hosts.models import Service,Service_Status
+
+data = {'ip': '192.168.79.133', 'target': 'restarted','servicename':''}
+required = ['servicename', 'ip', 'target']
+
+
+for i in required:
+    try:
+        if len(data[i]) == 0:
+                print (11,i)
+    except KeyError as  e:
+        print (str(e))
+
+

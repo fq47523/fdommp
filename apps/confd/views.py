@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponse
 from django.http import JsonResponse
 import django.utils.timezone as timezone
 from confd.modelform.confd_modelform import Confd_MF
+from hosts.models import Service
 from utils._BT_pagination import BtPaging
 from hosts.models import Confd,Confd_Update_History
 from assets.models import  Asset
@@ -33,6 +34,7 @@ def confd_list(request):
 def confd_add(request):
     if request.method == 'GET':
         Confd_MF_init = Confd_MF()
+
         return render(request,'confd/confd_add.html',locals())
 
     if request.method == 'POST':
@@ -43,7 +45,9 @@ def confd_add(request):
         host_id = request.POST['conf_host']
         host_ip = [i['manage_ip'] for i in Asset.objects.filter(id=host_id).values('manage_ip')]
 
-        init_dir = serverconf_dir+host_ip[0]+'/{}/'.format(conf_name)
+        # init_dir = serverconf_dir+host_ip[0]+'/{}/'.format(conf_name)
+        init_dir = serverconf_dir+'{}/'.format(conf_name)+host_ip[0]+'/'
+
 
         if not os.path.isdir(init_dir):
             os.makedirs(init_dir)
@@ -87,11 +91,11 @@ def confd_edit(request,confd_id):
     if request.method == 'GET':
         confd_id = confd_id
         confd_obj = Confd.objects.filter(id=confd_id).first()
-        host_ip = confd_obj.conf_host.all().values('h_ip')
+        host_ip = confd_obj.conf_host.all().values('manage_ip')
         file_path = confd_obj.conf_path
         conf_name = confd_obj.conf_name
 
-        edit_obj = serverconf_dir + '{}/{}/{}'.format(host_ip[0]['h_ip'],conf_name,file_path.split('/')[-1])
+        edit_obj = serverconf_dir + '{}/{}/{}'.format(conf_name,host_ip[0]['manage_ip'],file_path.split('/')[-1])
 
         with open(edit_obj,'r') as f:
             file_obj = f.read()
@@ -105,7 +109,7 @@ def confd_edit(request,confd_id):
         file_path = request.POST.get('file_path',None)
         file_dir = request.POST.get('conf_name',None)
 
-        edit_save_obj = serverconf_dir + '{}/{}/{}'.format(file_ip,file_dir,file_path.split('/')[-1])
+        edit_save_obj = serverconf_dir + '{}/{}/{}'.format(file_dir,file_ip,file_path.split('/')[-1])
 
         with open(edit_save_obj,'w') as f:
             f.write(file_obj)
