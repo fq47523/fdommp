@@ -312,7 +312,7 @@ if __name__ == '__main__':
     # resource 主要是生产环境的账号名密码都在数据库里面，使用时取出来
     rbt = ANSRunner(resource_list,redisKey='1')
     # Ansible Adhoc
-    rbt.run_model(host_list=['192.168.79.134'],module_name='shell',module_args='df -h')
+    rbt.run_model(host_list=['192.168.79.134'],module_name='shell',module_args='free')
     data = rbt.get_model_result()   # 返回字典: {"success": {}, "failed": {}, "unreachable":{}}
 
 

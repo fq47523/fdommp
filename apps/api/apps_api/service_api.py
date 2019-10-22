@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-import json
-from hosts.models import Service,Service_Status
+
+from api.utils.ansible_api import ANSRunner
+
 
 
 class ServiceAction(APIView):
@@ -12,9 +13,6 @@ class ServiceAction(APIView):
 
 
     def post(self,request, format=None):
-        print ('1',request.POST)
-        print('2', request.data)
-        print('3', request.body)
 
         if(request.data.get('action')):
             data = request.data.get('action')
@@ -33,5 +31,42 @@ class ServiceAction(APIView):
             return Response(status.HTTP_404_NOT_FOUND)
 
 
+        if hasattr(self, data['target']):
+            func = getattr(self, data['target'])
+            return func(data)
+        else:
+            return Response({'target':'error'},status.HTTP_400_BAD_REQUEST)
 
+
+    def started(self,data):
+        res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
+        print (res,type(res))
         return Response(status.HTTP_200_OK)
+
+    def stopped(self,data):
+        res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
+        print (res,type(res))
+        return Response(status.HTTP_200_OK)
+
+
+    def restarted(self,data):
+        res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
+        print (res,type(res))
+        return Response(status.HTTP_200_OK)
+
+
+    def ansibleadhoc(self,ip,target,servicename):
+        rbt = ANSRunner([], redisKey='1')
+        # Ansible Adhoc
+        rbt.run_model(host_list=[ip], module_name='script',
+                      module_args='/opt/DOM/server.sh {} {}'.format(target,servicename))
+
+        data = rbt.get_model_result()
+
+        if data['success']:
+            return data['success']
+
+        elif data['failed']:
+            return data['failed']
+        elif data['unreachable']:
+            return data['unreachable']
