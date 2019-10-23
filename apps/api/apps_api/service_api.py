@@ -13,7 +13,7 @@ class ServiceAction(APIView):
 
 
     def post(self,request, format=None):
-
+        print (request.data)
         if(request.data.get('action')):
             data = request.data.get('action')
 

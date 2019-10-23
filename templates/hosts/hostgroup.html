@@ -10,11 +10,14 @@
 
 
 
-
+    {% csrf_token %}
     <button id="celery_exec" style="background-color: green" onclick="celery_exec()" c_id="">celery_exec</button>
     <button id="celery_result" style="background-color: green" onclick="celery_result()" >celery_result</button>
 
     <textarea id="result"></textarea>
+
+
+    <button id="testajax" type="button">ajax-json</button>
 
 
     <script src="/static/js/jquery-1.12.4.min.js"></script>
@@ -22,6 +25,7 @@
     <script src="/static/plugins/layer/layer.js"></script>
     <script src="/static/js/bootstrap-table.js"></script>
     <script src="/static/js/bootstrap-table-zh-CN.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
     <script>
 
         function celery_exec(){
@@ -39,6 +43,32 @@
             })
 
         }
+
+        $('#testajax').click(function () {
+            var data = {"action":
+                    {"servicename":"zabbix_agentd",
+                        "ip":"192.168.79.134",
+		                "target":"started"
+	                }
+                }
+
+            {#var csrtoken = $.cookie.get('csrftoken')#}
+            var csrftoken = $.cookie('csrftoken')
+            console.log(csrftoken)
+            $.ajax({
+                    url: '/api/service/action/',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    headers:{'X-CSRFToken':csrftoken},
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (data, status) {
+                        console.log(data);
+                    }
+                }
+
+            )
+        })
 
 
 

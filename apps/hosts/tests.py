@@ -29,15 +29,6 @@ from hosts.models import Crontab
 
 from hosts.models import Service,Service_Status
 
-data = {'ip': '192.168.79.133', 'target': 'restarted','servicename':''}
-required = ['servicename', 'ip', 'target']
 
-
-for i in required:
-    try:
-        if len(data[i]) == 0:
-                print (11,i)
-    except KeyError as  e:
-        print (str(e))
 
 

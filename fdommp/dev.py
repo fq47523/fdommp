@@ -57,13 +57,29 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'logger.PlatformLogHandler.HostLog',
     'logger.PlatformLogHandler.UserLog',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # SessionAuthentication-ajax情况下：csrf中间件要开启，ajax提交的页面需要有{%csrftoken%}，
+        # var csrftoken = $.cookie('csrftoken')
+        # headers:{'X-CSRFToken':csrftoken}
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+
 
 ROOT_URLCONF = 'fdommp.urls'
 
