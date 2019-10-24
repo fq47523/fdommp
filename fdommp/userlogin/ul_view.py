@@ -5,9 +5,11 @@ from django.views.generic import View
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-
-
-
+# from rest_framework_jwt.settings import api_settings
+#
+#
+# jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+# jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 
@@ -36,8 +38,15 @@ def login(request):
 
             auth.login(request,user)
             request.session['username'] = username
+
             request.session.set_expiry(3600)
             return HttpResponseRedirect('/')
+            # payload = jwt_payload_handler(user)
+            # token = jwt_encode_handler(payload)
+            #
+            # rep = HttpResponseRedirect('/')
+            # rep.set_cookie('JwtToken',token,max_age=3598)
+            # return rep
         else:
             if request.method == "POST":
 

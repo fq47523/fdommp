@@ -7,7 +7,7 @@ from hosts.modelform.host_modelform import Host_MF
 from utils._BT_pagination import BtPaging
 from utils._auth import session_auth
 import json
-
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -15,7 +15,7 @@ import json
 # Create your views here.
 
 
-
+@csrf_exempt
 def host(request):
     # 返回主机列表，分页数据及标签
 
