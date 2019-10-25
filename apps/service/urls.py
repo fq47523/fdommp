@@ -26,5 +26,5 @@ urlpatterns = [
     re_path('control_list/(?P<s_name>\w+)/(?P<s_type>\w+)/', views.server_control_list, name='service_control_list'),
     path('control_action/', views.server_control_action, name='service_control_action'),
     path('control_action_result/', views.server_control_action_result, name='service_control_action_result'),
-    path('test/',views.testtpl,name='tpl')
+
 ]

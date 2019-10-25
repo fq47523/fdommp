@@ -1,4 +1,5 @@
 from django.shortcuts import render,HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.core import serializers
 from logger import models
@@ -6,9 +7,10 @@ from hosts.models import Host
 from utils._fmt_date import DateFmt
 from utils._BT_pagination import BtPaging
 from api.utils import es_api
-
 import json
 # Create your views here.
+
+@login_required
 def platform_log(request):
     if request.method == 'GET':
         change_action = request.GET.get('change_action', None)
@@ -82,7 +84,7 @@ def platform_log(request):
 
 
 
-
+@login_required
 def application_log(request):
     if request.method == 'GET':
         host_obj = Host.objects.all().values('h_ip')

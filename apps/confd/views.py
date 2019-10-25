@@ -1,8 +1,10 @@
 from django.shortcuts import render,HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import django.utils.timezone as timezone
 from confd.modelform.confd_modelform import Confd_MF
 from hosts.models import Service
+
 from utils._BT_pagination import BtPaging
 from hosts.models import Confd,Confd_Update_History
 from assets.models import  Asset
@@ -16,6 +18,7 @@ status = {"sts": None, "msg": None}
 
 
 # Create your views here.
+@login_required
 def confd_list(request):
     if request.method == 'GET':
 
@@ -30,7 +33,7 @@ def confd_list(request):
 
         return JsonResponse(confd_paging_date_ret)
 
-
+@login_required
 def confd_add(request):
     if request.method == 'GET':
         Confd_MF_init = Confd_MF()
@@ -87,6 +90,8 @@ def confd_add(request):
 
         return  JsonResponse(status)
 
+
+@login_required
 def confd_edit(request,confd_id):
     if request.method == 'GET':
         confd_id = confd_id
@@ -121,6 +126,8 @@ def confd_edit(request,confd_id):
 
         return JsonResponse(status)
 
+
+@login_required
 def confd_init(request):
     if request.method == 'POST':
         print (request.POST)
@@ -202,7 +209,7 @@ def confd_init(request):
 
         return HttpResponse(200)
 
-
+@login_required
 def confd_rollback(request):
     if request.method == 'GET':
         print(request.GET)
@@ -256,7 +263,7 @@ def confd_rollback(request):
 
 
 
-
+@login_required
 def confd_del(request):
     if request.method == "POST":
 

@@ -15,7 +15,7 @@
                     <div class="box-header">
                       <div>
 
-                          <button class="btn btn-primary" onclick="add_modal()">新增主机</button>
+
                       </div>
 
                     </div>
@@ -122,9 +122,7 @@
         });
 
         function AddFunctionAlty() {
-            return ['<button id="tbssh" type="button" class="btn btn-default">ssh</button> &nbsp;&nbsp;',
-                '<button id="tbedit" type="button" class="btn btn-default">edit</button> &nbsp;&nbsp;',
-                '<button id="tbdel" type="button" class="btn btn-default">del</button>'].join('')
+            return ['<button id="tbssh" type="button" class="btn btn-default">ssh</button> &nbsp;&nbsp;',].join('')
 
         }
 
@@ -136,34 +134,6 @@
 
 
 
-        function add_modal(){
-
-            layer.open({
-            type: 2,
-            title: '新增主机信息',
-            closeBtn: 1,
-            area: ['800px', '400px'],
-            shadeClose: true, //点击遮罩关闭
-            content: ['{% url 'hosts:hostadd' %}'],
-
-            });
-        };
-
-
-
-        function edit_modal(h_id){
-            var req_url = '{% url 'hosts:hostedit' '00000' %}'
-            var url = req_url.replace('00000',h_id)
-            layer.open({
-            type: 2,
-            title: '修改主机信息',
-            closeBtn: 1,
-            area: ['800px', '400px'],
-            shadeClose: true, //点击遮罩关闭
-            content: [url],
-
-            });
-        };
 
         function del_modal(h_ip){
             if(confirm("确定删除"+h_ip+"这台主机吗？")) {

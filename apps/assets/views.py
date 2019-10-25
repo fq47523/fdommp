@@ -26,7 +26,7 @@ class AssetView(LoginRequiredMixin,View,AssetManage):
     def post(self,request,*args,**kwargs):
         pass
 
-class AssetDetailView(View,AssetManage):
+class AssetDetailView(LoginRequiredMixin,View,AssetManage):
     '''获取一个资产类型详细数据与更新数据；'''
     def get(self,request,*args,**kwargs):
 
@@ -71,7 +71,7 @@ class AssetDetailView(View,AssetManage):
         return render(request, 'assets/asset_detail.html', locals())
 
 
-class AnsibleAssetCreateOrUpdate(View,AssetManage,AnsibleAssetsSetup):
+class AnsibleAssetCreateOrUpdate(LoginRequiredMixin,View,AssetManage,AnsibleAssetsSetup):
     '''手动触发同步所有ansible下的资产'''
     def post(self,request, *args, **kwagrs):
         query_dict = self.query_parm(request)
@@ -91,7 +91,7 @@ class AnsibleAssetCreateOrUpdate(View,AssetManage,AnsibleAssetsSetup):
         return HttpResponse(200)
 
 
-class AssetManualAdd(View,AssetManage):
+class AssetManualAdd(LoginRequiredMixin,View,AssetManage):
     def get(self,request, *args, **kwagrs):
 
         return render(request,'assets/asset_add.html',{'meun':self.meun()})
@@ -100,7 +100,7 @@ class AssetManualAdd(View,AssetManage):
 
 
 
-class AutoAssetCreateOrUpdate(View):
+class AutoAssetCreateOrUpdate(LoginRequiredMixin,View):
     '''处理cmdb客户端发送的数据，新增或更新资产'''
     def post(self,request,*args,**kwargs):
         asset_data = request.POST.get('asset_data')

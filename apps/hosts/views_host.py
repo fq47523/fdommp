@@ -1,11 +1,8 @@
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from hosts import models
-from hosts.models import Host
 from assets.models import Asset
-from hosts.modelform.host_modelform import Host_MF
 from utils._BT_pagination import BtPaging
-from utils._auth import session_auth
 import json
 from django.views.decorators.csrf import csrf_exempt
 
@@ -15,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
-
+@login_required
 def host(request):
     # 返回主机列表，分页数据及标签
 
@@ -34,64 +31,7 @@ def host(request):
 
 
 
-def host_add(request):
-    if request.method == "GET":
-        host_modelform = Host_MF()
-        return render(request,'hosts/host_add.html',locals())
-
-
-    if request.method == "POST":
-        # 新建主机
-        add_host_status = {"sts": None, "msg": None}
-        host_add_obj = Host_MF(request.POST)
-        if host_add_obj.is_valid():
-            host_add_obj.save()
-            add_host_status['sts'] = True
-            add_host_status['rcode'] = 200
-        else:
-            add_host_status['sts'] = False
-            add_host_status['rcode'] = 201
-            add_host_status['msg'] = host_add_obj.errors.as_json()
-
-        return JsonResponse(add_host_status)
-
-
-
-def host_edit(request,h_id):
-    if request.method == "GET":
-
-        host_modelform = Host_MF(instance=models.Host.objects.filter(h_id=h_id).first())
-        host_id = h_id
-        return render(request,'hosts/host_edit.html',locals())
-
-    if request.method == "POST":
-
-        # add_host_status = {"sts": None, "msg": None}
-        # # 编辑主机
-        # edit_id = request.POST.get('edit_id',None)
-        # if  edit_id:
-        host_obj = models.Host.objects.filter(h_id=h_id).first()
-        host_edit_obj = Host_MF(request.POST,instance=host_obj)
-        if host_edit_obj.is_valid():
-            host_edit_obj.save()
-
-
-
-
-            return HttpResponse(200)
-
-
-def host_del(request):
-    '''删除主机'''
-    hip = request.GET.get('hip',None)
-    if hip:
-        models.Host.objects.filter(h_ip=hip).delete()
-
-        return HttpResponse(json.dumps({"status":"succeed"}))
-    else:
-        pass
-
-
+@login_required
 def hostgroup(request):
     import redis
 

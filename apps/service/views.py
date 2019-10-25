@@ -1,10 +1,10 @@
-from django.shortcuts import render,HttpResponse,redirect
+from django.shortcuts import render,HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from hosts import models
 from assets.models import Asset
 from hosts.models import Service
 from service.modelform.service_modelform import Service_MF
-from utils._auth import session_auth
 from utils._BT_pagination import BtPaging
 from utils._Check_service_status import ServiceHealth
 from tasks.tasks import get_server_status
@@ -15,7 +15,7 @@ import json
 # Create your views here.
 
 
-
+@login_required
 def server(request):
     '''服务首页'''
 
@@ -32,7 +32,7 @@ def server(request):
 
 
 
-
+@login_required
 def server_add(request):
     if request.method == 'GET':
         Service_MF_I = Service_MF()
@@ -66,7 +66,7 @@ def server_add(request):
 
 
 
-
+@login_required
 def server_operation(request,sid,type):
     '''服务编辑'''
     if request.method == "GET":
@@ -122,7 +122,7 @@ def server_operation(request,sid,type):
             else:
                 return HttpResponse('你想搞什么')
 
-
+@login_required
 def server_control_list(request,s_name,s_type):
     '''控制Linux主机中的应用服务'''
 
@@ -143,7 +143,7 @@ def server_control_list(request,s_name,s_type):
                                                       "server_type":s_type,
                                                       'server_status_obj':server_status_obj})
 
-
+@login_required
 def server_control_action(request):
 
     '''启停服务'''
@@ -234,7 +234,7 @@ def server_control_action(request):
         #
         #
         #     return JsonResponse({"bat_cli":callback_list})
-
+@login_required
 def server_control_action_result(request):
     '''启停服务log'''
     import redis
@@ -257,5 +257,3 @@ def server_control_action_result(request):
     else:
         return render(request, 'service/server_control_result.html', {'result': '任务执行中，请稍等！！（搞个刷新按钮）'})
 
-def testtpl(request):
-    return render(request, 'service/../../templates/accounts/index.html')

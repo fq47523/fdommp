@@ -1,9 +1,9 @@
 from django.shortcuts import render,HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from hosts import models
 from assets.models import Asset
 from api.utils.ansible_api import *
-from utils._auth import session_auth
 from utils._get_files import get_scripts,get_roles
 from hosts.modelform.crontab_modelform import Crontab_MF,Crontab_Edit_MF,Crontab_Add_Host_MF
 from django.core import serializers
@@ -15,7 +15,7 @@ script = pwd + "/script/sh/"
 playbook = pwd + "/script/playbook/"
 playbook_roles = pwd + "/script/roles/"
 
-
+@login_required
 def automate_shell(request):
     if request.method == 'GET':
         script_list = get_scripts(script)
@@ -49,7 +49,7 @@ def automate_shell(request):
 
             return HttpResponse('200')
 
-
+@login_required
 def automate_playbook(request):
     if request.method == 'GET':
         playbook_list = get_scripts(playbook)
@@ -91,7 +91,7 @@ def automate_playbook(request):
 
 
 
-
+@login_required
 def automate_shell_result(request,ansible_type):
     if request.method == 'GET':
         print (ansible_type)
@@ -103,7 +103,7 @@ def automate_shell_result(request,ansible_type):
 
             return render(request, 'hosts/automate_shell_result.html', {'result':data})
 
-
+@login_required
 def automate_playbook_result(request,ansible_type):
     if request.method == 'GET':
         print (ansible_type)
@@ -120,11 +120,13 @@ def automate_playbook_result(request,ansible_type):
 
 
 
-
+@login_required
 def automate_crontab(request):
     crontab_obj = models.Crontab.objects.all()
     return render(request, 'hosts/automate_crontab.html', {'crontab_obj':crontab_obj})
 
+
+@login_required
 def automate_crontab_add(request):
 
 
@@ -164,7 +166,7 @@ def automate_crontab_add(request):
 
         return render(request, 'hosts/automate_crontab_add.html', {'crontab_modelform':crontab_modelform})
 
-
+@login_required
 def automate_crontab_add_host(request,job_name):
     if request.method == 'GET':
         crontab_obj = models.Crontab.objects.filter(jobname=job_name).first()
@@ -181,7 +183,7 @@ def automate_crontab_add_host(request,job_name):
 
         return JsonResponse({'status':200})
 
-
+@login_required
 def automate_crontab_edit(request,job_name):
     if request.method == 'POST':
         print (request.POST)
@@ -258,7 +260,7 @@ def automate_crontab_edit(request,job_name):
 
 
 
-
+@login_required
 def automate_crontab_del(request):
     if request.method == 'POST':
         cron_jobname = request.POST.get('crontab_jobname',None)
@@ -287,14 +289,14 @@ def automate_crontab_del(request):
 
 
 
-
+@login_required
 def automate_crontab_host(request,h_id):
     asset_obj = Asset.objects.filter(id=h_id)
     crontab_status_obj = models.Crontab_Status.objects.all()
     return render(request, 'hosts/automate_crontab_host.html', {'asset_obj':asset_obj, 'crontab_status_obj':crontab_status_obj})
 
 
-
+@login_required
 def automate_crontab_host_action(request):
     if request.method == 'POST':
         print (request.POST)

@@ -22,9 +22,9 @@ app_name = 'hosts'
 
 urlpatterns = [
     path('list/', views_host.host, name='hostlist'),
-    path('add/', views_host.host_add, name='hostadd'),
-    re_path('edit/(?P<h_id>\d+)/', views_host.host_edit, name='hostedit'),
-    path('del/', views_host.host_del, name='hostdel'),
+
+
+
     path('hostgroup/', views_host.hostgroup,name='hostgroup'),
     path('automate_shell/', views_zdh.automate_shell, name='shell'),
     re_path('automate_shell_result/(?P<ansible_type>\w+)/', views_zdh.automate_shell_result, name='shell_result'),

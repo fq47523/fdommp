@@ -1,5 +1,6 @@
 from django.contrib import auth
 from django.http import HttpResponseRedirect,JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views.generic import View
 
@@ -54,7 +55,7 @@ def login(request):
             else:
                 return render(request, 'accounts/login.html')
 
-
+@login_required
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('/login')
