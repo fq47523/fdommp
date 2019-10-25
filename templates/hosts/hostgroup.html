@@ -26,6 +26,7 @@
     <script src="/static/js/bootstrap-table.js"></script>
     <script src="/static/js/bootstrap-table-zh-CN.js"></script>
     <script src="/static/js/jquery.cookie.js"></script>
+    <script src="/static/js/csrf.js"></script>
     <script>
 
         function celery_exec(){
@@ -53,13 +54,13 @@
                 }
 
             {#var csrtoken = $.cookie.get('csrftoken')#}
-            var csrftoken = $.cookie('csrftoken')
-            console.log(csrftoken)
+            {#var csrftoken = $.cookie('csrftoken')#}
+            {#console.log(csrftoken)#}
             $.ajax({
                     url: '/api/service/action/',
                     type: 'POST',
                     dataType: 'JSON',
-                    headers:{'X-CSRFToken':csrftoken},
+                    {#headers:{'X-CSRFToken':csrftoken},#}
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function (data, status) {

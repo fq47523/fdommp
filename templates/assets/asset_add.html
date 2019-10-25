@@ -316,12 +316,12 @@
 
 
         var asset_data = getFormData(asset_from,'');
-        var csrftoken = $.cookie('csrftoken')
+
 
         $.ajax({
             dataType: "JSON",
             url:"{% url 'api:api-assetslist' %}",
-            headers:{'X-CSRFToken':csrftoken},
+
             type:"POST",
             contentType: "application/json",
             data: JSON.stringify({

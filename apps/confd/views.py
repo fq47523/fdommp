@@ -133,7 +133,7 @@ def confd_init(request):
 
         get_conf_ver = Confd.objects.filter(conf_name=conf_name).first()
         init_filename = conf_path.split('/')[-1]+'.{}'.format(get_conf_ver.current_ver)
-        backup_path = serverconf_dir + '{}/{}/{}'.format(host_ip,conf_name,init_filename)
+        backup_path = serverconf_dir + '{}/{}/{}'.format(conf_name,host_ip,init_filename)
 
         rbt = ANSRunner([], redisKey='1')
         rbt.run_model(host_list=[host_ip], module_name='fetch',
@@ -142,7 +142,7 @@ def confd_init(request):
 
         if data['success']:
             confd_init_status['backupfile'] = True
-            src = serverconf_dir + '{}/{}/{}'.format(host_ip,conf_name,conf_path.split('/')[-1])
+            src = serverconf_dir + '{}/{}/{}'.format(conf_name,host_ip,conf_path.split('/')[-1])
             dest = conf_path
 
 
@@ -154,18 +154,26 @@ def confd_init(request):
 
             if data['success']:
                 confd_init_status['pushfile'] = True
-                import requests as req
+                # import requests as req
+                #
+                # url = "http://192.168.79.134:8080/accounts/login/"
+                # s = req.session()  # 建立一个Session
+                # print (host_ip,server_type)
+                # response = s.post(url, data={"user": "api", "pwd": "api"})  # session登录网站
+                # response = s.post("http://192.168.79.134:8080/service/control_action/",
+                #                   data={"ip": host_ip, "server": server_type, "action": "restarted"})  # session浏览页面
+                # response.encoding = "utf-8"
+                # response_ret = response.json()
+                # s.get("http://192.168.79.134:8080/accounts/login/")
+                rbt = ANSRunner([], redisKey='1')
+                # Ansible Adhoc
+                rbt.run_model(host_list=[host_ip], module_name='script',
+                              module_args='/opt/DOM/server.sh {} {}'.format("restarted", server_type))
 
-                url = "http://192.168.79.134:8080/accounts/login/"
-                s = req.session()  # 建立一个Session
-                print (host_ip,server_type)
-                response = s.post(url, data={"user": "api", "pwd": "api"})  # session登录网站
-                response = s.post("http://192.168.79.134:8080/service/control_action/",
-                                  data={"ip": host_ip, "server": server_type, "action": "restarted"})  # session浏览页面
-                response.encoding = "utf-8"
-                response_ret = response.json()
-                s.get("http://192.168.79.134:8080/accounts/login/")
-                if response_ret['result'] == 200:
+                data = rbt.get_model_result()
+
+
+                if data['success']:
                     Confd.objects.filter(conf_name=conf_name).update(current_ver=get_conf_ver.modified_ver)
                     Confd_Update_History.objects.create(conf_id=conf_id,
                                                         conf_ip=host_ip,
@@ -222,21 +230,17 @@ def confd_rollback(request):
 
             if data['success']:
                 confd_rollback_status['pushfile'] = True
-                import requests as req
 
-                url = "http://192.168.79.134:8080/accounts/login/"
-                s = req.session()  # 建立一个Session
+                rbt = ANSRunner([], redisKey='1')
+                # Ansible Adhoc
+                rbt.run_model(host_list=[rollback_obj.conf_ip], module_name='script',
+                              module_args='/opt/DOM/server.sh {} {}'.format("restarted", rollback_obj.conf_server))
 
-                response = s.post(url, data={"user": "api", "pwd": "api"})  # session登录网站
-                response = s.post("http://192.168.79.134:8080/service/control_action/",
-                                  data={"ip": rollback_obj.conf_ip, "server": rollback_obj.conf_server, "action": "restarted"})  # session浏览页面
-                response.encoding = "utf-8"
-                response_ret = response.json()
+                data = rbt.get_model_result()
 
-                s.get("http://192.168.79.134:8080/accounts/login/")
-
+                if data['success']:
                 # if
-                Confd.objects.filter(id=rollback_obj.conf_id).update(current_ver=backup_ver)
+                    Confd.objects.filter(id=rollback_obj.conf_id).update(current_ver=backup_ver)
 
 
             return HttpResponse(200)

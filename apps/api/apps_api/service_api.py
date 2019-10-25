@@ -39,20 +39,20 @@ class ServiceAction(APIView):
 
 
     def started(self,data):
-        # res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
-        # print (res,type(res))
-        return Response({'ok':'ok'},status.HTTP_200_OK)
+        res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
+        print (res,type(res))
+        return Response(res,status.HTTP_200_OK)
 
     def stopped(self,data):
         res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
         print (res,type(res))
-        return Response(status.HTTP_200_OK)
+        return Response(res,status.HTTP_200_OK)
 
 
     def restarted(self,data):
         res = self.ansibleadhoc(data['ip'],data['target'],data['servicename'])
         print (res,type(res))
-        return Response(status.HTTP_200_OK)
+        return Response(res,status.HTTP_200_OK)
 
 
     def ansibleadhoc(self,ip,target,servicename):
@@ -63,10 +63,5 @@ class ServiceAction(APIView):
 
         data = rbt.get_model_result()
 
-        if data['success']:
-            return data['success']
 
-        elif data['failed']:
-            return data['failed']
-        elif data['unreachable']:
-            return data['unreachable']
+        return data

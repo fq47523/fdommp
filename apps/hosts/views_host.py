@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
-@csrf_exempt
+
 def host(request):
     # 返回主机列表，分页数据及标签
 
