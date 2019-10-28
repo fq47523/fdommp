@@ -164,8 +164,17 @@ def server_control_action(request):
             import redis
             pool = redis.ConnectionPool(decode_responses=True)
             rr = redis.Redis(connection_pool=pool)
-            r = control_host_server.delay(ip, action,server)
-            rr.set('ServerCenter-{}-{}'.format(ip,server), r.id, ex=300)
+            try:
+
+                r = control_host_server.delay(ip, action, server)
+                rr.set('ServerCenter-{}-{}'.format(ip, server), r.id, ex=300)
+            except Exception as  e:
+
+                callback['result'] = 500
+                callback['msg'] = str(e)
+                return JsonResponse(callback)
+
+
             callback['result'] = 200
             return JsonResponse(callback)
             # rbt = ANSRunner([])

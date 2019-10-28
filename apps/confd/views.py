@@ -268,11 +268,11 @@ def confd_del(request):
     if request.method == "POST":
 
         conf_id = request.POST.get('conf_id',None)
-        hostip = request.POST.get('hostip',None)
         conf_name = request.POST.get('conf_name',None)
 
         Confd.objects.filter(id=conf_id).delete()
-        delete_obj = serverconf_dir + '{}/{}/'.format(hostip,conf_name)
+        Confd_Update_History.objects.filter(conf_name=conf_name).delete()
+        delete_obj = serverconf_dir + '{}/'.format(conf_name)
         shutil.rmtree(delete_obj)
         status['sts'] = 200
         status['msg'] = 'delete succeed'

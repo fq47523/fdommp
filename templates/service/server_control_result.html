@@ -2,6 +2,16 @@
 
 
 {% block body %}
+    <button type="button" onclick="f5()">f5</button>
+    {{ result }}
+{% endblock %}
 
-{{ result }}
+{% block js%}
+    <script src="/static/plugins/layer/layer.js"></script>
+    <script>
+        function f5() {
+            var index = parent.layer.getFrameIndex(window.name);
+            location.reload(index)
+        }
+    </script>
 {% endblock %}

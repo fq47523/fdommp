@@ -23,15 +23,15 @@ django.setup()
 # print (git_repo.branches)
 # print (git_repo.tags)
 from rest_framework_jwt.utils import  jwt_payload_handler
-from django.contrib.auth.models import User
-from rest_framework_jwt.settings import api_settings
-userobj = User.objects.get(username='fuqing')
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+# from django.contrib.auth.models import User
+# from rest_framework_jwt.settings import api_settings
+# userobj = User.objects.get(username='fuqing')
+# jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+# jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+#
+# payload = jwt_payload_handler(userobj)
+# token = jwt_encode_handler(payload)
+# print (token)
+from django.conf import settings
 
-payload = jwt_payload_handler(userobj)
-token = jwt_encode_handler(payload)
-print (token)
-
-
-
+print (settings.SERVER_SHELL_SCRIPT)

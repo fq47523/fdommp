@@ -44,6 +44,8 @@
                                 <td>failed</td>
                             {% elif  server_status.server_status == 4 %}
                                 <td>unreachable</td>
+                            {% elif  server_status.server_status == 5 %}
+                                <td>ACfailed</td>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -114,14 +116,16 @@
 
                 {#$("#s_content").text(data.result)#}
                 if (data.result != 200){
-                    $(this).parent().siblings().eq(6).empty();
-                    $(this).parent().siblings().eq(6).append('error')
+
+                    alert(data.msg)
                 }
                 else {
-                    console.log($(this).parent().siblings().eq(6).text())
-                    $(this).parent().siblings().eq(6).empty();
-                    $(this).parent().siblings().eq(6).append('<img src="/static/icon/loading.gif">')
+                    {#console.log($(this).parent().siblings().eq(6).text())#}
+                    {#$(this).parent().siblings().eq(6).empty();#}
+                    {#$(this).parent().siblings().eq(6).append('<img src="/static/icon/loading.gif">')#}
                     {#window.location.reload();#}
+                    console.log(ip,server)
+                    server_control_result(ip,server)
                 }
             }
         })
@@ -150,18 +154,22 @@
         },'json');
     })
 
-    function server_control_result(obj) {
-        console.log($(obj).parent().siblings().eq(4).text(),$(obj).parent().siblings().eq(5).text())
-        var ip = $(obj).parent().siblings().eq(4).text()
-        var server = $(obj).parent().siblings().eq(5).text()
+    function server_control_result(ip,server) {
+
+        {#var ip = $(obj).parent().siblings().eq(4).text()#}
+        {#var server = $(obj).parent().siblings().eq(5).text()#}
         var req_url = '{% url 'service:service_control_action_result' %}'
-        layer.open({
+        var index = layer.open({
             type: 2,
             title: server+':service_control_action_result',
             closeBtn: 1,
             area: ['800px', '480px'],
             shadeClose: true, //点击遮罩关闭
             content: req_url+'?ip='+ip+'&server='+server,
+            cancel: function(index, layero){
+                layer.close(index);
+                location.reload();
+            }
         });
     }
 

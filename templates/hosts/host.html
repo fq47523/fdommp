@@ -135,21 +135,6 @@
 
 
 
-        function del_modal(h_ip){
-            if(confirm("确定删除"+h_ip+"这台主机吗？")) {
-                $.ajax({
-                    url:"{% url 'hosts:hostdel' %}",
-                    dataType:"JSON",
-                    type:"GET",
-                    data:{"hip":h_ip},
-                    success: function (data) {
-                        if (data.status == 'succeed'){
-                            $("#table").bootstrapTable('refresh');
-                        }
-                    }
-                })
-            }
-        }
 
 
 

@@ -1,4 +1,4 @@
-
+from django.conf import settings
 from fdommp.celery import app
 from celery import  shared_task
 from celery.schedules import crontab
@@ -7,7 +7,7 @@ from hosts import models
 from assets.models import Asset
 from api.utils.zabbix_api import Zabbix_API
 from utils._paramiko_example import SSH_CLIENT
-import time
+import time,json
 from datetime import timedelta
 
 
@@ -63,17 +63,29 @@ def add(x, y):
 def control_host_server(ip,action,server):
     rbt = ANSRunner([], redisKey='1')
     # Ansible Adhoc
-    rbt.run_model(host_list=[ip], module_name='script', module_args='/opt/DOM/server.sh {} {}'.format(action,server))
-    return rbt.get_model_result()
+    rbt.run_model(host_list=[ip], module_name='script', module_args='{} {} {}'.format(settings.SERVER_SHELL_SCRIPT,action,server))
+    data = rbt.get_model_result()
+    if data['success']:
+        for k, v in data['success'].items():
+
+             status = v['stdout_lines'][-1]
+             status_obj = json.loads(status)
+
+             if status_obj['meters']['status'] == 1:
+                 models.Service_Status.objects.filter(server_host=ip,server_name=server).update(server_status=1)
+             elif status_obj['meters']['status'] == 11:
+                 models.Service_Status.objects.filter(server_host=ip, server_name=server).update(server_status=2)
+             elif status_obj['meters']['status'] == 2:
+                 models.Service_Status.objects.filter(server_host=ip, server_name=server).update(server_status=5)
 
 
-# test
-# def exc_ansi(iplist):
-#     a_client = SSH_CLIENT(iplist, 22,'root', 'redhat')
-#     a_client.tactics()
-#     a_client.conn()
-#     res = a_client.output("df -lh")
-#     return res
+    if data['failed']:
+        models.Service_Status.objects.filter(server_host=ip, server_name=server).update(server_status=3)
+    if data['unreachable']:
+        models.Service_Status.objects.filter(server_host=ip, server_name=server).update(server_status=4)
+    return data
+
+
 
 @app.task(ignore_result=True)
 def get_hosts_status():

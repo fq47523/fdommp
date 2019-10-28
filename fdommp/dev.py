@@ -191,3 +191,5 @@ ES_PORT = 9200
 ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
 
 ANSIBLE_HOSTS_FILE = '/home/fuqing/hosts'
+
+SERVER_SHELL_SCRIPT = BASE_DIR+'/apps/service/server.sh'
