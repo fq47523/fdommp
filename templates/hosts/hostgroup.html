@@ -17,8 +17,14 @@
     <textarea id="result"></textarea>
 
 
-    <button id="testajax" type="button">ajax-json</button>
+    <button id="testajax" type="button">ajax-csrf</button>
 
+    <div>
+        <button id="websocket_post" type="button">websocket_post</button>
+
+
+    </div>
+    <div id="websocket_result"></div>
 
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/js/bootstrap.js"></script>
@@ -71,6 +77,53 @@
             )
         })
 
+
+        function makeRandomId() {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 8; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            return text;
+        }
+
+
+        var randromChat = makeRandomId()
+
+
+
+
+
+
+        $('#websocket_post').click(function () {
+            var btnObj = $(this);
+            let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    	    let websocket = new WebSocket(ws_scheme + '://' + window.location.host + "/ws/ansible/model/" + randromChat + '/');
+    	    let out_print = $("#websocket_result");
+
+    	    websocket.onopen = function () {
+    	    	out_print.html('服务器正在处理，请稍等。。。\n\n');
+		    	let data = {
+
+						'custom':'shell test'
+					}
+    	    	websocket.send(JSON.stringify(data));
+    	    };
+
+    	    websocket.onmessage = function (event) {
+    	    	out_print.append(event.data+'\n')
+    	    };
+
+    	    websocket.onerror = function(event) {
+    	    	console.log(event)
+    	    	websocket.close();
+				out_print.append('\n服务器连接异常\n\n');
+    	    };
+
+    	    websocket.onclose = function () {
+    	    	btnObj.removeAttr('disabled');
+    	    }
+
+        })
 
 
     </script>
