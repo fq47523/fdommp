@@ -15,7 +15,7 @@ class AnsibleModel(WebsocketConsumer):
 
     def connect(self):
         self.group_name = self.scope['url_route']['kwargs']['group_name']
-
+        print (self.group_name )
         async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
 
         self.accept()
@@ -24,7 +24,9 @@ class AnsibleModel(WebsocketConsumer):
 
         request = json.loads(text_data)
         print (request)
-        self.send(request['custom'])
+        self.send(text_data="<font color='#FA8072'> {stdout} </font>".format(stdout=request['custom']))
+        self.send("\n<font color='red'>执行完成，总共{count}台机器，耗时：{time}</font>".format(count=1, time=2))
+
         self.close()
 
     def record_resullt(self, user, ans_model, ans_server, ans_args):
