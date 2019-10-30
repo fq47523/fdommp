@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/static/css/bootstrap.css"/>
     <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
     <link rel="stylesheet" href="/static/css/bootstrap-table.css">
+    <link rel="stylesheet" href="/static/plugins/nprogress/nprogress.css">
 </head>
 <body>
 
@@ -33,6 +34,7 @@
     <script src="/static/js/bootstrap-table-zh-CN.js"></script>
     <script src="/static/js/jquery.cookie.js"></script>
     <script src="/static/js/csrf.js"></script>
+    <script src="/static/plugins/nprogress/nprogress.js"></script>
     <script>
 
         function celery_exec(){
@@ -99,18 +101,21 @@
             let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
     	    let websocket = new WebSocket(ws_scheme + '://' + window.location.host + "/ws/ansible/model/" + randromChat + '/');
     	    let out_print = $("#websocket_result");
-
+            NProgress.start();
     	    websocket.onopen = function () {
     	    	out_print.html('服务器正在处理，请稍等。。。\n\n');
 		    	let data = {
 
-						'custom':'shell test'
+						'ip':'192.168.79.134',
+                        'arg':'ls /'
 					}
     	    	websocket.send(JSON.stringify(data));
     	    };
 
     	    websocket.onmessage = function (event) {
+    	        NProgress.done();
     	    	out_print.append(event.data+'\n')
+
     	    };
 
     	    websocket.onerror = function(event) {
