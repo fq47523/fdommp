@@ -92,6 +92,7 @@ class AnsibleAssetsSetup(object):
 
         for i in os.listdir(p):
             asset_dict = dict()
+            print (p,i)
             with open(p+i,'r') as f:
                 c = f.read()
                 b = json.loads(c)

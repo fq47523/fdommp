@@ -75,7 +75,7 @@ class AnsibleAssetCreateOrUpdate(LoginRequiredMixin,View,AssetManage,AnsibleAsse
     '''手动触发同步所有ansible下的资产'''
     def post(self,request, *args, **kwagrs):
         query_dict = self.query_parm(request)
-
+        print (query_dict,type(query_dict))
         if hasattr(self, query_dict['action']):
             func = getattr(self, query_dict['action'])
             return func(request)
