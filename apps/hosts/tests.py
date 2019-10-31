@@ -33,8 +33,6 @@ from rest_framework_jwt.utils import  jwt_payload_handler
 # token = jwt_encode_handler(payload)
 # print (token)
 
-from hosts import models
-cron_obj = models.Crontab.objects.get(jobname='ff223')
-print (cron_obj.cron_host.all())
-cron_hosts = [i['manage_ip'] for i in cron_obj.cron_host.values('manage_ip')]
-print (cron_hosts)
+from tasks.tasks import add
+
+add.delay(1,1)
