@@ -37,53 +37,49 @@ b = {'ansible_facts': {'ansible_all_ipv4_addresses': ['192.168.79.134', '172.17.
 asset_dict = {}
 # print (json.dumps(b,indent=4))
 
-# asset_dict['asset_type'] = 'server'
-# asset_dict['manufacturer'] = b["ansible_facts"]['ansible_system_vendor']
-# asset_dict['sn'] = b["ansible_facts"]['ansible_hostname']
-# asset_dict['model'] = b["ansible_facts"]['ansible_product_name']
-# asset_dict['uuid'] = b["ansible_facts"]['ansible_product_uuid']
-# asset_dict['os_distribution'] = b["ansible_facts"]['ansible_lsb']['id']
-# asset_dict['os_release'] = b["ansible_facts"]['ansible_lsb']['description']
-# asset_dict['os_type'] = b["ansible_facts"]['ansible_system']
-#
-# asset_dict['cpu_count'] = b["ansible_facts"]['ansible_processor_count']
-# asset_dict['cpu_core_count'] = b["ansible_facts"]['ansible_processor_vcpus']
-# asset_dict['cpu_model'] = b["ansible_facts"]['ansible_processor'][1]
-#
-# asset_dict['ram_size'] = round(int(b["ansible_facts"]['ansible_memtotal_mb']) / 1024)
-# asset_dict['ram'] = [
-#     {"capacity": asset_dict['ram_size'], "slot": "RAM slot #0", "model": "DRAM", "manufacturer": "Not Specified",
-#      "sn": "Not Specified", "asset_tag": "Not Specified"}]
-#
-# nic_list = [b["ansible_facts"]['ansible_' + i.replace('-','_')] for i in b["ansible_facts"]['ansible_interfaces']]
-# nic_list_refactor = []
-#
-# for nic_obj in nic_list:
-#     print (nic_obj)
-#     nic_dict = {}
-#     nic_dict['name'] = nic_obj['device']
-#     nic_dict['mac'] = nic_obj.get('macaddress') or nic_obj['device']
-#     nic_dict['net_mask'] = nic_obj['ipv4']['netmask']
-#     nic_dict['network'] = nic_obj['ipv4']['network']
-#     nic_dict['model'] = nic_obj.get('module') or nic_obj['device']
-#     nic_dict['ip_address'] = nic_obj['ipv4']['address']
-#     nic_dict['active'] = nic_obj['active']
-#     nic_list_refactor.append(nic_dict)
-#     # print (nic_obj)
-#
-# asset_dict['nic'] = nic_list_refactor
-# asset_dict['physical_disk_driver'] = [{'model': b["ansible_facts"]['ansible_devices']['sda']['model'],
-#                                        'capacity': float(
-#                                            b["ansible_facts"]['ansible_devices']['sda']['size'].split()[0]),
-#                                        'sn': 'sda-' + b["ansible_facts"]['ansible_hostname'],
-#                                        'manufacturer': b["ansible_facts"]['ansible_devices']['sda']['vendor'],
-#                                        }
-#                                       ]
-#
-# print (asset_dict)
+asset_dict['asset_type'] = 'server'
+asset_dict['manufacturer'] = b["ansible_facts"]['ansible_system_vendor']
+asset_dict['sn'] = b["ansible_facts"]['ansible_hostname']
+asset_dict['model'] = b["ansible_facts"]['ansible_product_name']
+asset_dict['uuid'] = b["ansible_facts"]['ansible_product_uuid']
+asset_dict['os_distribution'] = b["ansible_facts"]['ansible_lsb']['id']
+asset_dict['os_release'] = b["ansible_facts"]['ansible_lsb']['description']
+asset_dict['os_type'] = b["ansible_facts"]['ansible_system']
 
-aa = {'aa':{'ipv6':{'aa':1,'bb':22}}}
+asset_dict['cpu_count'] = b["ansible_facts"]['ansible_processor_count']
+asset_dict['cpu_core_count'] = b["ansible_facts"]['ansible_processor_vcpus']
+asset_dict['cpu_model'] = b["ansible_facts"]['ansible_processor'][1]
 
-cc = aa['aa'].get('ipv4',None)
+asset_dict['ram_size'] = round(int(b["ansible_facts"]['ansible_memtotal_mb']) / 1024)
+asset_dict['ram'] = [
+    {"capacity": asset_dict['ram_size'], "slot": "RAM slot #0", "model": "DRAM", "manufacturer": "Not Specified",
+     "sn": "Not Specified", "asset_tag": "Not Specified"}]
 
-print (cc)
+nic_list = [b["ansible_facts"]['ansible_' + i.replace('-','_')] for i in b["ansible_facts"]['ansible_interfaces']]
+print (nic_list)
+nic_list_refactor = []
+
+for nic_obj in nic_list:
+    nic_dict = {}
+    ipv4 = nic_obj.get('ipv4',None)
+    nic_dict['name'] = nic_obj.get('device',None)
+    nic_dict['mac'] = nic_obj.get('macaddress') or nic_obj['device']
+    nic_dict['net_mask'] =  ipv4['netmask'] if ipv4 else None
+    nic_dict['network'] = ipv4['network'] if ipv4 else None
+    nic_dict['model'] = nic_obj.get('module') or nic_obj['device']
+    nic_dict['ip_address'] = ipv4['address'] if ipv4 else None
+    nic_dict['active'] = nic_obj['active']
+    nic_list_refactor.append(nic_dict)
+    # print (nic_obj)
+
+asset_dict['nic'] = nic_list_refactor
+asset_dict['physical_disk_driver'] = [{'model': b["ansible_facts"]['ansible_devices']['sda']['model'],
+                                       'capacity': float(
+                                           b["ansible_facts"]['ansible_devices']['sda']['size'].split()[0]),
+                                       'sn': 'sda-' + b["ansible_facts"]['ansible_hostname'],
+                                       'manufacturer': b["ansible_facts"]['ansible_devices']['sda']['vendor'],
+                                       }
+                                      ]
+
+print (asset_dict)
+

@@ -118,20 +118,20 @@ class AnsibleAssetsSetup(object):
                         asset_dict['ram'] =  [{"capacity": asset_dict['ram_size'], "slot": "RAM slot #0", "model": "DRAM", "manufacturer": "Not Specified", "sn": "Not Specified", "asset_tag": "Not Specified"}]
 
 
-                        nic_list = [b["ansible_facts"]['ansible_'+i] for i in b["ansible_facts"]['ansible_interfaces']]
+                        nic_list = [b["ansible_facts"]['ansible_' + i.replace('-','_')] for i in b["ansible_facts"]['ansible_interfaces']]
                         nic_list_refactor = []
 
                         for nic_obj in nic_list:
                             nic_dict = {}
-                            nic_dict['name'] = nic_obj['device']
+                            ipv4 = nic_obj.get('ipv4', None)
+                            nic_dict['name'] = nic_obj.get('device', None)
                             nic_dict['mac'] = nic_obj.get('macaddress') or nic_obj['device']
-                            nic_dict['net_mask'] = nic_obj['ipv4']['netmask']
-                            nic_dict['network'] = nic_obj['ipv4']['network']
+                            nic_dict['net_mask'] = ipv4['netmask'] if ipv4 else None
+                            nic_dict['network'] = ipv4['network'] if ipv4 else None
                             nic_dict['model'] = nic_obj.get('module') or nic_obj['device']
-                            nic_dict['ip_address'] = nic_obj['ipv4']['address']
+                            nic_dict['ip_address'] = ipv4['address'] if ipv4 else None
                             nic_dict['active'] = nic_obj['active']
                             nic_list_refactor.append(nic_dict)
-                            # print (nic_obj)
 
                         asset_dict['nic'] = nic_list_refactor
                         asset_dict['physical_disk_driver'] = [{'model': b["ansible_facts"]['ansible_devices']['sda']['model'],
@@ -164,20 +164,20 @@ class AnsibleAssetsSetup(object):
                         asset_dict['ram'] =  [{"capacity": asset_dict['ram_size'], "slot": "RAM slot #0", "model": "DRAM", "manufacturer": "Not Specified", "sn": "Not Specified", "asset_tag": "Not Specified"}]
 
 
-                        nic_list = [b["ansible_facts"]['ansible_'+i] for i in b["ansible_facts"]['ansible_interfaces']]
+                        nic_list = [b["ansible_facts"]['ansible_' + i.replace('-','_')] for i in b["ansible_facts"]['ansible_interfaces']]
                         nic_list_refactor = []
 
                         for nic_obj in nic_list:
                             nic_dict = {}
-                            nic_dict['name'] = nic_obj['device']
+                            ipv4 = nic_obj.get('ipv4', None)
+                            nic_dict['name'] = nic_obj.get('device', None)
                             nic_dict['mac'] = nic_obj.get('macaddress') or nic_obj['device']
-                            nic_dict['net_mask'] = nic_obj['ipv4']['netmask']
-                            nic_dict['network'] = nic_obj['ipv4']['network']
+                            nic_dict['net_mask'] = ipv4['netmask'] if ipv4 else None
+                            nic_dict['network'] = ipv4['network'] if ipv4 else None
                             nic_dict['model'] = nic_obj.get('module') or nic_obj['device']
-                            nic_dict['ip_address'] = nic_obj['ipv4']['address']
+                            nic_dict['ip_address'] = ipv4['address'] if ipv4 else None
                             nic_dict['active'] = nic_obj['active']
                             nic_list_refactor.append(nic_dict)
-                            # print (nic_obj)
 
                         asset_dict['nic'] = nic_list_refactor
                         asset_dict['physical_disk_driver'] = [{'model': b["ansible_facts"]['ansible_devices']['sda']['model'],
