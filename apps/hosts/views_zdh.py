@@ -264,25 +264,26 @@ def automate_crontab_edit(request,job_name):
 def automate_crontab_del(request):
     if request.method == 'POST':
         cron_jobname = request.POST.get('crontab_jobname',None)
-        cron_hosts = request.POST.getlist('crontab_hosts[]',None)
+        cron_obj = models.Crontab.objects.get(jobname=cron_jobname)
+        cron_hosts_ip_list = [i['manage_ip'] for i in cron_obj.cron_host.values('manage_ip')]
 
-        if cron_jobname  and cron_hosts:
-            asset_sn = [i.split()[2] for i in cron_hosts]
-            asset_iplist = [i.manage_ip for i in Asset.objects.filter(sn__in=asset_sn)]
-            rbt = ANSRunner([])
-            rbt.run_model(host_list=asset_iplist,
-                          module_name='cron',
-                          module_args='name=\"{}\" state=\"absent\"'.format(
-                              cron_jobname,
 
-                          )
-                          )
-            #data = rbt.get_model_result()
-            # yuliu
+        rbt = ANSRunner([])
+        rbt.run_model(host_list=cron_hosts_ip_list,
+                      module_name='cron',
+                      module_args='name=\"{}\" state=\"absent\"'.format(
+                          cron_jobname,
 
-        models.Crontab.objects.filter(jobname=cron_jobname).delete()
-        models.Crontab_Status.objects.filter(job_name=cron_jobname).delete()
-        return HttpResponse(200)
+                      )
+                      )
+        data = rbt.get_model_result()
+        if data['success']:
+            models.Crontab.objects.filter(jobname=cron_jobname).delete()
+            models.Crontab_Status.objects.filter(job_name=cron_jobname).delete()
+        else:
+            return JsonResponse({'status':500,'msg':'网络或数据错误'})
+
+        return JsonResponse({'status':200})
 
 
 

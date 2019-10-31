@@ -145,7 +145,7 @@
             if (confirm("确定删除任务"+crontab_jobname+"以及"+crontab_hosts+"上的crontab？")){
 
                 $.post('{% url 'hosts:crontab_del' %}',{'crontab_jobname':crontab_jobname,'crontab_hosts':crontab_hosts},function (data) {
-                    if (data == 200){
+                    if (data.status == 200){
                         window.location.reload();
                     }
                 })
