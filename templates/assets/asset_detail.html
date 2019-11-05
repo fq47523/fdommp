@@ -31,7 +31,8 @@
         <div class="box-body">
 
             <h4><b>概览:</b></h4>
-        <form id="gailanA">
+        <button type="button" onclick="gailan({{ asset.id }})" style="float: right">保存</button>
+        <form id="gailan">
             <table  border="1" class="table  table-responsive" style="border-left:3px solid deepskyblue;border-bottom:1px solid deepskyblue" >
                 <thead>
                     <tr>
@@ -43,37 +44,69 @@
                         <th>机房</th>
                         <th>标签</th>
                         <th>更新日期</th>
-                        <th>编辑</th>
+
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
 {#                    <td>{{ asset.get_asset_type_display }}</td>#}
-                    <td>{{ asset_gailan.asset_type }}</td>
+                    <td><input type="text" readonly  unselectable="on" name="asset_asset_type" value="{{ asset.asset_type }}"></td>
                     <td>{{ asset.sn }}</td>
 {#                    <td>{{ asset.business_unit|default:'N/A' }}</td>#}
-                    <td>{{ asset_gailan.business_unit }}</td>
-{#                    <td>{{ asset.manufacturer|default:'N/A' }}</td>#}
-                    <td>{{ asset_gailan.manufacturer }}</td>
-{#                    <td>{{ asset.manage_ip|default:'N/A' }}</td>#}
-                    <td>{{ asset_gailan.manage_ip }}</td>
-{#                    <td>{{ asset.idc|default:'N/A' }}</td>#}
-                    <td>{{ asset_gailan.idc }}</td>
                     <td>
-                        {% for tag in asset.tags.all %}
-                        <label class="label label-primary">{{ tag.name }}</label>
-                        {% empty %}
-                            -
+                        <select class="form-control"  name="asset_business_unit">
+                            {% for bu in meun.bu %}
+
+                                {% if idc in asset.idc.all %}
+                                    <option value="{{ bu.id }}" selected="selected">{{ bu.name }}</option>
+                                {% else %}
+                                    <option></option>
+                                    <option value="{{ bu.id }}">{{ bu.name }}</option>
+                                {% endif %}
+
+                            {% endfor %}
+                        </select>
+                    </td>
+{#                    <td>{{ asset.manufacturer|default:'N/A' }}</td>#}
+                    <td>{{ asset.manufacturer }}</td>
+{#                    <td>{{ asset.manage_ip|default:'N/A' }}</td>#}
+                    <td><input type="text" name="asset_manage_ip" value="{{ asset.manage_ip }}"></td>
+{#                    <td>{{ asset.idc|default:'N/A' }}</td>#}
+                    <td>
+                        <select class="form-control"  name="asset_idc">
+                            {% for idc in meun.idc %}
+
+                                {% if idc in asset.idc.all %}
+                                    <option value="{{ idc.id }}" selected="selected">{{ idc.name }}</option>
+                                {% else %}
+                                    <option value="{{ idc.id }}">{{ idc.name }}</option>
+                                {% endif %}
+
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td>
+                        <select class="form-control" multiple="multiple" name="asset_tags">
+                        {% for tag in meun.tag %}
+
+                            {% if tag in asset.tags.all %}
+                                <option value="{{ tag.id }}" selected="selected">{{ tag.name }}</option>
+                            {% else %}
+                                <option value="{{ tag.id }}">{{ tag.name }}</option>
+                            {% endif %}
+
                         {% endfor %}
+                        </select>
                     </td>
                     <td>{{ asset.m_time }}</td>
-                    <td><button type="button" onclick="gailanA({{ asset.id }})">保存</button></td>
+
                 </tr>
                 </tbody>
             </table>
-        </form>
 
-        <form id="gailanB">
+
+
             <table border="1" class="table  table-responsive" style="border-left:3px solid deepskyblue;border-bottom:1px solid deepskyblue">
                 <thead>
                     <tr>
@@ -82,20 +115,19 @@
                         <th>ssh端口</th>
                         <th>sudo密码</th>
                         <th>秘钥文件</th>
-                        <th>编辑</th>
-{#                        <th>test</th>#}
+
 
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ asset_gailanB.username|default:'N/A' }}</td>
-                    <td>{{ asset_gailanB.passwd|default:'N/A' }}</td>
-                    <td>{{ asset_gailanB.sshport|default:'N/A' }}</td>
-                    <td>{{ asset_gailanB.sudo_passwd|default:'N/A' }}</td>
-                    <td>{{ asset_gailanB.keyfile|default:'N/A' }}</td>
-                    <td><button type="button" onclick="gailanB({{ asset.id }})">保存</button></td>
-{#                    <td>{{ asset_gailanB.username }}</td>#}
+                    <td><input type="text" name="server_username" value="{{ asset.server.username | default:''}}"></td>
+                    <td><input type="text" name="server_passwd" value="{{ asset.server.passwd | default:''}}"></td>
+                    <td><input type="text" name="server_sshport" value="{{ asset.server.sshport | default:''}}"></td>
+                    <td><input type="text" name="server_sudo_passwd" value="{{ asset.server.sudo_passwd | default:''}}"></td>
+                    <td><input type="text" name="server_keyfile" value="{{ asset.server.keyfile | default:''}}"></td>
+
+
                 </tr>
                 </tbody>
             </table>
@@ -289,22 +321,97 @@
     <script src="{% static 'plugins/layer/layer.js'%}"></script>
 
     <script>
-        function gailanA(obj) {
+    	function getFormData (form, filler) {
+            var asset = {};
+            var server = {};
+            var net = {};
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
 
-            $.post('{% url 'assets:assets_detail' %}?action=gailanA&name='+obj,$('#gailanA').serialize(),function(result){
-                if (result.data == 200){
-                    layer.msg('保存成功', {icon: 1});
-                };
-            })
+                if (name.length == 0)
+                    continue;
+                try {
+
+                    value  = value.replace(/\n/g,'<br/>');
+
+                }catch (e) {
+                    alert(e);
+                }
+                if (value.length == 0) {
+                    if ((typeof filler != 'string') || (filler.length == 0))
+                        continue;
+                    else
+                        value = filler;
+                }
+                let assetStart = name.indexOf("asset_");
+                let serverStart = name.indexOf("server_");
+                let netStart = name.indexOf("net_");
+
+                if (assetStart==0){
+                    var asz = "asset."+name.replace("asset_","")+" = '" + value + "'";
+
+                    try {
+                        eval(asz);
+                    } catch (e) {
+                        alert(e);
+                    }
+                }
+                else if(serverStart==0){
+                    var ssz = "server."+name.replace("server_","")+" = '" + value + "'";
+                    console.log(ssz)
+                    try {
+                        eval(ssz);
+                    } catch (e) {
+                        alert(e);
+                    }
+                }
+                else if(netStart==0){
+                    var nsz = "net."+name.replace("net_","")+" = '" + value + "'";
+                    try {
+                        eval(nsz);
+                    } catch (e) {
+                        alert(e);
+                    }
+                }
+                else if(netStart==0){
+                    var nsz = "net."+name.replace("net_","")+" = '" + value + "'";
+                    try {
+                        eval(nsz);
+                    } catch (e) {
+                        alert(e);
+                    }
+                }
+
+            }
+            if (asset.asset_type == "server" || asset.asset_type=="vmser"){
+                server.asset = asset;
+                console.log(server)
+                return server;
+            }
+            else {
+                net.asset = asset;
+                return net;
+            }
         }
 
-        function gailanB(obj) {
 
-            $.post('{% url 'assets:assets_detail' %}?action=gailanB&name='+obj,$('#gailanB').serialize(),function(result){
-                if (result.data == 200){
-                    layer.msg('保存成功', {icon: 1});
-                };
-            })
+
+        function gailan(assetID) {
+    	    var asset_from  = document.getElementById('gailan')
+            var asset_data = getFormData(asset_from,'');
+    	    console.log(asset_data)
+            var req_url = '{% url 'api:api-assetaction' '00000'%}'
+            var url = req_url.replace('00000',assetID)
+            $.ajax({
+                dataType: "JSON",
+                url:url,
+                contentType: "application/json",
+                type:"PUT",
+                data: JSON.stringify({'data':asset_data})
+                }
+
+            )
         }
 
 

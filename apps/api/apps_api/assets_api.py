@@ -27,30 +27,46 @@ class AssetsAction(APIView):
         return Response(404)
 
     def put(self, request, id,format=None):
-        data = request.data
+        if (request.data.get('data')):
+            data = request.data.get('data')
+        else:
+            data = request.data
 
-        try:
-            snippet = Server.objects.get(id=id)
-        except Server.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        assets_snippet = Asset.objects.get(id=id)
+        # print (assets_snippet.server)
+        server_snippet = Server.objects.get(id=assets_snippet.server.id)
 
-
-
-        if (data.get('asset')):
-            assets_data = data.pop('asset')
-            try:
-                assets_snippet = Asset.objects.get(id=snippet.asset.id)
-                assets = serializers.AssetsSerializer(assets_snippet, data=assets_data)
-            except Asset.DoesNotExist:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-            if assets.is_valid():
-                assets.save()
-
-        serializer = serializers.AssetsServerSerializer(snippet, data=data)
+        serializer = serializers.AssetsServerSerializer(server_snippet, data=data)
+        print (serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        return Response(status.HTTP_200_OK)
+
+        # try:
+        #     snippet = Server.objects.get(id=id)
+        # except Server.DoesNotExist:
+        #     return Response(status=status.HTTP_404_NOT_FOUND)
+        #
+        #
+        #
+        # if (data.get('asset')):
+        #     assets_data = data.pop('asset')
+        #     try:
+        #         assets_snippet = Asset.objects.get(id=snippet.asset.id)
+        #         assets = serializers.AssetsSerializer(assets_snippet, data=assets_data)
+        #     except Asset.DoesNotExist:
+        #         return Response(status=status.HTTP_404_NOT_FOUND)
+        #     if assets.is_valid():
+        #         assets.save()
+        #
+        # serializer = serializers.AssetsServerSerializer(snippet, data=data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self,request, id,format=None):
 

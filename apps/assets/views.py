@@ -30,45 +30,45 @@ class AssetDetailView(LoginRequiredMixin,View,AssetManage):
     '''获取一个资产类型详细数据与更新数据；'''
     def get(self,request,*args,**kwargs):
 
-        asset_id = self.query_parm(request)['assetid']
-        # print (asset_id)
-        asset = self.select_obj_asset(asset_id)
 
-
-        if hasattr(self, asset.asset_type):
-            func = getattr(self, asset.asset_type)
-            return func(request,asset)
-        else:
-            return HttpResponse(status=404)
-
-
-    def post(self,request,*args,**kwargs):
-        query_dict = self.query_parm(request)
-
-
-        # print (query_dict['action'])
-        if hasattr(self, query_dict['action']):
-            func = getattr(self, query_dict['action'])
-            return func(request,query_dict['name'])
-        else:
-            return HttpResponse(status=404)
-
-    def gailanA(self,request, *args, **kwagrs):
-        # print (request.POST,args[0])
-        exec_status = self.update_server_gailan_a(request,args[0])
-        return JsonResponse({'data':200})
-
-    def gailanB(self,request, *args, **kwagrs):
-        # print (request.POST,args[0])
-        exec_status = self.update_server_gailan_b(request,args[0])
-        return JsonResponse({'data':200})
-
-    def server(self,request, asset,*args, **kwagrs):
-        asset_gailan = GaiLanA(instance=asset)
-        asset_gailanB = GaiLanB(instance=asset.server)
-
-
+        asset = self.select_obj_asset(self.query_parm(request)['assetid'])
+        meun = self.meun()
+        print (asset.tags.all())
         return render(request, 'assets/asset_detail.html', locals())
+        # if hasattr(self, asset.asset_type):
+        #     func = getattr(self, asset.asset_type)
+        #     return func(request,asset)
+        # else:
+        #     return HttpResponse(status=404)
+
+
+    # def post(self,request,*args,**kwargs):
+    #     query_dict = self.query_parm(request)
+    #
+    #
+    #     # print (query_dict['action'])
+    #     if hasattr(self, query_dict['action']):
+    #         func = getattr(self, query_dict['action'])
+    #         return func(request,query_dict['name'])
+    #     else:
+    #         return HttpResponse(status=404)
+    #
+    # def gailanA(self,request, *args, **kwagrs):
+    #     # print (request.POST,args[0])
+    #     exec_status = self.update_server_gailan_a(request,args[0])
+    #     return JsonResponse({'data':200})
+    #
+    # def gailanB(self,request, *args, **kwagrs):
+    #     # print (request.POST,args[0])
+    #     exec_status = self.update_server_gailan_b(request,args[0])
+    #     return JsonResponse({'data':200})
+
+    # def server(self,request, asset,*args, **kwagrs):
+    #     asset_gailan = GaiLanA(instance=asset)
+    #     asset_gailanB = GaiLanB(instance=asset.server)
+    #
+    #
+    #     return render(request, 'assets/asset_detail.html', locals())
 
 
 class AnsibleAssetCreateOrUpdate(LoginRequiredMixin,View,AssetManage,AnsibleAssetsSetup):
