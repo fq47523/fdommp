@@ -31,7 +31,7 @@
         <div class="box-body">
 
             <h4><b>概览:</b></h4>
-        <button type="button" onclick="gailan({{ asset.id }})" style="float: right">保存</button>
+        <button type="button" onclick="gailan({{ asset.server.id }})" style="float: right">保存</button>
         <form id="gailan">
             <table  border="1" class="table  table-responsive" style="border-left:3px solid deepskyblue;border-bottom:1px solid deepskyblue" >
                 <thead>
@@ -50,17 +50,21 @@
                 <tbody>
                 <tr>
 {#                    <td>{{ asset.get_asset_type_display }}</td>#}
-                    <td><input type="text" readonly  unselectable="on" name="asset_asset_type" value="{{ asset.asset_type }}"></td>
+                    <input type="text" style="display: none" readonly  unselectable="on" name="asset_asset_type" value="{{ asset.asset_type }}">
+                    <input type="text" style="display: none" readonly  unselectable="on" name="asset_sn" value="{{ asset.sn }}">
+                    <input type="text" style="display: none" readonly  unselectable="on" name="asset_name" value="{{ asset.name }}">
+                    <td>{{ asset.asset_type }}</td>
                     <td>{{ asset.sn }}</td>
 {#                    <td>{{ asset.business_unit|default:'N/A' }}</td>#}
                     <td>
                         <select class="form-control"  name="asset_business_unit">
+                            <option value="null"></option>
                             {% for bu in meun.bu %}
 
-                                {% if idc in asset.idc.all %}
+                                {% if bu.name == asset.business_unit.name %}
                                     <option value="{{ bu.id }}" selected="selected">{{ bu.name }}</option>
                                 {% else %}
-                                    <option></option>
+
                                     <option value="{{ bu.id }}">{{ bu.name }}</option>
                                 {% endif %}
 
@@ -397,12 +401,12 @@
 
 
 
-        function gailan(assetID) {
+        function gailan(serverID) {
     	    var asset_from  = document.getElementById('gailan')
             var asset_data = getFormData(asset_from,'');
     	    console.log(asset_data)
             var req_url = '{% url 'api:api-assetaction' '00000'%}'
-            var url = req_url.replace('00000',assetID)
+            var url = req_url.replace('00000',serverID)
             $.ajax({
                 dataType: "JSON",
                 url:url,

@@ -33,6 +33,12 @@ from rest_framework_jwt.utils import  jwt_payload_handler
 # token = jwt_encode_handler(payload)
 # print (token)
 
-from assets.models import Asset,Server
-asset_obj = Asset.objects.get(sn='ubuntu')
-print (asset_obj.server.id,asset_obj.id)
+from assets.models import Asset,BusinessUnit
+ass = Asset.objects.get(id=25)
+bu = BusinessUnit.objects.all()
+for bus in bu:
+    print(type(bus.name),type(ass.business_unit.name))
+    if bus.name == ass.business_unit.name:
+
+        print (1)
+
