@@ -33,12 +33,17 @@ from rest_framework_jwt.utils import  jwt_payload_handler
 # token = jwt_encode_handler(payload)
 # print (token)
 
-from assets.models import Asset,BusinessUnit
-ass = Asset.objects.get(id=25)
-bu = BusinessUnit.objects.all()
-for bus in bu:
-    print(type(bus.name),type(ass.business_unit.name))
-    if bus.name == ass.business_unit.name:
+from hosts.models import Host_zabbix
+from assets.models import Asset
 
-        print (1)
+ass_obj = Asset.objects.filter(id=25).first()
+print (type(ass_obj.manage_ip))
+Host_zabbix.objects.update(
+    za_ip= ass_obj.manage_ip,
+    za_cpu= 0,
+    za_mem= 1,
+    za_disk= 0,
+    za_action= 0,
+    asset_extend= ass_obj
+)
 

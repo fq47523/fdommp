@@ -114,50 +114,50 @@ def get_hosts_status():
         za_list.append(i)
 
     for za_host in za_list: # 遍历拼接好的za客户端数据,列表类型
-
+        host_obj = Asset.objects.filter(manage_ip=za_host['interfaces'][0]['ip']).first()
+        if not host_obj:continue
         if za_host['za_action'] == 0:   # 0:活
-            host_obj = Asset.objects.filter(manage_ip=za_host['interfaces'][0]['ip']).first()
-            if host_obj:
-                hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
-                if not hz_obj:
-                    models.Host_zabbix.objects.create(
-                        za_action=za_host['za_action'],
-                        za_cpu=za_host['za_cpu'],
-                        za_mem=za_host['za_mem'],
-                        za_disk=za_host['za_disk'],
-                        h_extend=host_obj,
-                        za_ip=za_host['interfaces'][0]['ip']
-                    )
-                else:
 
-                    models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip']).update(
-                        za_action=za_host['za_action'],
-                        za_cpu=za_host['za_cpu'],
-                        za_mem=za_host['za_mem'],
-                        za_disk=za_host['za_disk']
-                    )
+
+            hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
+            if not hz_obj:
+                models.Host_zabbix.objects.create(
+                    za_action=za_host['za_action'],
+                    za_cpu=za_host['za_cpu'],
+                    za_mem=za_host['za_mem'],
+                    za_disk=za_host['za_disk'],
+                    asset_extend=host_obj,
+                    za_ip=za_host['interfaces'][0]['ip']
+                )
             else:
-                pass
-        elif za_host['za_action'] == 1: #1：死
-            host_obj = Asset.objects.filter(manage_ip=za_host['interfaces'][0]['ip']).first()
-            if host_obj:
-                hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
-                if not hz_obj:
-                    models.Host_zabbix.objects.create(
-                        za_action=za_host['za_action'],
-                        za_cpu=0,
-                        za_mem=0,
-                        za_disk=0,
-                        h_extend=host_obj,
-                        za_ip=za_host['interfaces'][0]['ip']
-                    )
-                else:
-                    models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip']).update(
-                        za_action=za_host['za_action'],
-                        za_cpu=0,
-                        za_mem=0,
-                        za_disk=0,
-                    )
+
+                models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip']).update(
+                    za_action=za_host['za_action'],
+                    za_cpu=za_host['za_cpu'],
+                    za_mem=za_host['za_mem'],
+                    za_disk=za_host['za_disk']
+                )
+
+
+        # elif za_host['za_action'] == 1: #1：死
+        #
+        #     hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
+        #     if not hz_obj:
+        #         models.Host_zabbix.objects.create(
+        #             za_action=za_host['za_action'],
+        #             za_cpu=0,
+        #             za_mem=0,
+        #             za_disk=0,
+        #             asset_extend=host_obj,
+        #             za_ip=za_host['interfaces'][0]['ip']
+        #         )
+        #     else:
+        #         models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip']).update(
+        #             za_action=za_host['za_action'],
+        #             za_cpu=0,
+        #             za_mem=0,
+        #             za_disk=0,
+        #         )
 
 @app.task(ignore_result=True)
 def get_server_status(iplist=None,servername=None):
