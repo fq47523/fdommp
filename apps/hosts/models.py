@@ -19,7 +19,7 @@ class HostGroup(models.Model):
 
 
 class Host_zabbix(models.Model):
-    za_ip = models.GenericIPAddressField(max_length=32,unique=True)
+    za_ip = models.GenericIPAddressField(max_length=32)
     za_action = models.IntegerField()
     za_cpu = models.FloatField()
     za_mem = models.FloatField()

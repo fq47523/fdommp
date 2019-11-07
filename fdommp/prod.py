@@ -27,6 +27,8 @@ SECRET_KEY = 'r_1*4ephgq7^w1=d6=$lm!e-*65!#li!c^_)6nj7#-fh95t0r@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+LOGIN_URL = '/login/'
+
 ALLOWED_HOSTS = ['*']
 
 
@@ -63,6 +65,18 @@ MIDDLEWARE = [
     'logger.PlatformLogHandler.HostLog',
     'logger.PlatformLogHandler.UserLog',
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+       "BACKEND": "channels_redis.core.RedisChannelLayer",  # use redis backend
+       "CONFIG": {
+            "hosts": [('127.0.0.1', 6379)],
+           },
+       },
+}
+
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -172,12 +186,14 @@ STATICFILES_DIRS = (
 )
 
 # customize
-# CELERY_BROKER = 'redis://127.0.0.1:6379/5'
-# CELERY_BACKEND = 'redis://127.0.0.1:6379/6'
-#
-# ES_IP = '192.168.79.141'
-# ES_PORT = 9200
-#
-# ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
-#
-# ANSIBLE_HOSTS_FILE = '/home/fuqing/hosts'
+FD_CELERY_BROKER = 'redis://127.0.0.1:6379/5'
+FD_CELERY_BACKEND = 'redis://127.0.0.1:6379/6'
+
+FD_ES_IP = '192.168.79.142'
+FD_ES_PORT = 9200
+
+FD_ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
+
+FD_ANSIBLE_HOSTS_FILE = '/home/fuqing/hosts'
+
+FD_SERVER_SHELL_SCRIPT = BASE_DIR+'/apps/service/server.sh'

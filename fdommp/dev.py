@@ -193,14 +193,14 @@ STATICFILES_DIRS = (
 )
 
 # customize
-CELERY_BROKER = 'redis://127.0.0.1:6379/5'
-CELERY_BACKEND = 'redis://127.0.0.1:6379/6'
+FD_CELERY_BROKER = 'redis://127.0.0.1:6379/5'
+FD_CELERY_BACKEND = 'redis://127.0.0.1:6379/6'
 
-ES_IP = '192.168.79.141'
-ES_PORT = 9200
+FD_ES_IP = '192.168.79.141'
+FD_ES_PORT = 9200
 
-ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
+FD_ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
 
-ANSIBLE_HOSTS_FILE = '/home/fuqing/hosts'
+FD_ANSIBLE_HOSTS_FILE = '/home/fuqing/hosts'
 
-SERVER_SHELL_SCRIPT = BASE_DIR+'/apps/service/server.sh'
+FD_SERVER_SHELL_SCRIPT = BASE_DIR+'/apps/service/server.sh'

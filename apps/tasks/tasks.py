@@ -95,69 +95,36 @@ def get_hosts_status():
     '''
     zabbix_init = Zabbix_API()
     hostid_list = zabbix_init.host_get()
-    za_list = []
-
-    for i in hostid_list:
-        # 遍历za主机的id
-        za_action = zabbix_init.za_agent_action(i['hostid'])
-        za_cpu_system = zabbix_init.za_agent_cpu_system(i['hostid'])
-        za_cpu_user = zabbix_init.za_agent_cpu_user(i['hostid'])
-        za_mem_available = zabbix_init.za_agent_mem(i['hostid'])
-        za_mem_total = zabbix_init.host_mem_total(i['hostid'])
-        za_disk = zabbix_init.za_agent_disk(i['hostid'])
 
 
-        i['za_action'] = int(za_action[0]['value'])
-        i['za_cpu'] = round(float(za_cpu_system[0]['lastvalue']) + float(za_cpu_user[0]['lastvalue']), 2)
-        i['za_mem'] = round((int(za_mem_total[0]['lastvalue']) - int(za_mem_available[0]['lastvalue']))/ 1024 / 1024 / 1024, 2)
-        i['za_disk'] = round(int(za_disk[0]['lastvalue']) / 1024 / 1024 / 1024, 2)
-        za_list.append(i)
+    for host_dict in hostid_list:
+        host_obj = Asset.objects.filter(manage_ip=host_dict['interfaces'][0]['ip']).first()
+        if not host_obj: continue
 
-    for za_host in za_list: # 遍历拼接好的za客户端数据,列表类型
-        host_obj = Asset.objects.filter(manage_ip=za_host['interfaces'][0]['ip']).first()
-        if not host_obj:continue
-        if za_host['za_action'] == 0:   # 0:活
+        za_action = zabbix_init.za_agent_action(host_dict['hostid'])
+        za_cpu_system = zabbix_init.za_agent_cpu_system(host_dict['hostid'])
+        za_cpu_user = zabbix_init.za_agent_cpu_user(host_dict['hostid'])
+        za_mem_available = zabbix_init.za_agent_mem(host_dict['hostid'])
+        za_mem_total = zabbix_init.host_mem_total(host_dict['hostid'])
+        za_disk = zabbix_init.za_agent_disk(host_dict['hostid'])
 
+        host_dict['za_action'] = int(za_action[0]['value'])
+        host_dict['za_cpu'] = round(float(za_cpu_system[0]['lastvalue']) + float(za_cpu_user[0]['lastvalue']), 2)
+        host_dict['za_mem'] = round(
+            (int(za_mem_total[0]['lastvalue']) - int(za_mem_available[0]['lastvalue'])) / 1024 / 1024 / 1024, 2)
+        host_dict['za_disk'] = round(int(za_disk[0]['lastvalue']) / 1024 / 1024 / 1024, 2)
 
-            hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
-            if not hz_obj:
-                models.Host_zabbix.objects.create(
-                    za_action=za_host['za_action'],
-                    za_cpu=za_host['za_cpu'],
-                    za_mem=za_host['za_mem'],
-                    za_disk=za_host['za_disk'],
-                    asset_extend=host_obj,
-                    za_ip=za_host['interfaces'][0]['ip']
-                )
-            else:
+        obj, create = models.Host_zabbix.objects.update_or_create(
+            za_ip=host_dict['interfaces'][0]['ip'],
+            defaults={
+                'za_action': host_dict.get('za_action'),
+                'za_cpu': host_dict.get('za_cpu', 0),
+                'za_mem': host_dict.get('za_mem', 0),
+                'za_disk': host_dict.get('za_disk', 0),
+                'asset_extend': host_obj,
+            }
 
-                models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip']).update(
-                    za_action=za_host['za_action'],
-                    za_cpu=za_host['za_cpu'],
-                    za_mem=za_host['za_mem'],
-                    za_disk=za_host['za_disk']
-                )
-
-
-        # elif za_host['za_action'] == 1: #1：死
-        #
-        #     hz_obj = models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip'])
-        #     if not hz_obj:
-        #         models.Host_zabbix.objects.create(
-        #             za_action=za_host['za_action'],
-        #             za_cpu=0,
-        #             za_mem=0,
-        #             za_disk=0,
-        #             asset_extend=host_obj,
-        #             za_ip=za_host['interfaces'][0]['ip']
-        #         )
-        #     else:
-        #         models.Host_zabbix.objects.filter(za_ip=za_host['interfaces'][0]['ip']).update(
-        #             za_action=za_host['za_action'],
-        #             za_cpu=0,
-        #             za_mem=0,
-        #             za_disk=0,
-        #         )
+        )
 
 @app.task(ignore_result=True)
 def get_server_status(iplist=None,servername=None):
