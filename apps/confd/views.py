@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import django.utils.timezone as timezone
 from confd.modelform.confd_modelform import Confd_MF
-from hosts.models import Service
+from django.conf import settings
 
 from utils._BT_pagination import BtPaging
 from hosts.models import Confd,Confd_Update_History
@@ -175,7 +175,7 @@ def confd_init(request):
                 rbt = ANSRunner([], redisKey='1')
                 # Ansible Adhoc
                 rbt.run_model(host_list=[host_ip], module_name='script',
-                              module_args='/opt/DOM/server.sh {} {}'.format("restarted", server_type))
+                              module_args='{} {} {}'.format(settings.FD_SERVER_SHELL_SCRIPT,"restarted", server_type))
 
                 data = rbt.get_model_result()
 
@@ -241,7 +241,7 @@ def confd_rollback(request):
                 rbt = ANSRunner([], redisKey='1')
                 # Ansible Adhoc
                 rbt.run_model(host_list=[rollback_obj.conf_ip], module_name='script',
-                              module_args='/opt/DOM/server.sh {} {}'.format("restarted", rollback_obj.conf_server))
+                              module_args='{} {} {}'.format(settings.FD_SERVER_SHELL_SCRIPT,"restarted", rollback_obj.conf_server))
 
                 data = rbt.get_model_result()
 

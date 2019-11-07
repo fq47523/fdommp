@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-
+from django.conf import  settings
 from api.utils.ansible_api import ANSRunner
 
 
@@ -59,7 +59,7 @@ class ServiceAction(APIView):
         rbt = ANSRunner([], redisKey='1')
         # Ansible Adhoc
         rbt.run_model(host_list=[ip], module_name='script',
-                      module_args='/opt/DOM/server.sh {} {}'.format(target,servicename))
+                      module_args='{} {} {}'.format(settings.FD_SERVER_SHELL_SCRIPT,target,servicename))
 
         data = rbt.get_model_result()
 

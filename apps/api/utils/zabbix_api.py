@@ -1,10 +1,11 @@
 import  requests
+from django.conf import settings
 # from ops import models
 
 
 class Zabbix_API(object):
     def __init__(self):
-        self.url = 'http://192.168.79.133/api_jsonrpc.php'
+        self.url = settings.FD_ZABBIX_API_URL
         self.user = 'admin'
         self.pwd = 'zabbix'
         self.token_id = 'e253f73ca7559cc82674241f807afbe3'
