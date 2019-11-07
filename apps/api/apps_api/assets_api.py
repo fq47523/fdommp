@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from api import  serializers
 from assets.models import *
 
-class AssetsServer(APIView):
+class AssetsServerList(APIView):
     def get(self, request, format=None):
         snippets = Server.objects.all()
         serializer = serializers.AssetsServerSerializer(snippets, many=True)
@@ -26,6 +26,22 @@ class AssetsServer(APIView):
             return Response({'code':201}, status=status.HTTP_201_CREATED)
         return Response(404)
 
+
+
+class AssetsServerDetail(APIView):
+
+
+    def get(self,request,id):
+        try:
+            snippet = Server.objects.get(id=id)
+        except Server.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+        serializer = serializers.AssetsServerSerializer(snippet)
+        return Response(serializer.data)
+
+
     def put(self, request, id,format=None):
         if (request.data.get('data')):
             data = request.data.get('data')
@@ -37,8 +53,6 @@ class AssetsServer(APIView):
         except Server.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-
-        # print (data)
         if (data.get('asset')):
             asset_data = data.pop('asset')
             print (asset_data)
@@ -57,7 +71,6 @@ class AssetsServer(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
     def delete(self,request, id,format=None):

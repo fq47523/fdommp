@@ -194,6 +194,6 @@ FD_ES_PORT = 9200
 
 FD_ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
 
-FD_ANSIBLE_HOSTS_FILE = '/home/fuqing/hosts'
+FD_ANSIBLE_HOSTS_FILE = BASE_DIR+'/apps/hosts/ansible_hosts'
 
 FD_SERVER_SHELL_SCRIPT = BASE_DIR+'/apps/service/server.sh'

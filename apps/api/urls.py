@@ -23,9 +23,10 @@ app_name = 'api'
 
 urlpatterns = [
     re_path('dashboard/(?P<type>\w+)/', views.dashboard_data, name='dashboard'),
-    path("assets/server/list/",assets_api.AssetsServer.as_view(),name='api-assetslist'),
+    path("asset/server/",assets_api.AssetsServerList.as_view(),name='api-assetslist'),
+    re_path("asset/server/(?P<id>[0-9]+)/", assets_api.AssetsServerDetail.as_view(), name='api-assetaction'),
     path("service/action/",service_api.ServiceAction.as_view()),
-    re_path("assets/server/action/(?P<id>[0-9]+)/",assets_api.AssetsServer.as_view(),name='api-assetaction'),
+
 
 
 ]

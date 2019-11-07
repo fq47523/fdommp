@@ -1,3 +1,4 @@
+from django.conf import  settings
 import json,sys,os,multiprocessing
 from ansible import constants
 from collections import namedtuple
@@ -9,7 +10,7 @@ from ansible.plugins.callback import CallbackBase
 from ansible.inventory.manager import InventoryManager
 from ansible.vars.manager import VariableManager
 from ansible.inventory.host import Host,Group
-#from admin.settings.settings import BASE_DIR
+
 
 
 class MyTaskQueueManager(TaskQueueManager):
@@ -29,7 +30,7 @@ class MyInventory():
     def __init__(self,resource,loader,variable_manager):
         self.resource = resource
         self.loader = DataLoader()
-        self.inventory = InventoryManager(loader=self.loader, sources=['/home/fuqing/hosts'])
+        self.inventory = InventoryManager(loader=self.loader, sources=[settings.FD_ANSIBLE_HOSTS_FILE])
 
         # self.variable_manager.set_inventory(self.inventory)
         self.variable_manager = VariableManager(loader=self.loader, inventory=self.inventory)

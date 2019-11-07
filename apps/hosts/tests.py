@@ -33,14 +33,17 @@ from rest_framework_jwt.utils import  jwt_payload_handler
 # token = jwt_encode_handler(payload)
 # print (token)
 
+import  json
+from api.utils.ansible_api import ANSRunner
 
-from assets.models import Asset
-from api.utils.zabbix_api import Zabbix_API
-from hosts import models
+rbt = ANSRunner([], redisKey='1')
+# Ansible Adhoc
+rbt.run_model(host_list=['192.168.79.134'], module_name='shell', module_args='free')
+data = rbt.get_model_result()  # 返回字典: {"success": {}, "failed": {}, "unreachable":{}}
 
+data_json = json.dumps(data, indent=4)
 
-
-print (settings.FD_ES_IP)
+print(data)
 
 
 
