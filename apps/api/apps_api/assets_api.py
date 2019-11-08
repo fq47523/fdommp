@@ -2,14 +2,24 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-
+from assets.dao import AssetManage
 from api import  serializers
 from assets.models import *
+
+class AssetsMeun(APIView,AssetManage):
+    def get(self,request):
+        meun = self.api_meun()
+        return Response(meun,status=status.HTTP_200_OK)
+
+
+
 
 class AssetsServerList(APIView):
     def get(self, request, format=None):
         snippets = Server.objects.all()
         serializer = serializers.AssetsServerSerializer(snippets, many=True)
+
+        print (type(serializer.data),serializer.data)
         return Response(serializer.data)
 
     def post(self,request, format=None):

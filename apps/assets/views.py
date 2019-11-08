@@ -23,9 +23,6 @@ class AssetView(LoginRequiredMixin,View,AssetManage):
         return render(request,'assets/assets_list.html',locals())
 
 
-    def post(self,request,*args,**kwargs):
-        pass
-
 class AssetDetailView(LoginRequiredMixin,View,AssetManage):
     '''获取一个资产类型详细数据与更新数据；'''
     def get(self,request,*args,**kwargs):
@@ -35,40 +32,10 @@ class AssetDetailView(LoginRequiredMixin,View,AssetManage):
         meun = self.meun()
         print (asset.tags.all())
         return render(request, 'assets/asset_detail.html', locals())
-        # if hasattr(self, asset.asset_type):
-        #     func = getattr(self, asset.asset_type)
-        #     return func(request,asset)
-        # else:
-        #     return HttpResponse(status=404)
 
-
-    # def post(self,request,*args,**kwargs):
-    #     query_dict = self.query_parm(request)
-    #
-    #
-    #     # print (query_dict['action'])
-    #     if hasattr(self, query_dict['action']):
-    #         func = getattr(self, query_dict['action'])
-    #         return func(request,query_dict['name'])
-    #     else:
-    #         return HttpResponse(status=404)
-    #
-    # def gailanA(self,request, *args, **kwagrs):
-    #     # print (request.POST,args[0])
-    #     exec_status = self.update_server_gailan_a(request,args[0])
-    #     return JsonResponse({'data':200})
-    #
-    # def gailanB(self,request, *args, **kwagrs):
-    #     # print (request.POST,args[0])
-    #     exec_status = self.update_server_gailan_b(request,args[0])
-    #     return JsonResponse({'data':200})
-
-    # def server(self,request, asset,*args, **kwagrs):
-    #     asset_gailan = GaiLanA(instance=asset)
-    #     asset_gailanB = GaiLanB(instance=asset.server)
-    #
-    #
-    #     return render(request, 'assets/asset_detail.html', locals())
+class AssetManualAdd(LoginRequiredMixin,View,AssetManage):
+    def get(self,request, *args, **kwagrs):
+        return render(request,'assets/asset_add.html',{'meun':self.meun()})
 
 
 class AnsibleAssetCreateOrUpdate(LoginRequiredMixin,View,AssetManage,AnsibleAssetsSetup):
@@ -89,15 +56,6 @@ class AnsibleAssetCreateOrUpdate(LoginRequiredMixin,View,AssetManage,AnsibleAsse
 
 
         return HttpResponse(200)
-
-
-class AssetManualAdd(LoginRequiredMixin,View,AssetManage):
-    def get(self,request, *args, **kwagrs):
-
-        return render(request,'assets/asset_add.html',{'meun':self.meun()})
-
-
-
 
 
 class AutoAssetCreateOrUpdate(LoginRequiredMixin,View):

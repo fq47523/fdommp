@@ -2,6 +2,8 @@ import json,os
 import subprocess
 from assets import models
 from django.shortcuts import get_object_or_404
+from django.core import serializers
+
 
 class AssetManage(object):
 
@@ -35,44 +37,64 @@ class AssetManage(object):
                 'server_type':server.sub_asset_type_choice,
                 }
 
-    def update_server_gailan_a(self,request, *args, **kwagrs):
-        # print(request.POST,args[0])
-        asset_type_data = request.POST.get('asset_type',None)
-        business_unit_id = request.POST.get('business_unit',None)
-        manufacturer_id = request.POST.get('manufacturer',None)
-        manage_ip = request.POST.get('manage_ip',None)
-        idc_id = request.POST.get('idc',None)
+    def api_meun(self):
+        asset = models.Asset()
+        server = models.Server()
 
-        asset_obj = models.Asset.objects.filter(id=args[0]).first()
-        asset_obj.asset_type = asset_type_data
-        asset_obj.business_unit = models.BusinessUnit.objects.get(id=business_unit_id) if business_unit_id else None
-        asset_obj.manufacturer = models.Manufacturer.objects.get(id=manufacturer_id) if manufacturer_id else None
-        asset_obj.manage_ip = manage_ip
-        asset_obj.idc = models.IDC.objects.get(id=idc_id) if idc_id else None
-        asset_obj.save()
+        mfs =  [{'pk':i.id,'name':i.name} for i in models.Manufacturer.objects.all() ]
+        idcs =  [{'pk':i.id,'name':i.name} for i in models.IDC.objects.all()]
+        tags = [{'pk':i.id,'name':i.name} for i in models.Tag.objects.all()]
+        return {
+                'asset_type': asset.asset_type_choice,
+                'asset_status': asset.asset_status,
 
-
-        # print (c.values())
-        return True
+                'mf': mfs,
+                'idc': idcs,
+                'tag': tags,
+                'server_type': server.sub_asset_type_choice,
+                }
 
 
-    def update_server_gailan_b(self,request, *args, **kwagrs):
-        # print ('r:',request.POST,'args:',args[0])
-        username = request.POST.get('username')
-        passwd = request.POST.get('passwd',None)
-        sshport = request.POST.get('sshport',None)
-        sudo_passwd = request.POST.get('sudo_passwd',None)
-        keyfile = request.POST.get('keyfile',None)
-        # print (username,passwd,sudo_passwd)
-        asset_obj = models.Asset.objects.filter(id=args[0]).first()
-        server_obj = models.Server.objects.filter(asset=asset_obj).first()
-        server_obj.username = username
-        server_obj.passwd = passwd
-        server_obj.sshport = sshport
-        server_obj.sudo_passwd = sudo_passwd
-        server_obj.keyfile = keyfile if keyfile else  None
-        server_obj.save()
-        # print (server_obj.sshport)
+
+
+    # def update_server_gailan_a(self,request, *args, **kwagrs):
+    #     # print(request.POST,args[0])
+    #     asset_type_data = request.POST.get('asset_type',None)
+    #     business_unit_id = request.POST.get('business_unit',None)
+    #     manufacturer_id = request.POST.get('manufacturer',None)
+    #     manage_ip = request.POST.get('manage_ip',None)
+    #     idc_id = request.POST.get('idc',None)
+    #
+    #     asset_obj = models.Asset.objects.filter(id=args[0]).first()
+    #     asset_obj.asset_type = asset_type_data
+    #     asset_obj.business_unit = models.BusinessUnit.objects.get(id=business_unit_id) if business_unit_id else None
+    #     asset_obj.manufacturer = models.Manufacturer.objects.get(id=manufacturer_id) if manufacturer_id else None
+    #     asset_obj.manage_ip = manage_ip
+    #     asset_obj.idc = models.IDC.objects.get(id=idc_id) if idc_id else None
+    #     asset_obj.save()
+    #
+    #
+    #     # print (c.values())
+    #     return True
+    #
+    #
+    # def update_server_gailan_b(self,request, *args, **kwagrs):
+    #     # print ('r:',request.POST,'args:',args[0])
+    #     username = request.POST.get('username')
+    #     passwd = request.POST.get('passwd',None)
+    #     sshport = request.POST.get('sshport',None)
+    #     sudo_passwd = request.POST.get('sudo_passwd',None)
+    #     keyfile = request.POST.get('keyfile',None)
+    #     # print (username,passwd,sudo_passwd)
+    #     asset_obj = models.Asset.objects.filter(id=args[0]).first()
+    #     server_obj = models.Server.objects.filter(asset=asset_obj).first()
+    #     server_obj.username = username
+    #     server_obj.passwd = passwd
+    #     server_obj.sshport = sshport
+    #     server_obj.sudo_passwd = sudo_passwd
+    #     server_obj.keyfile = keyfile if keyfile else  None
+    #     server_obj.save()
+    #     # print (server_obj.sshport)
 
 
 

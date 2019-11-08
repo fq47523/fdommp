@@ -34,16 +34,17 @@ from rest_framework_jwt.utils import  jwt_payload_handler
 # print (token)
 
 import  json
-from api.utils.ansible_api import ANSRunner
+from assets.dao import AssetManage
+from django.core import serializers
+from assets.models import Tag,Asset
 
-rbt = ANSRunner([], redisKey='1')
-# Ansible Adhoc
-rbt.run_model(host_list=['192.168.79.134'], module_name='shell', module_args='free')
-data = rbt.get_model_result()  # 返回字典: {"success": {}, "failed": {}, "unreachable":{}}
+ass = Asset.objects.all()
+tag = Tag.objects.all()
+aa = AssetManage()
+cc = aa.api_meun()
+ret = serializers.serialize("json", tag,fields=('name'))
 
-data_json = json.dumps(data, indent=4)
-
-print(data)
+print (type(ret),ret)
 
 
 
