@@ -41,14 +41,14 @@ class AssetManage(object):
         asset = models.Asset()
         server = models.Server()
 
-        mfs =  [{'pk':i.id,'name':i.name} for i in models.Manufacturer.objects.all() ]
+        bu =  [{'pk':i.id,'name':i.name} for i in models.BusinessUnit.objects.all() ]
         idcs =  [{'pk':i.id,'name':i.name} for i in models.IDC.objects.all()]
         tags = [{'pk':i.id,'name':i.name} for i in models.Tag.objects.all()]
         return {
                 'asset_type': asset.asset_type_choice,
                 'asset_status': asset.asset_status,
 
-                'mf': mfs,
+                'bu': bu,
                 'idc': idcs,
                 'tag': tags,
                 'server_type': server.sub_asset_type_choice,

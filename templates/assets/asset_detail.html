@@ -57,18 +57,8 @@
                     <td>{{ asset.sn }}</td>
 {#                    <td>{{ asset.business_unit|default:'N/A' }}</td>#}
                     <td>
-                        <select class="form-control"  name="asset_business_unit">
-                            <option value="null"></option>
-                            {% for bu in meun.bu %}
+                        <select class="form-control"  name="asset_business_unit" id="asset_business_unit">
 
-                                {% if bu.name == asset.business_unit.name %}
-                                    <option value="{{ bu.id }}" selected="selected">{{ bu.name }}</option>
-                                {% else %}
-
-                                    <option value="{{ bu.id }}">{{ bu.name }}</option>
-                                {% endif %}
-
-                            {% endfor %}
                         </select>
                     </td>
 {#                    <td>{{ asset.manufacturer|default:'N/A' }}</td>#}
@@ -77,21 +67,13 @@
                     <td><input type="text" name="asset_manage_ip" value="{{ asset.manage_ip }}"></td>
 {#                    <td>{{ asset.idc|default:'N/A' }}</td>#}
                     <td>
-                        <select class="form-control"  name="asset_idc">
-                            {% for idc in meun.idc %}
+                        <select class="form-control"  name="asset_idc" id="asset_idc">
 
-                                {% if idc in asset.idc.all %}
-                                    <option value="{{ idc.id }}" selected="selected">{{ idc.name }}</option>
-                                {% else %}
-                                    <option value="{{ idc.id }}">{{ idc.name }}</option>
-                                {% endif %}
-
-                            {% endfor %}
                         </select>
                     </td>
 
                     <td>
-                        <select class="form-control" multiple="multiple" name="asset_tags">
+                        <select class="form-control" multiple="multiple" name="asset_tags" id="asset_tags">
                         {% for tag in meun.tag %}
 
                             {% if tag in asset.tags.all %}
@@ -353,6 +335,22 @@
                 let netStart = name.indexOf("net_");
 
                 if (assetStart==0){
+                    /*
+                    if (name == 'asset_tags'){
+                        var items = new Array();
+
+                        items = $("#asset_tags option:selected");
+
+                        var items_ret = get_multiple_select_value(items)
+                        console.log(typeof items_ret)
+                        var new_name = name.replace("asset_","")
+                        asset[new_name] = items_ret
+                        console.log('name:'+name)
+
+                    }else {
+                        var asz = "asset."+name.replace("asset_","")+" = '" + value + "'";
+                    }
+                    */
                     var asz = "asset."+name.replace("asset_","")+" = '" + value + "'";
 
                     try {
@@ -402,6 +400,7 @@
 
 
         function gailan(serverID) {
+
     	    var asset_from  = document.getElementById('gailan')
             var asset_data = getFormData(asset_from,'');
     	    console.log(asset_data)
@@ -418,14 +417,93 @@
             )
         }
 
+
+
+        function requests(method,url,data){
+            var ret = '';
+            $.ajax({
+                async:false,
+                url:url, //请求地址
+                type:method,  //提交类似
+                success:function(response){
+                     ret = response;
+                },
+                error:function(data){
+                    ret = {};
+                }
+            });
+            return 	ret
+        }
+
+
+
+
+
+
         $(function () {
             /*
             $.get('/api/asset/server/23/',function (data) {
                 console.log(data)
             })
             */
-            console.log($("input[name='asset_asset_type']").val())
+            meun_url = '/api/asset/meun/'
+            url = '/api/asset/server/23/'
+            var api_meun = requests('get',meun_url)
+            var asset_data = requests('get',url)
+
+            console.log(api_meun)
+            console.log(asset_data)
+            asset_business_unit_select(api_meun.bu,asset_data.asset.business_unit)
+            asset_idc_select(api_meun.idc,asset_data.asset.idc)
+
+
+
         })
+
+        function asset_business_unit_select (meun_bu,asset_bu){
+			var binlogHtml = '<select class="form-control"  name="asset_business_unit" id="asset_business_unit"><option   value="">请选择服务器</option>'
+			var selectHtml = '';
+			for (var i=0; i < meun_bu.length; i++){
+			    if (asset_bu == meun_bu[i]["pk"]){
+			        selectHtml += '<option  selected="selected value="'+ meun_bu[i]["pk"] +'">' + meun_bu[i]["name"] + '</option>'
+                }else {
+			        selectHtml += '<option   value="'+ meun_bu[i]["pk"] +'">' + meun_bu[i]["name"] + '</option>'
+                }
+
+			};
+			binlogHtml =  binlogHtml + selectHtml + '</select>';
+			$("#asset_business_unit").html(binlogHtml)
+        }
+
+        function asset_idc_select(meun_idc,asset_idc) {
+            var binlogHtml = '<select class="form-control"  name="asset_idc" id="asset_idc"><option   value="">请选择服务器</option>'
+			var selectHtml = '';
+			for (var i=0; i < meun_idc.length; i++){
+			    if (asset_idc == meun_idc[i]["pk"]){
+			        selectHtml += '<option  selected="selected value="'+ meun_idc[i]["pk"] +'">' + meun_idc[i]["name"] + '</option>'
+                }else {
+			        selectHtml += '<option   value="'+ meun_idc[i]["pk"] +'">' + meun_idc[i]["name"] + '</option>'
+                }
+
+			};
+			binlogHtml =  binlogHtml + selectHtml + '</select>';
+			$("#asset_idc").html(binlogHtml)
+        }
+
+
+        function get_multiple_select_value(items) {
+
+
+
+            var itemvalue = new Array();
+
+            for(var i = 0;i<items.length;i++){
+                itemvalue.push(items[i].value);
+
+            }
+            console.log(itemvalue)
+            return itemvalue
+        }
 
 
     </script>

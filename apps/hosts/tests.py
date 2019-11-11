@@ -38,13 +38,14 @@ from assets.dao import AssetManage
 from django.core import serializers
 from assets.models import Tag,Asset
 
-ass = Asset.objects.all()
+ass = Asset()
 tag = Tag.objects.all()
 aa = AssetManage()
 cc = aa.api_meun()
-ret = serializers.serialize("json", tag,fields=('name'))
+# ret = serializers.serialize("json",)
+dd = {'asset_type': 'server', 'sn': 'ubuntu', 'name': 'server: ubuntu', 'tags':[1,2,3]}
+Asset.objects.filter(sn='ubuntu').update(**dd)
 
-print (type(ret),ret)
 
 
 

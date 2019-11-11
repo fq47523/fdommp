@@ -9,6 +9,7 @@ from assets.models import *
 class AssetsMeun(APIView,AssetManage):
     def get(self,request):
         meun = self.api_meun()
+        print (type(meun))
         return Response(meun,status=status.HTTP_200_OK)
 
 
@@ -57,7 +58,7 @@ class AssetsServerDetail(APIView):
             data = request.data.get('data')
         else:
             data = request.data
-
+        print( data )
         try:
             snippet = Server.objects.get(id=id)
         except Server.DoesNotExist:
@@ -65,9 +66,9 @@ class AssetsServerDetail(APIView):
 
         if (data.get('asset')):
             asset_data = data.pop('asset')
-            print (asset_data)
+
             try:
-                print(snippet.asset.id)
+
                 asset_snippet = Asset.objects.get(id=snippet.asset.id)
 
                 assets = serializers.AssetsSerializer(asset_snippet, data=asset_data)
@@ -78,8 +79,10 @@ class AssetsServerDetail(APIView):
 
         serializer = serializers.AssetsServerSerializer(snippet, data=data)
         if serializer.is_valid():
+
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
