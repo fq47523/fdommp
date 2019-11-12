@@ -20,7 +20,7 @@ class AssetsServerList(APIView):
         snippets = Server.objects.all()
         serializer = serializers.AssetsServerSerializer(snippets, many=True)
 
-        print (type(serializer.data),serializer.data)
+
         return Response(serializer.data)
 
     def post(self,request, format=None):
@@ -81,6 +81,7 @@ class AssetsServerDetail(APIView):
         if serializer.is_valid():
 
             serializer.save()
+            print (serializer.data)
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
