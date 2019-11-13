@@ -17,6 +17,7 @@ class AssetsMeun(APIView,AssetManage):
 
 class AssetsServerList(APIView):
     def get(self, request, format=None):
+        print(request.query_params.dict())
         snippets = Server.objects.all()
         serializer = serializers.AssetsServerSerializer(snippets, many=True)
 
@@ -77,14 +78,14 @@ class AssetsServerDetail(APIView):
             if assets.is_valid():
                 assets.save()
 
-        serializer = serializers.AssetsServerSerializer(snippet, data=data)
-        if serializer.is_valid():
+                serializer = serializers.AssetsServerSerializer(snippet, data=data)
+                if serializer.is_valid():
 
-            serializer.save()
-            print (serializer.data)
-            return Response(serializer.data)
+                    serializer.save()
+                    print (serializer.data)
+                    return Response({'status':'success','data':serializer.data},status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(assets.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def delete(self,request, id,format=None):

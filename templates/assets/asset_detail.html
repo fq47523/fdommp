@@ -324,12 +324,28 @@
                 }catch (e) {
                     alert(e);
                 }
+
+                /*
                 if (value.length == 0) {
+
                     if ((typeof filler != 'string') || (filler.length == 0))
                         continue;
                     else
                         value = filler;
                 }
+                */
+                if (value.length == 0) {
+
+                    if (name == 'server_keyfile')
+                        continue;
+
+                }
+
+
+
+
+
+
                 let assetStart = name.indexOf("asset_");
                 let serverStart = name.indexOf("server_");
                 let netStart = name.indexOf("net_");
@@ -410,7 +426,12 @@
                 url:url,
                 contentType: "application/json",
                 type:"PUT",
-                data: JSON.stringify({'data':asset_data})
+                data: JSON.stringify({'data':asset_data}),
+                success:function (Response) {
+                    if (Response.status == 'success'){
+                        location.reload()
+                    }
+                }
                 }
 
             )
@@ -446,7 +467,7 @@
             })
             */
             meun_url = '/api/asset/meun/'
-            url = '/api/asset/server/23/'
+            url = '/api/asset/server/{{ asset.server.id }}/'
             var api_meun = requests('get',meun_url)
             var asset_data = requests('get',url)
             console.log(asset_data)
@@ -460,7 +481,7 @@
         })
 
         function asset_business_unit_select (meun_bu,asset_bu){
-			var binlogHtml = '<select class="form-control"  name="asset_business_unit" id="asset_business_unit"><option   value="">请选择服务器</option>'
+			var binlogHtml = '<select class="form-control"  name="asset_business_unit" id="asset_business_unit"><option   value="">-----</option>'
 			var selectHtml = '';
 			for (var i=0; i < meun_bu.length; i++){
 			    if (asset_bu == meun_bu[i]["pk"]){
@@ -475,7 +496,7 @@
         }
 
         function asset_idc_select(meun_idc,asset_idc) {
-            var binlogHtml = '<select class="form-control"  name="asset_idc" id="asset_idc"><option   value="">请选择服务器</option>'
+            var binlogHtml = '<select class="form-control"  name="asset_idc" id="asset_idc"><option   value="">-----</option>'
 			var selectHtml = '';
 			for (var i=0; i < meun_idc.length; i++){
 			    if (asset_idc == meun_idc[i]["pk"]){
@@ -490,7 +511,7 @@
         }
 
         function asset_tags_select(meun_tags,asset_tag) {
-            var binlogHtml = '<select class="form-control" multiple="multiple" name="asset_tags" id="asset_tags"><option   value=""></option>'
+            var binlogHtml = '<select class="form-control" multiple="multiple" name="asset_tags" id="asset_tags"><option   value="">-----</option>'
 			var selectHtml = '';
 
 
@@ -524,8 +545,14 @@
 
             var itemvalue = new Array();
 
+
             for(var i = 0;i<items.length;i++){
-                itemvalue.push(items[i].value);
+                if (items[i].value.length == 0){
+                    return itemvalue
+                }else {
+                    itemvalue.push(items[i].value);
+                }
+
 
             }
 

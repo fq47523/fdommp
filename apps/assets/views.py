@@ -16,7 +16,7 @@ from .dao import AssetManage,AutoNewAsset,AutoUpdateAsset,AnsibleAssetsSetup
 
 
 class AssetView(LoginRequiredMixin,View,AssetManage):
-    '''获取资产列表与手动添加资产'''
+    '''获取资产列表'''
     @method_decorator(permission_required('assets.assets_read','/403/'))
     def get(self,request,*args,**kwargs):
         assets = self.select_all_asset()
@@ -30,7 +30,7 @@ class AssetDetailView(LoginRequiredMixin,View,AssetManage):
 
         asset = self.select_obj_asset(self.query_parm(request)['assetid'])
         meun = self.meun()
-        print (asset.tags.all())
+
         return render(request, 'assets/asset_detail.html', locals())
 
 class AssetManualAdd(LoginRequiredMixin,View,AssetManage):
@@ -42,7 +42,7 @@ class AnsibleAssetCreateOrUpdate(LoginRequiredMixin,View,AssetManage,AnsibleAsse
     '''手动触发同步所有ansible下的资产'''
     def post(self,request, *args, **kwagrs):
         query_dict = self.query_parm(request)
-        print (query_dict,type(query_dict))
+
         if hasattr(self, query_dict['action']):
             func = getattr(self, query_dict['action'])
             return func(request)
