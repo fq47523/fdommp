@@ -36,16 +36,14 @@ from rest_framework_jwt.utils import  jwt_payload_handler
 import  json
 from assets.dao import AssetManage
 from django.core import serializers
-from assets.models import Tag,Asset
+from assets.models import Tag,Asset,Server
+from hosts.models import Service
+serverlist_dict = {}
+for server_obj in Service.objects.all():
+    serverlist_dict[server_obj.s_name] = [ii['manage_ip'] for ii in server_obj.h_server.all().values('manage_ip')]
+    # print (server_obj)
 
-a = [1,2]
-b = [2,3]
-
-if a in b:
-    print(111)
-
-
-
+print (serverlist_dict)
 
 
 

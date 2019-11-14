@@ -58,12 +58,12 @@ def add(x, y):
 
     return x + y
 
-# test
+
 @shared_task
 def control_host_server(ip,action,server):
     rbt = ANSRunner([], redisKey='1')
     # Ansible Adhoc
-    rbt.run_model(host_list=[ip], module_name='script', module_args='{} {} {}'.format(settings.SERVER_SHELL_SCRIPT,action,server))
+    rbt.run_model(host_list=[ip], module_name='script', module_args='{} {} {}'.format(settings.FD_SERVER_SHELL_SCRIPT,action,server))
     data = rbt.get_model_result()
     if data['success']:
         for k, v in data['success'].items():
@@ -161,7 +161,7 @@ def get_server_status(iplist=None,servername=None):
         serverlist_dict = {}
 
         for server_obj in models.Service.objects.all():
-            serverlist_dict[server_obj.s_name] = [ii['h_ip'] for ii in server_obj.h_server.all().values('h_ip')]
+            serverlist_dict[server_obj.s_name] = [ii['manage_ip'] for ii in server_obj.h_server.all().values('manage_ip')]
 
         for server_k in serverlist_dict:
             rbt = ANSRunner([])

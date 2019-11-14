@@ -70,7 +70,7 @@ def server_add(request):
 def server_operation(request,sid,type):
     '''服务编辑'''
     if request.method == "GET":
-        if  type == '1':  #服务编辑
+        if  type == '1':  #服务编辑page
             Service_obj = models.Service.objects.filter(s_id=sid).first()
 
             Service_MF_I = Service_MF(instance=Service_obj)
@@ -110,13 +110,16 @@ def server_operation(request,sid,type):
 
                 add_host = [i for i in new_hid if i not in old_hid]
                 if add_host:
-                    print (add_host)
+                    print ('add:',add_host)
                     host_ip = Asset.objects.filter(id__in=add_host).values('manage_ip')
                     host_ip_list = []
+                    print ('hostlist:',host_ip_list)
                     for i in host_ip: host_ip_list.append(i['manage_ip'])
-                    servicehealth = ServiceHealth(request.POST.get('s_name'), host_ip_list)
-                    servicehealth.status_init()
-
+                    print ('name:',request.POST.get('s_name'))
+                    print('hostlist:', host_ip_list)
+                    # servicehealth = ServiceHealth(request.POST.get('s_name'), host_ip_list)
+                    # servicehealth.status_init()
+                    get_server_status.delay(iplist=host_ip_list, servername=request.POST.get('s_name'))
 
                 return HttpResponse(200)
             else:
