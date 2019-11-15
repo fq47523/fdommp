@@ -38,13 +38,16 @@ from assets.dao import AssetManage
 from django.core import serializers
 from assets.models import Tag,Asset,Server
 from hosts.models import Service
-serverlist_dict = {}
-for server_obj in Service.objects.all():
-    serverlist_dict[server_obj.s_name] = [ii['manage_ip'] for ii in server_obj.h_server.all().values('manage_ip')]
-    # print (server_obj)
 
-print (serverlist_dict)
+data = {'success':{},'failed':{},'unreachable':'1'}
+if data['success']:
+    print (1)
 
+elif data['failed']:
+    print (2)
+
+elif data['unreachable']:
+    print (3)
 
 
 
