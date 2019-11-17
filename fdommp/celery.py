@@ -5,8 +5,8 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fdommp.settings')
 
-broker = 'redis://127.0.0.1:6379/5'
-backend = 'redis://127.0.0.1:6379/6'
+broker = settings.FD_CELERY_BROKER
+backend = settings.FD_CELERY_BACKEND
 
 app = Celery('fdommp',broker=broker,backend=backend)
 

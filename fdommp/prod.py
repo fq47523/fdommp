@@ -186,8 +186,8 @@ STATICFILES_DIRS = (
 )
 
 # customize
-FD_CELERY_BROKER = 'redis://127.0.0.1:6379/5'
-FD_CELERY_BACKEND = 'redis://127.0.0.1:6379/6'
+FD_CELERY_BROKER = 'redis://fd-redis:6379/5'
+FD_CELERY_BACKEND = 'redis://fd-redis:6379/6'
 
 FD_ES_IP = '192.168.79.142'
 FD_ES_PORT = 9200
