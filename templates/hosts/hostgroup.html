@@ -99,7 +99,8 @@
         $('#websocket_post').click(function () {
             var btnObj = $(this);
             let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-            let ip_prot = window.location.host.replace(/:[\S]+/,':8090')
+            {#let ip_prot = window.location.host.replace(/:[\S]+/,':8090')#}
+            let ip_prot = window.location.host
     	    let websocket = new WebSocket(ws_scheme + '://' + ip_prot  + "/ws/ansible/model/" + randromChat + '/');
     	    let out_print = $("#websocket_result");
             NProgress.start();

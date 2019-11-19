@@ -1,1 +1,0 @@
-[{"model": "accounts.user", "pk": 1, "fields": {"u_name": "admin", "u_pwd": "admin"}}, {"model": "accounts.user", "pk": 2, "fields": {"u_name": "api", "u_pwd": "api"}}]

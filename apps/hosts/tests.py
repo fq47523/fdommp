@@ -39,15 +39,6 @@ from django.core import serializers
 from assets.models import Tag,Asset,Server
 from hosts.models import Service
 
-data = {'success':{},'failed':{},'unreachable':'1'}
-if data['success']:
-    print (1)
-
-elif data['failed']:
-    print (2)
-
-elif data['unreachable']:
-    print (3)
 
 
 

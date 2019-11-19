@@ -112,7 +112,7 @@ function webssh(unique) {
         }
         ),
         protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://',
-        ip_prot = window.location.host.replace(/:[\S]+/,':8090')
+        ip_prot = window.location.host
         // socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') +
         //     '/webssh/?' + 'unique=' + unique + '&width=' + cols + '&height=' + rows;
 

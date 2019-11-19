@@ -129,7 +129,9 @@
         function open_webssh(row) {
             $('#ssh_ip').val('')
             $('#ssh_ip').val(row)
-            window.open('http://192.168.79.134:8080/wssh/','newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
+            let ip_prot = window.location.host
+
+            window.open('http://'+ ip_prot +'/wssh/','newwindow','height=600,width=800,top=0,left=200,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no')
         }
 
 
