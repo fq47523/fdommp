@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from mptt.models import MPTTModel, TreeForeignKey
 # Create your models here.
 
 
@@ -243,6 +244,102 @@ class BusinessUnit(models.Model):
     class Meta:
         verbose_name = '业务线'
         verbose_name_plural = "业务线"
+
+
+class Business_Env_Assets(models.Model):
+    '''业务环境资产表'''
+    name = models.CharField(default="测试环境", max_length=100, unique=True)
+
+    class Meta:
+        db_table = 'opsmanage_business_env_assets'
+        default_permissions = ()
+        verbose_name = '资产管理'
+        verbose_name_plural = '业务环境类型表'
+
+
+class Business_Tree_Assets(MPTTModel):
+    text = models.CharField(verbose_name='节点名称', max_length=100, unique=True)
+    env = models.SmallIntegerField(blank=True, null=True, verbose_name='项目环境')
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, verbose_name='上级业务', null=True, blank=True, db_index=True,
+                            related_name='children')
+    manage = models.SmallIntegerField(blank=True, null=True, verbose_name='项目负责人')
+    group = models.CharField(blank=True, null=True, max_length=100, verbose_name='所属部门')
+    desc = models.CharField(blank=True, null=True, max_length=200)
+
+    class Meta:
+        db_table = 'opsmanage_business_assets'
+        default_permissions = ()
+        permissions = (
+            ("assets_read_business", "读取业务资产权限"),
+            ("assets_change_business", "编辑业务资产权限"),
+            ("assets_add_business", "添加业务资产权限"),
+            ("assets_delete_business", "删除业务资产权限"),
+        )
+        verbose_name = '资产管理'
+        verbose_name_plural = '业务节点资产表'
+
+    def __unicode__(self):
+        return self.text
+
+    def business_env(self):
+        try:
+            env = Business_Env_Assets.objects.get(id=self.get_root().env).name
+        except Exception as ex:
+            env = "未知"
+        return env
+
+    def node_path(self):
+        self.paths = ''
+        if not self.parent:
+            self.paths = self.text
+        else:
+            dataList = Business_Tree_Assets.objects.raw(
+                """SELECT id,text as path FROM opsmanage_business_assets WHERE tree_id = {tree_id} AND  lft < {lft} AND  rght > {rght} ORDER BY lft DESC;""".format(
+                    tree_id=self.tree_id, lft=self.lft, rght=self.rght))
+            for ds in dataList:
+                self.paths = ds.path + '/' + self.paths
+            self.paths = self.paths + self.text
+        return self.paths
+
+    def last_node(self):
+        if self.is_leaf_node():
+            return 1
+        else:
+            return 0
+
+    def icon(self):
+        icon = "fa fa-tree"
+        if self.parent:
+            icon = "fa fa-plus-square"
+        if self.is_leaf_node():
+            return 'fa fa-minus-square-o'
+        return icon
+
+    def to_json(self):
+        if self.parent:
+            parentId = self.parent.id
+        else:
+            parentId = 0
+        json_format = {
+            "id": self.id,
+            "text": self.text,
+            "icon": self.icon(),
+            "level": self.level,
+            "manage": self.manage,
+            "group": self.group,
+            "desc": self.desc,
+            "tree_id": self.tree_id,
+            "lft": self.lft,
+            "rght": self.rght,
+            "paths": self.node_path(),
+            "last_node": self.last_node(),
+            "parentId": parentId,
+        }
+        return json_format
+
+
+
+
 
 
 class Contract(models.Model):

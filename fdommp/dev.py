@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'webssh',
     'tasks',
     'assets',
+    'databases',
 
 ]
 
