@@ -251,7 +251,7 @@ class Business_Env_Assets(models.Model):
     name = models.CharField(default="测试环境", max_length=100, unique=True)
 
     class Meta:
-        db_table = 'opsmanage_business_env_assets'
+        db_table = 'assets_business_env_assets'
         default_permissions = ()
         verbose_name = '资产管理'
         verbose_name_plural = '业务环境类型表'
@@ -267,7 +267,7 @@ class Business_Tree_Assets(MPTTModel):
     desc = models.CharField(blank=True, null=True, max_length=200)
 
     class Meta:
-        db_table = 'opsmanage_business_assets'
+        db_table = 'assets_business_assets'
         default_permissions = ()
         permissions = (
             ("assets_read_business", "读取业务资产权限"),
@@ -294,7 +294,7 @@ class Business_Tree_Assets(MPTTModel):
             self.paths = self.text
         else:
             dataList = Business_Tree_Assets.objects.raw(
-                """SELECT id,text as path FROM opsmanage_business_assets WHERE tree_id = {tree_id} AND  lft < {lft} AND  rght > {rght} ORDER BY lft DESC;""".format(
+                """SELECT id,text as path FROM assets_business_assets WHERE tree_id = {tree_id} AND  lft < {lft} AND  rght > {rght} ORDER BY lft DESC;""".format(
                     tree_id=self.tree_id, lft=self.lft, rght=self.rght))
             for ds in dataList:
                 self.paths = ds.path + '/' + self.paths
