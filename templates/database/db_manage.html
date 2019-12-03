@@ -1,22 +1,34 @@
 {% extends "base_body.html" %}
 
 {% block link_1 %}
+    <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-select.css">
+    <style type="text/css">
+        #add_db_windows {
+            display: none;
+        }
+    </style>
 
 {% endblock %}
 
 {% block body %}
-    <section class="content">
+    <section class="content" >
         <div class="row">
             <div class="col-xs-12">
 
                 <div class="box">
                     <div class="box-header">
-                      <button type="button" class="btn btn-primary" onclick="assetsync()">add</button>
+                      <button  id="add_db" type="button" class="btn btn-primary" >add</button>
 
                     </div>
                 </div>
 
                 <div class="box-body">
+
+
+
+
 
                 </div>
 
@@ -24,11 +36,218 @@
             </div>
         </div>
     </section>
+
+
+
+
+    <section class="content" id="add_db_windows">
+        <div class="row">
+            <div class="col-xs-12">
+
+
+                <div class="box-body">
+
+                    <form role="form" method="post" id="addDatabase" class="main form-horizontal layui-form"  novalidate>
+                        <div class="form-group" >
+                             <label class="col-sm-2 control-label" >环境类型<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                 <select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_env" id="db_env" autocomplete="off">
+                                    <option value="beta" name="db_env" >测试</option>
+                                    <option value="ga" name="db_env">生产</option>
+                                 </select>
+                             </div>
+                        </div>
+                        <div class="form-group" >
+                             <label class="col-sm-2 control-label" >架构类型<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                 <select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_mode" id="db_mode" autocomplete="off">
+                                    <option value="single" name="db_mode" >单例</option>
+                                    <option value="ms" name="db_mode" >主从</option>
+                                    <option value="pxc" name="db_mode" >PXC</option>
+                                    <option value="master" name="db_mode" >主库</option>
+                                 </select>
+                             </div>
+                        </div>
+                        <input class="form-control"  type="hidden" value="mysql"  name="db_type" />
+                        <div class="form-group">
+                             <label class="col-sm-2 control-label" > 所属项目<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                  <select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%"  id="db_business"  onchange="javascript:oBtBusinessSelect();" autocomplete="off">
+                                        <option selected="selected" value="">请选择一个项目</option>
+                                  </select>
+                             </div>
+                        </div>
+                        <div class="form-group" >
+                             <label required="required" class="col-sm-2 control-label" >数据库IP<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                 <select class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_assets_id" id="db_assets_id" autocomplete="off">
+                                    <option selected="selected" value="">请选择服务器</option>
+                                 </select>
+                             </div>
+                        </div>
+                        <div class="form-group">
+                             <label class="col-sm-2 control-label" > 读写类型<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                 <select class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_rw"  id="db_rw" autocomplete="off">
+                                    <option selected="selected" value="read">只读</option>
+                                    <option  value="write">写入</option>
+                                    <option  value="r/w">读写</option>
+                                 </select>
+                             </div>
+                        </div>
+                        <div class="item form-group" >
+                             <label  class="col-sm-2 control-label" > 数据库类型<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                <input class="form-control" type="text" value="MySQL" placeholder="不能为空" name="db_type" id="db_type"  required/>
+                             </div>
+                        </div>
+                        <div class="item form-group" >
+                             <label  class="col-sm-2 control-label" > 数据库版本<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="db_name" id="db_version"  required/>
+                             </div>
+                        </div>
+                        <div class="item form-group" >
+                             <label  class="col-sm-2 control-label" > 账户<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                <input class="form-control" type="text" value="" placeholder="不能为空" name="db_user" id="db_user" required/>
+                             </div>
+                        </div>
+
+                        <div class="item form-group" >
+                             <label  class="col-sm-2 control-label" > 端口<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                <input class="form-control" type="text"   value="" placeholder="不能为空" name="db_port" id="db_port" required/>
+                             </div>
+                        </div>
+
+                        <div class="item form-group" >
+                             <label  class="col-sm-2 control-label" > 密码<span class="required">*</span></label>
+                             <div class="col-sm-10">
+                                <input class="form-control" type="password"   value="" placeholder="不能为空" name="db_passwd" id="db_passwd" required/>
+                             </div>
+                        </div>
+                        <div class="form-group" >
+                             <label  class="col-sm-2 control-label" > 备注</label>
+                             <div class="col-sm-10">
+                                <input class="form-control" type="text"  value="" placeholder="第二个分库" name="db_mark" id="db_mark" />
+                             </div>
+                        </div>
+                        <legend></legend>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <button type="reset" class="btn btn-default btn-group-sm">取消</button>
+                            <button type="button" class="btn btn-default btn-group-sm" value="" id="save_database_config">添加</button>
+                        </div>
+                    </form>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
 {% endblock %}
 
 
 {% block js %}
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/plugins/select/bootstrap-select.js"></script>
     <script>
+
+        $(function() {
+
+
+
+
+
+
+
+            /*
+            if($('#db_business').length){
+                $.ajax({
+                    async : true,
+                    url:'/api/asset/business/tree/', //请求地址
+                    type:"GET",  //提交类似
+                    success:function(response){
+                        var binlogHtml = '<select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_business"  id="db_business" autocomplete="off" onchange="javascript:ipvsVipBusinessSelect();"><option selected="selected" value="">请选择一个进行操作</option>'
+                        var selectHtml = '';
+                        for (var i=0; i <response.length; i++){
+                            selectHtml += '<option value="'+ response[i]["id"] +'">'+ response[i]["paths"] +'</option>'
+                        };
+                        binlogHtml =  binlogHtml + selectHtml + '</select>';
+                        $("#db_business").html(binlogHtml)
+                        $("#db_business").selectpicker('refresh');
+                    }
+                });
+            }
+            */
+        })
+
+        /*
+        function oBtBusinessSelect() {
+           $('#db_host').empty();
+           var obj = document.getElementById("db_business");
+           var index = obj.selectedIndex;
+           var businessId = obj.options[index].value;
+           if ( businessId > 0){
+                $.ajax({
+                    dataType: "JSON",
+                    url:'/api/asset/server/', //请求地址
+                    type:"GET",  //提交类似
+                    success:function(response){
+                        var binlogHtml = '<select class="selectpicker" name="db_assets_id" id="db_assets_id" required><option  name="db_assets_id" value="">请选择服务器</option>'
+                        var selectHtml = '';
+                        for (var i=0; i <response.length; i++){
+                             selectHtml += '<option name="db_assets_id" value="'+ response[i]["id"] +'">' + response[i]["asset"]["manage_ip"] + '</option>'
+                        };
+                        binlogHtml =  binlogHtml + selectHtml + '</select>';
+                        $("#db_assets_id").html(binlogHtml)
+                        $('.selectpicker').selectpicker('refresh');
+                    },
+                });
+           }
+           else{
+               $('#db_service').attr("disabled",true);
+           }
+        }
+
+       */
+
+        layui.use(["form","laypage","layer"],function() {
+            var form = layui.form;
+            var laypage = layui.laypage;
+            var layer = layui.layer;
+
+            $(function () {
+                $('#add_db').click(function () {
+                    layer.open({
+                        type: 1,
+                        title: '修改主机信息',
+                        closeBtn: 1,
+                        area: ['800px', '400px'],
+                        shadeClose: true, //点击遮罩关闭
+                        content: $('#add_db_windows').html(),
+                    })
+                    form.render();
+                })
+            })
+
+        })
+
+
+
+
+
+
+
+
+
+
+
 
     </script>
 {% endblock %}

@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from assets.dao import AssetManage
 from api import  serializers
 from assets.models import *
+from utils.logger import logger
+
 
 class AssetsMeun(APIView,AssetManage):
     def get(self,request):
@@ -16,6 +18,7 @@ class AssetsMeun(APIView,AssetManage):
 
 
 class AssetsServerList(APIView):
+    # 资产-服务器
     def get(self, request, format=None):
         print(request.query_params.dict())
         snippets = Server.objects.all()
@@ -41,7 +44,7 @@ class AssetsServerList(APIView):
 
 
 class AssetsServerDetail(APIView):
-
+    # 资产-服务器
 
     def get(self,request,id):
         try:
@@ -99,3 +102,21 @@ class AssetsServerDetail(APIView):
         Asset.objects.filter(id=snippet.id).delete()
 
         return Response({'code':202},status.HTTP_202_ACCEPTED)
+
+
+@api_view(['GET', 'POST' ])
+def business_list(request,format=None):
+
+    if request.method == 'GET':
+        dataList = []
+        for ds in Business_Tree_Assets.objects.all():
+            if ds.is_leaf_node():
+                try:
+                    topParent = Business_Tree_Assets.objects.get(tree_id=ds.tree_id,parent__isnull=True)
+                except Exception as ex:
+                    logger.error(msg="查询根节点业务失败: {ex}".format(ex=str(ex)))
+                    continue
+                data = ds.to_json()
+                data["paths"] = ds.business_env() + '/' + data["paths"]
+                dataList.append(data)
+        return Response(dataList)
