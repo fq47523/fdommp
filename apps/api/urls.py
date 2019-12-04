@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.urls import re_path,path
 from api import views
-from api.apps_api import assets_api,service_api
+from api.apps_api import assets_api,service_api,db_api
 
 
 app_name = 'api'
@@ -28,6 +28,7 @@ urlpatterns = [
     path("asset/server/",assets_api.AssetsServerList.as_view(),name='api-assetslist'),
     re_path("asset/server/(?P<id>[0-9]+)/", assets_api.AssetsServerDetail.as_view(), name='api-assetaction'),
     path("service/action/",service_api.ServiceAction.as_view()),
+    path("db/manage/",db_api.db_list)
 
 
 

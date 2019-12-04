@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from assets.models import Asset,Server
+from databases.models import DataBase_Server_Config
 
 
 
@@ -40,3 +41,16 @@ class AssetsServerSerializer(serializers.ModelSerializer):
         data['asset'] = asset
         server = Server.objects.create(**data)
         return server
+
+
+class DataBaseServerSerializer(serializers.ModelSerializer):
+    detail = serializers.SerializerMethodField(read_only=True, required=False)
+
+    class Meta:
+        model = DataBase_Server_Config
+        fields = ('id', 'db_env', 'db_version', 'db_assets_id',
+                  'db_user', 'db_port', 'db_mark', 'db_type',
+                  "db_mode", "db_business", "db_rw", "detail")
+
+    def get_detail(self, obj):
+        return obj.to_json()
