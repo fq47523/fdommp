@@ -28,7 +28,10 @@ urlpatterns = [
     path("asset/server/",assets_api.AssetsServerList.as_view(),name='api-assetslist'),
     re_path("asset/server/(?P<id>[0-9]+)/", assets_api.AssetsServerDetail.as_view(), name='api-assetaction'),
     path("service/action/",service_api.ServiceAction.as_view()),
-    path("db/manage/",db_api.db_list)
+    path("db/manage/",db_api.db_list),
+    re_path('^db/status/(?P<id>[0-9]+)/$', db_api.db_status),
+    path('db/tree/', db_api.db_tree),
+
 
 
 

@@ -7,7 +7,7 @@ app_name = 'databases'
 urlpatterns = [
     # url(r'^config/$', views.DatabaseConfigs.as_view()),
     path('manage/', views.DatabaseManage.as_view(),name='db_manage'),
-    # url(r'^users/$', views.DatabaseUsers.as_view()),
-    # url(r'^query/$', views.DatabaseQuery.as_view()),
+    # path(r'^users/$', views.DatabaseUsers.as_view()),
+    path('query/', views.DatabaseQuery.as_view(),name='db_query'),
     # url(r'^execute/histroy/$', views.DatabaseExecuteHistroy.as_view()),
 ]

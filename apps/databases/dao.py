@@ -282,7 +282,7 @@ class DBManage():
         tree_list = []
 
         dataList = Business_Tree_Assets.objects.raw(
-            """SELECT id FROM opsmanage_business_assets WHERE tree_id = {tree_id} AND  lft < {lft} AND  rght > {rght} ORDER BY lft ASC;""".format(
+            """SELECT id FROM assets_business_assets WHERE tree_id = {tree_id} AND  lft < {lft} AND  rght > {rght} ORDER BY lft ASC;""".format(
                 tree_id=business.tree_id, lft=business.lft, rght=business.rght))
 
         for ds in dataList:
@@ -306,7 +306,7 @@ class DBManage():
                                  'db_business').annotate(dcount=Count('db_business'))]
 
         business_list = []
-
+        print(Business_Tree_Assets.objects.filter(id__in=user_business))
         for business in Business_Tree_Assets.objects.filter(id__in=user_business):
             business_list += self.business_paths_id_list(business)
 
@@ -314,9 +314,11 @@ class DBManage():
 
         business_node = Business_Tree_Assets.objects.filter(id__in=business_list)
 
+
         root_nodes = cache_tree_children(business_node)
 
         dataList = []
         for n in root_nodes:
             dataList.append(self.recursive_node_to_dict(n, request, user_db_server_list))
+            print (dataList)
         return dataList

@@ -11,7 +11,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth.decorators import permission_required
 from dao.base import MySQLPool
-# from dao.database import MySQLARCH,DBManage,DBUser
+# from databases.dao import MySQLARCH,DBManage,DBUser
+from databases.dao import DBManage
+
 from django.http import JsonResponse
 from utils.logger import logger
 from utils import mysql as MySQL
@@ -147,7 +149,7 @@ class DatabaseExecuteHistroy(APIView):
         return page.get_paginated_response(ser.data)    
     
 @api_view(['POST','GET'])
-@permission_required('databases.database_can_read_database_server_config',raise_exception=True)  
+# @permission_required('databases.database_can_read_database_server_config',raise_exception=True)
 def db_status(request, id,format=None):
     try:
         dbServer = DataBase_Server_Config.objects.get(id=id)

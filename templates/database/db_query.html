@@ -1,0 +1,115 @@
+{% extends "base_body.html" %}
+
+{% block link_1 %}
+    <link rel="stylesheet" href="/static/plugins/jstree/css/style.min.css">
+    <link href="/static/plugins/datatable/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/datatable/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/datatable/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/datatable/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/datatable/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+     <section class="content">
+        <div class="row">
+            <div class="col-xs-3">
+
+                <div class="box">
+
+                </div>
+
+                <div class="box-body">
+                    <div id="dbTree"></div>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-xs-9">
+                <div class="box">
+
+                </div>
+                <div class="box-body">
+                     <div id="jstree_demo_div_response" ></div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xs-12">
+                <div class="box">
+
+                </div>
+                <div class="box-body">
+                    <div id="compile-editor-add" class="ace_editor"></div>
+                    <lable><button type="button" value="1" class="btn btn-default btn-sm " id="db_query_btn" >select</button></lable>
+                </div>
+
+            </div>
+
+            <div class="col-xs-12">
+                <div class="box">
+
+                </div>
+                <div class="box-body">
+
+                    <div id="result" style="overflow: auto;" ></div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </section>
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="/static/plugins/jstree/js/jstree.min.js"></script>
+    <script src="/static/plugins/datatable/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="/static/plugins/datatable/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="/static/plugins/datatable/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/static/plugins/datatable/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+    <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.flash.min.js"></script>
+    <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script>
+        $(function () {
+            drawTree('#dbTree',"/api/db/tree/?db_rw=r/w&db_rw=read")
+        })
+
+
+        function drawTree(ids,url){
+            $(ids).jstree('destroy');
+            $(ids).jstree({
+                "core" : {
+                  "check_callback": function (op, node, par, pos, more) {
+                        if (op === "move_node" || op === "copy_node") {
+                            return false;
+                        }
+                        return true;
+                    },
+                  'data' : {
+                    "url" : url,
+                    "dataType" : "json"
+                  }
+                },
+                "plugins": ["contextmenu", "dnd", "search","themes","state", "types", "wholerow","json_data","unique"],
+                "contextmenu":{
+                        select_node:false,
+                        show_at_node:true,
+                        'items': customMenu
+                      }
+            });
+        }
+
+        function customMenu(node) {
+            var items = {}
+            return items
+        }
+
+
+    </script>
+{% endblock %}

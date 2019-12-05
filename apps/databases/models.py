@@ -80,7 +80,7 @@ class DataBase_Server_Config(models.Model):
 
     def to_tree(self):
         try:
-            db_ip = self.db_assets.server_assets.ip
+            db_ip = self.db_assets.manage_ip
         except:
             db_ip = '未知'
         json_format = {
@@ -96,7 +96,7 @@ class DataBase_Server_Config(models.Model):
 
     def to_json(self):
         try:
-            db_ip = self.db_assets.server_assets.ip
+            db_ip = self.db_assets.manage_ip
         except:
             db_ip = '未知'
         json_format = {
@@ -120,7 +120,7 @@ class DataBase_Server_Config(models.Model):
         json_format = {
             "id": self.id,
             "db_name": '',
-            "ip": self.db_assets.server_assets.ip,
+            "ip": self.db_assets.manage_ip,
             "db_port": self.db_port,
             "db_user": self.db_user,
             "db_passwd": self.db_passwd,
