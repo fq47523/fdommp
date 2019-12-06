@@ -148,7 +148,7 @@ class Database_Detail(models.Model):
             "id": self.id,
             "db_name": self.db_name,
             "db_size": self.db_size,
-            "ip": self.db_server.db_assets.server_assets.ip,
+            "ip": self.db_server.db_assets.manage_ip,
             "db_port": self.db_server.db_port,
             "db_mark": self.db_server.db_mark,
             "db_size": self.db_size,
@@ -161,7 +161,7 @@ class Database_Detail(models.Model):
     def to_connect(self):
         json_format = {
             "db_name": self.db_name,
-            "ip": self.db_server.db_assets.server_assets.ip,
+            "ip": self.db_server.db_assets.manage_ip,
             "db_port": self.db_server.db_port,
             "db_user": self.db_server.db_user,
             "db_passwd": self.db_server.db_passwd,

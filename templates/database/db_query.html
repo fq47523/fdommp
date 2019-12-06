@@ -7,6 +7,17 @@
     <link href="/static/plugins/datatable/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="/static/plugins/datatable/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
     <link href="/static/plugins/datatable/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        #compile-editor-add {
+			width: 90%;
+			height: 200px;
+	    }
+
+        .dbhidden{
+            display: none;
+        }
+    </style>
+
 {% endblock %}
 
 {% block body %}
@@ -19,6 +30,7 @@
                 </div>
 
                 <div class="box-body">
+                    <input id="search-input" type="text" class="form-control" placeholder="检索关键词...">
                     <div id="dbTree"></div>
 
                 </div>
@@ -31,20 +43,51 @@
 
                 </div>
                 <div class="box-body">
-                     <div id="jstree_demo_div_response" ></div>
+                      <table id="UserDatabaseListTable" class="table table-striped table-bordered">
+                          <thead>
+                              <tr>
+                                  <th>备注</th>
+                                  <th>数据库</th>
+                                  <th>数据库地址</th>
+                                  <th>端口</th>
+                                  <th>读写类型</th>
+                                  <th class="text-center">操作</th>
+                              </tr>
+                          </thead>
+
+                          <tbody>
+                          </tbody>
+                      </table>
 
                 </div>
 
             </div>
 
             <div class="col-xs-12">
-                <div class="box">
 
+                <div id="sql_query" class="box-body dbhidden" >
+                    <legend>
+                        <p id="dbChoice"></p>
+                    </legend>
+                    <form role="form" method="post" id="exec_db_query" class="main form-horizontal"  novalidate>
+                        <div class="form-group">
+                            <label>SQL内容<i class="fa fa-info-circle" data-toggle="tooltip" title="输入查询SQL"></i></label>
+                            <div id="compile-editor-add" class="ace_editor"></div>
+                        </div>
+                        <lable><button type="button" value="" class="btn btn-default btn-sm disabled" id="db_query_btn">请先选择数据库</button></lable>
+                    </form>
                 </div>
-                <div class="box-body">
-                    <div id="compile-editor-add" class="ace_editor"></div>
-                    <lable><button type="button" value="1" class="btn btn-default btn-sm " id="db_query_btn" >select</button></lable>
+
+                <div id="table_query" class="box-body dbhidden">
+                    <legend>
+                        <p id="dbTables"></p>
+                    </legend>
+                    <div>1111</div>
                 </div>
+
+
+
+
 
             </div>
 
@@ -75,9 +118,287 @@
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.flash.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.html5.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="/static/plugins/ace/js/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/static/plugins/ace/js/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/static/plugins/ace/js/ext-old_ie.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/static/plugins/ace/js/theme-monokai.js" type="text/javascript" charset="utf-8"></script>
     <script>
+        var language =  {
+            "sProcessing" : "处理中...",
+            "sLengthMenu" : "显示 _MENU_ 项结果",
+            "sZeroRecords" : "没有匹配结果",
+            "sInfo" : "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+            "sInfoEmpty" : "显示第 0 至 0 项结果，共 0 项",
+            "sInfoFiltered" : "(由 _MAX_ 项结果过滤)",
+            "sInfoPostFix" : "",
+            "sSearch" : "搜索: ",
+            "sUrl" : "",
+            "sEmptyTable" : "表中数据为空",
+            "sLoadingRecords" : "载入中...",
+            "sInfoThousands" : ",",
+            "oPaginate" : {
+                "sFirst" : "首页",
+                "sPrevious" : "上页",
+                "sNext" : "下页",
+                "sLast" : "末页"
+            },
+            "oAria" : {
+                "sSortAscending" : ": 以升序排列此列",
+                "sSortDescending" : ": 以降序排列此列"
+            }
+        }
+
+
         $(function () {
+            try{
+                var aceEditAdd = setAceEditMode("compile-editor-add","ace/mode/mysql","ace/theme/sqlserver");
+            }
+            catch(err){
+                console.log(err)
+            }
+
+
+
+
             drawTree('#dbTree',"/api/db/tree/?db_rw=r/w&db_rw=read")
+
+            $("#search-input").keyup(function () {
+                var searchString = $(this).val();
+                $('#dbTree').jstree('search', searchString);
+            });
+
+            $("#dbTree").click(function () {
+                 var position = 'last';
+                 let select_node = $(this).jstree("get_selected",true)[0]["original"];
+                     console.log(select_node)
+                 if(select_node["last_node"] == 1){
+                        $.ajax({
+                              type: 'GET',
+                              url: '/api/db/user/list/?db_server='+select_node["db_server"],
+                              success:function(response){
+                                  if ($('#UserDatabaseListTable').hasClass('dataTable')) {
+                                    dttable = $('#UserDatabaseListTable').dataTable();
+                                    dttable.fnClearTable();
+                                    dttable.fnDestroy();
+                                  }
+                                  makeDbQueryTableList(response)
+                              },
+                              error:function(response){
+                                new PNotify({
+                                    title: 'Ops Failed!',
+                                    text: response.responseText,
+                                    type: 'error',
+                                    styling: 'bootstrap3'
+                                });
+                              }
+                        });
+                 }
+            });
+
+            if ($("#UserDatabaseListTable").length) {
+
+                $('#UserDatabaseListTable tbody').on('click',"button[name='btn-database-query']",function(){
+                    ChangeMenu('sql_query')
+                    let vIds = $(this).val();
+                    let td = $(this).parent().parent().parent().find("td")
+                    $("#dbChoice").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> 查询入口</i>')
+                    $("#db_query_btn").removeClass("disabled").text("查询").val(vIds)
+                });
+
+                $('#UserDatabaseListTable tbody').on('click',"button[name='btn-database-table']",function(){
+                    ChangeMenu('table_query')
+                    let vIds = $(this).val();
+                    let td = $(this).parent().parent().parent().find("td")
+                    $("#dbTables").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> 表结构</i>')
+                    /*
+                    let dbname = td.eq(1).text()
+                    var jsonData = {
+                        "id": 1,
+                        "text": dbname,
+                        "icon": "fa fa-database",
+                        "children":[]
+                    }
+                    $.ajax({
+                        cache: true,
+                        type: "POST",
+                        url:"/db/manage/",
+                        data:{
+                            "model": "table_list",
+                            "db":vIds
+                        },
+                        async : false,
+                        error: function(response) {
+                            new PNotify({
+                                title: 'Ops Failed!',
+                                text: response.responseText,
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+                        },
+                        success: function(response) {
+                            if(response["code"]==500){
+                                new PNotify({
+                                       title: 'Ops Failed!',
+                                       text: response["msg"],
+                                       type: 'error',
+                                       styling: 'bootstrap3'
+                                });
+                            }else{
+                                let respone = response["data"]
+                                for (var i=0; i <respone.length; i++){
+                                    jsonData["children"].push({"db":vIds,"id":respone[i],"text":respone[i],"icon": "fa fa-bar-chart"})
+                                    if (i>1000){
+                                        break
+                                    }
+
+                                }
+                                drawTableTree("#dbTableTree",[jsonData])
+                                $("#table-search-input").keyup(function () {
+                                    var searchString = $(this).val();
+                                    $('#dbTableTree').jstree('search', searchString);
+                                });
+                            }
+
+                        }
+                    });
+                    */
+                });
+            }	;
+
+
+            $("#db_query_btn").on('click', function() {
+                var btnObj = $(this);
+                btnObj.attr('disabled',true);
+                var db = $(this).val()
+                if (db > 0){
+                    $('#show_sql_result').show();
+                    var sql = aceEditAdd.getSession().getValue();
+                    if ( sql.length == 0 || db == 0){
+                        new PNotify({
+                            title: 'Warning!',
+                            text: 'SQL内容与数据库不能为空',
+                            type: 'warning',
+                            styling: 'bootstrap3'
+                        });
+                        btnObj.removeAttr('disabled');
+                        return false;
+                    };
+                    $.ajax({
+                        url:'/databases/manage/',
+                        type:"POST",
+                        "dateType":"json",
+                        data:{
+                            "db":db,
+                            "model":'query_sql',
+                            "sql":sql
+                        },  //提交参数
+                        success:function(response){
+                            btnObj.removeAttr('disabled');
+                            var ulTags = '<ul class="list-unstyled timeline widget">'
+                            var tableHtml = ''
+                            var liTags = '';
+                            var tablesList = [];
+                            if (response['code'] == "200" && response["data"].length > 0 ){
+                                for (var i=0; i <response["data"].length; i++){
+                                    var tableId = "query_result_list_"+ i
+                                    tablesList.push(tableId)
+                                    if (response["data"][i]["dataList"][0] >= 0){
+                                        var tableHtml = '<table class="table" id="'+ tableId +'"><thead><tr>'
+                                        var trHtml = '';
+                                        for (var x=0; x <response["data"][i]["dataList"][2].length; x++){
+                                            trHtml = trHtml + '<th>' + response["data"][i]["dataList"][2][x] +'</th>';
+                                        };
+                                        tableHtml = tableHtml + trHtml + '</tr></thead><tbody>';
+                                        var trsHtml = '';
+                                        for (var y=0; y <response["data"][i]["dataList"][1].length; y++){
+                                            var tdHtml = '<tr>';
+                                            for (var z=0; z < response["data"][i]["dataList"][1][y].length; z++){
+                                                tdHtml = tdHtml + '<td>' + response["data"][i]["dataList"][1][y][z]  +'</td>';
+                                            }
+                                            trsHtml = trsHtml + tdHtml + '</tr>';
+                                        }
+                                        tableHtml = tableHtml + trsHtml +  '</tbody></table>';
+                                    }else{
+                                        tableHtml = response["data"][i]["dataList"]
+
+                                    }
+
+                                }
+                                $("#result").html(tableHtml);
+                                if (tablesList.length) {
+                                    for (var i=0; i <tablesList.length; i++){
+                                       var table = $("#"+tablesList[i]).DataTable( {
+                                            dom: 'Bfrtip',
+                                            "lengthMenu": [ [50, 150, 450, -1], [50, 150, 450, "All"] ],
+                                            buttons: [{
+                                                    extend: "copy",
+                                                    className: "btn-sm"
+                                                },
+                                                {
+                                                    extend: "csv",
+                                                    className: "btn-sm"
+                                                },
+                                                {
+                                                    extend: "excel",
+                                                    className: "btn-sm"
+                                                },
+                                                {
+                                                    extend: "pdfHtml5",
+                                                    className: "btn-sm"
+                                                },
+                                                {
+                                                extend: "print",
+                                                    className: "btn-sm"
+                                            }],
+                                            language : {
+                                                "sProcessing" : "处理中...",
+                                                "sLengthMenu" : "显示 _MENU_ 项结果",
+                                                "sZeroRecords" : "没有匹配结果",
+                                                "sInfo" : "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                                                "sInfoEmpty" : "显示第 0 至 0 项结果，共 0 项",
+                                                "sInfoFiltered" : "(由 _MAX_ 项结果过滤)",
+                                                "sInfoPostFix" : "",
+                                                "sSearch" : "搜索:",
+                                                "sUrl" : "",
+                                                "sEmptyTable" : "表中数据为空",
+                                                "sLoadingRecords" : "载入中...",
+                                                "sInfoThousands" : ",",
+                                                "oPaginate" : {
+                                                    "sFirst" : "首页",
+                                                    "sPrevious" : "上页",
+                                                    "sNext" : "下页",
+                                                    "sLast" : "末页"
+                                                },
+                                                "oAria" : {
+                                                    "sSortAscending" : ": 以升序排列此列",
+                                                    "sSortDescending" : ": 以降序排列此列"
+                                                }
+                                        },
+                                       });
+                                    }
+                                }
+                                }
+                            else{
+                                var selectHtml = '<div id="result">' + response["msg"] + '</div>';
+                                $("#result").html(selectHtml);
+                            }
+                        },
+                        error:function(response){
+                            btnObj.removeAttr('disabled');
+                            new PNotify({
+                                   title: 'Ops Failed!',
+                                   text: response.responseText,
+                                   type: 'error',
+                                   styling: 'bootstrap3'
+                            });
+                        }
+                    });
+                }
+            });
+
+
+
+
         })
 
 
@@ -108,6 +429,94 @@
         function customMenu(node) {
             var items = {}
             return items
+        }
+
+        function makeDbQueryTableList(dataList){
+            var columns = [
+                           {"data": "db_mark"},
+                           {
+                               "data": "db_name",
+                               "defaultContent": ""
+                           },
+                           {"data": "ip"},
+                           {"data": "db_port"},
+                           {"data": "db_rw"}
+                    ]
+           var columnDefs = [
+                                {
+                                targets: [5],
+                                render: function(data, type, row, meta) {
+                                    return '<div class="btn-group  btn-group-xs">' +
+                                               '<button type="button" name="btn-database-query" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="glyphicon glyphicon glyphicon-zoom-in" aria-hidden="true"></span>' +
+                                               '</button>' +
+                                               '<button type="button" name="btn-database-table" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="fa fa-bar-chart" aria-hidden="true"></span>' +
+                                               '</button>' +
+                                               '</div>';
+                                },
+                                "className": "text-center",
+                                },
+                              ]
+            var buttons = []
+            InitDataTable('UserDatabaseListTable',dataList,buttons,columns,columnDefs);
+        }
+
+        function InitDataTable(tableId,dataList,buttons,columns,columnDefs){
+              oOverviewTable =$('#'+tableId).dataTable(
+                      {
+                            "dom": "Bfrtip",
+                            "buttons":buttons,
+                            "bScrollCollapse": false,
+                            "bRetrieve": true,
+                            "destroy": true,
+                            "data":	dataList,
+                            "columns": columns,
+                            "columnDefs" :columnDefs,
+                            "language" : language,
+                            "iDisplayLength": 20,
+                            "select": {
+                                "style":    'multi',
+                                "selector": 'td:first-child'
+                            },
+                            "order": [[ 0, "ase" ]],
+                            "autoWidth": false
+                        });
+        }
+
+        function setAceEditMode(ids,model,theme) {
+            try
+              {
+                var editor = ace.edit(ids);
+                require("ace/ext/old_ie");
+                var langTools = ace.require("ace/ext/language_tools");
+                editor.removeLines();
+                editor.setTheme(theme);
+                editor.getSession().setMode(model);
+                editor.setShowPrintMargin(false);
+                editor.setOptions({
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: true
+                });
+                return editor
+              }
+            catch(err)
+              {
+                console.log(err)
+              }
+        }
+
+        function ChangeMenu(nid){
+            var current_header = document.getElementById(nid);  //   鼠标选择的菜单的对象
+
+            var item_list = current_header.parentElement.children;    // 根据菜单ID查找所有菜单节点<div class="item">
+
+            // 闭合所有菜单
+            for(var i=0;i<item_list.length;i++){
+                var current_item = item_list[i];
+                current_item.classList.add('dbhidden');
+            }
+
+            current_header.classList.remove('dbhidden'); // 根据鼠标选择的菜单移除hide{display: none}
         }
 
 
