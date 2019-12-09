@@ -42,8 +42,8 @@ from hosts.models import Service
 
 
 from assets.models import  Business_Tree_Assets
-dd = Business_Tree_Assets.objects.get(id=1)
-Business_Tree_Assets.objects.create(text='fd-db',manage=0,group='ss',desc='db',parent=dd)
+dd = Business_Tree_Assets.objects.get(id=3)
+Business_Tree_Assets.objects.create(text='test',manage=0,group='ssss',desc='dbtt',parent=dd)
 
 
 

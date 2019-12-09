@@ -23,7 +23,7 @@
 {% block body %}
      <section class="content">
         <div class="row">
-            <div class="col-xs-3">
+            <div class="col-xs-4">
 
                 <div class="box">
 
@@ -38,7 +38,7 @@
 
             </div>
 
-            <div class="col-xs-9">
+            <div class="col-xs-8">
                 <div class="box">
 
                 </div>
@@ -63,7 +63,7 @@
 
             </div>
 
-            <div class="col-xs-12">
+            <div class="col-xs-12" id="test1">
 
                 <div id="sql_query" class="box-body dbhidden" >
                     <legend>
@@ -79,10 +79,71 @@
                 </div>
 
                 <div id="table_query" class="box-body dbhidden">
-                    <legend>
-                        <p id="dbTables"></p>
-                    </legend>
-                    <div>1111</div>
+
+										<legend>
+											<p id="dbTable"></p>
+										</legend>
+										<form role="form" method="post" id="table_schema_form" class="main form-horizontal"  novalidate>
+											<input  type="hidden" class="form-control"  name="model" value="table_schema">
+											<div class="form-group" >
+												 <label> 表名<i class="fa fa-info-circle" data-toggle="tooltip" title="选择表"></i></label>
+												 <select required="required" class="selectpicker form-control" data-live-search="true" name="table_name" id="table_name"  data-size="10" data-selected-text-format="count > 3"  data-width="100%"  autocomplete="off">
+												   	<option>请选择表</option>
+												 </select>
+											</div>
+											<lable><button type="button" value="" class="btn btn-default btn-sm" id="db_schema_btn">查看</button></lable>
+										</form>
+
+									<div class="col-lg-8">
+										<legend>
+											<i class="fa  fa-paper-plane-o"></i>
+										</legend>
+				                        <div id="schema_result">
+				                        </div>
+									 </div>
+                </div>
+
+
+
+                <div id="binlog_query" class="box-body dbhidden">
+                    <div class="col-lg-4">
+										<legend>
+											<p id="dbDmlBinlog"></p>
+										</legend>
+										<form role="form" method="post" id="parse_binlog_file" class="main form-horizontal"  novalidate>
+											<input  type="hidden" class="form-control"  name="model" value="parse_sql">
+											<div class="form-group" >
+												 <label> binlog文件<i class="fa fa-info-circle" data-toggle="tooltip" title="选择binlog文件"></i></label>
+												 <select required="required" class="selectpicker form-control" data-live-search="true" name="binlog_db_file" id="binlog_db_file"  data-size="10" data-selected-text-format="count > 3"  data-width="100%"  autocomplete="off">
+												   	<option>请选择一个binlog文件</option>
+												 </select>
+											</div>
+											<div class="form-group" >
+												 <label> 表<i class="fa fa-info-circle" data-toggle="tooltip" title="选择指定表"></i></label>
+												 <input type="text" name="binlog_table" id="binlog_table" placeholder="多个表以,号分割开来; 不填就是解析整个数据库" class="form-control" value="" />
+											</div>
+				                            <div class="control-group">
+				                              <label> 选择时间段</label>
+				                              <div class="controls">
+				                                <div class="input-prepend input-group">
+				                                  <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+				                                  <input type="text" name="binlog_time" id="binlog_time" class="form-control" value="2018-01-09 - 2019-01-09" />
+				                                </div>
+				                              </div>
+				                            </div>
+											<lable><button type="button" value="" class="btn btn-default btn-sm" id="db_binlog_btn">解析</button></lable>
+										</form>
+									 </div>
+									<div class="col-lg-8">
+										<legend>
+											<i class="fa  fa-paper-plane-o"></i> 解析结果
+										</legend>
+										<div id="binlog_result">
+					                    </div>
+									 </div>
+
+
+
                 </div>
 
 
@@ -168,9 +229,10 @@
             });
 
             $("#dbTree").click(function () {
+                 $('#dbChoice,#result,#dbTable,#schema_result,#table_name').empty()
                  var position = 'last';
                  let select_node = $(this).jstree("get_selected",true)[0]["original"];
-                     console.log(select_node)
+
                  if(select_node["last_node"] == 1){
                         $.ajax({
                               type: 'GET',
@@ -180,6 +242,7 @@
                                     dttable = $('#UserDatabaseListTable').dataTable();
                                     dttable.fnClearTable();
                                     dttable.fnDestroy();
+
                                   }
                                   makeDbQueryTableList(response)
                               },
@@ -209,60 +272,25 @@
                     ChangeMenu('table_query')
                     let vIds = $(this).val();
                     let td = $(this).parent().parent().parent().find("td")
-                    $("#dbTables").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> 表结构</i>')
-                    /*
-                    let dbname = td.eq(1).text()
-                    var jsonData = {
-                        "id": 1,
-                        "text": dbname,
-                        "icon": "fa fa-database",
-                        "children":[]
-                    }
-                    $.ajax({
-                        cache: true,
-                        type: "POST",
-                        url:"/db/manage/",
-                        data:{
-                            "model": "table_list",
-                            "db":vIds
-                        },
-                        async : false,
-                        error: function(response) {
-                            new PNotify({
-                                title: 'Ops Failed!',
-                                text: response.responseText,
-                                type: 'error',
-                                styling: 'bootstrap3'
-                            });
-                        },
-                        success: function(response) {
-                            if(response["code"]==500){
-                                new PNotify({
-                                       title: 'Ops Failed!',
-                                       text: response["msg"],
-                                       type: 'error',
-                                       styling: 'bootstrap3'
-                                });
-                            }else{
-                                let respone = response["data"]
-                                for (var i=0; i <respone.length; i++){
-                                    jsonData["children"].push({"db":vIds,"id":respone[i],"text":respone[i],"icon": "fa fa-bar-chart"})
-                                    if (i>1000){
-                                        break
-                                    }
+                    $("#dbTable").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> 表结构查询</i>')
+                    $("#db_schema_btn").removeClass("disabled").text("查看").val(vIds)
+                    make_database_data(vIds,'table_name')
 
-                                }
-                                drawTableTree("#dbTableTree",[jsonData])
-                                $("#table-search-input").keyup(function () {
-                                    var searchString = $(this).val();
-                                    $('#dbTableTree').jstree('search', searchString);
-                                });
-                            }
-
-                        }
-                    });
-                    */
                 });
+
+                $('#UserDatabaseListTable tbody').on('click',"button[name='btn-database-binlog']",function(){
+                    ChangeMenu('binlog_query')
+                    let vIds = $(this).val();
+                    let td = $(this).parent().parent().parent().find("td")
+                    $("#dbTable").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> binlog查询</i>')
+                    {#$("#db_schema_btn").removeClass("disabled").text("查看").val(vIds)#}
+                    {#make_database_data(vIds,'table_name')#}
+
+                });
+
+
+
+
             }	;
 
 
@@ -447,10 +475,13 @@
                                 targets: [5],
                                 render: function(data, type, row, meta) {
                                     return '<div class="btn-group  btn-group-xs">' +
-                                               '<button type="button" name="btn-database-query" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="glyphicon glyphicon glyphicon-zoom-in" aria-hidden="true"></span>' +
+                                               '<button type="button" name="btn-database-query" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>' +
                                                '</button>' +
-                                               '<button type="button" name="btn-database-table" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="fa fa-bar-chart" aria-hidden="true"></span>' +
+                                               '<button type="button" name="btn-database-table" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="glyphicon glyphicon-list" aria-hidden="true"></span>' +
                                                '</button>' +
+                                               '<button type="button" name="btn-database-binlog" value="'+ row.id +'" class="btn btn-default"  aria-label="Justify"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>' +
+                                               '</button>' +
+
                                                '</div>';
                                 },
                                 "className": "text-center",
@@ -504,6 +535,178 @@
                 console.log(err)
               }
         }
+
+
+
+
+
+        function make_database_data(vIds,select_name){
+            switch(select_name) {
+                case "binlog_db_file":
+                   var model = "binlog_sql"
+                   break;
+                case "table_name":
+                    var model = "table_list"
+                   break;
+                case "optimize_db":
+                    var model = "optimize_sql"
+                   break;
+            }
+            $.ajax({
+                url:'/databases/manage/', //请求地址
+                type:"POST",  //提交类似
+                data:{
+                    "db":vIds,
+                    "model":model,
+                },  //提交参数
+                success:function(response){
+                    if (response["code"] == 200){
+                        if (response["data"].length) {
+                            var selectHtml = '<select required="required" class="selectpicker form-control" data-live-search="true" name="'+select_name+'" id="'+select_name+'"  data-size="10" data-selected-text-format="count > 3"  data-width="100%"  autocomplete="off">'
+                            var option = '';
+                            for (var i=0; i <response["data"].length; i++){
+                                option = option + '<option value="'+ response["data"][i] +'">'+ response["data"][i] +'</option>'
+                            }
+                            var selectHtml = selectHtml + option + '</select>';
+                            $("#"+select_name).html(selectHtml);
+                            $('.selectpicker').selectpicker('refresh');
+                        }
+                    }else{
+                        new PNotify({
+                               title: 'Ops Failed!',
+                               text: response["msg"],
+                               type: 'error',
+                               styling: 'bootstrap3'
+                        });
+                    }
+                },
+                error:function(response){
+                    new PNotify({
+                           title: 'Ops Failed!',
+                           text: response.responseText,
+                           type: 'error',
+                           styling: 'bootstrap3'
+                    });
+                }
+            });
+        }
+
+
+        $("#db_schema_btn").on('click', function() {
+            var btnObj = $(this);
+            btnObj.attr('disabled',true);
+            let vIds = $(this).val();
+            $.ajax({
+                url:'/databases/manage/',
+                type:"POST",
+                data:{
+                    "db":vIds,
+                    "model":"table_schema",
+                    "table_name":$("#table_name option:selected").val(),
+                },  //提交参数
+                success:function(response){
+                    btnObj.removeAttr('disabled');
+                    var schemaTableHtml = '<table class="table table-striped">' +
+                                              '<tbody>' +
+                                                '<tr>' +
+                                                  '<td>数据库: </td>' + '<td>'+ response["data"]["schema"][1][0][0] +'</td>' +
+                                                  '<td>表名: </td>' +	'<td>'+ response["data"]["schema"][1][0][1] +'</td>' +
+                                                  '<td>表类型: </td>' + '<td>'+ response["data"]["schema"][1][0][2] +'</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                  '<td>存储引擎: </td>' + '<td>'+ response["data"]["schema"][1][0][3] +'</td>' +
+                                                  '<td>版本: </td>' + '<td>'+ response["data"]["schema"][1][0][4] +'</td>' +
+                                                  '<td>行格式: </td>' + '<td>'+ response["data"]["schema"][1][0][5] +'</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                  '<td>行记录数: </td>' + '<td>'+ response["data"]["schema"][1][0][6] +'</td>' +
+                                                  '<td>数据长度: </td>' + '<td>'+ response["data"]["schema"][1][0][7] +'</td>' +
+                                                  '<td>最大数据长度: </td>' + '<td>'+ response["data"]["schema"][1][0][8] +'</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                  '<td>索引长度: </td>' + '<td>'+ response["data"]["schema"][1][0][9] +'</td>' +
+                                                  '<td>数据空闲: </td>' + '<td>'+ response["data"]["schema"][1][0][10] +'</td>' +
+                                                  '<td>自动递增值: </td>' + '<td>'+ response["data"]["schema"][1][0][11] +'</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                  '<td>创建日期: </td>' + '<td>'+ response["data"]["schema"][1][0][12] +'</td>' +
+                                                  '<td>字符集类型: </td>' + '<td>'+ response["data"]["schema"][1][0][13] +'</td>' +
+                                                  '<td>注释</td>' + '<td>'+ response["data"]["schema"][1][0][14] +'</td>' +
+                                                '</tr>'	 +
+                                              '</tbody>' +
+                                           '</table>'
+                    var indexTableHtml = '<table class="table table-striped"><thead><tr>'
+                        var indexTrHtml = '';
+                        for (var i=0; i <response["data"]["index"][2].length; i++){
+                            indexTrHtml = indexTrHtml + '<th>' + response["data"]["index"][2][i] +'</th>';
+                        };
+                        indexTableHtml = indexTableHtml + indexTrHtml + '</tr></thead><tbody>';
+                        var indexHtml = '';
+                        for (var i=0; i <response["data"]["index"][1].length; i++){
+                            var indexTdHtml = '<tr>';
+                            for (var x=0; x < response["data"]["index"][1][i].length; x++){
+                                indexTdHtml = indexTdHtml + '<td>' + response["data"]["index"][1][i][x] +'</td>';
+                            }
+                            indexHtml = indexHtml + indexTdHtml + '</tr>';
+                        }
+                    indexTableHtml = indexTableHtml + indexHtml +  '</tbody></table>';
+                    var descHtml = '<pre><code class="sql hljs">' + response["data"]["desc"] + '<br></code></pre>';
+                    var schemaHtml = '<div id="schema_result"><ul class="list-unstyled timeline widget">' +
+                                       '<li>' +
+                                        '<div class="block">' +
+                                          '<div class="block_content">' +
+                                            '<h2 class="title">' +
+                                               '<a>表结构信息</a>' +
+                                            '</h2><br>' +
+                                            schemaTableHtml +
+                                          '</div>' +
+                                        '</div>' +
+                                      '</li>' +
+                                      '<li>' +
+                                       '<li>' +
+                                        '<div class="block">' +
+                                          '<div class="block_content">' +
+                                            '<h2 class="title">' +
+                                               '<a>表索引信息</a>' +
+                                            '</h2><br>' +
+                                            indexTableHtml +
+                                          '</div>' +
+                                        '</div>' +
+                                      '</li>' +
+                                       '<li>' +
+                                        '<div class="block">' +
+                                          '<div class="block_content">' +
+                                            '<h2 class="title">' +
+                                               '<a>DDL信息</a>' +
+                                            '</h2><br>' +
+                                            descHtml +
+                                          '</div>' +
+                                        '</div>' +
+                                      '</li>' +
+                                    '</ul>'
+                    $("#schema_result").html(schemaHtml);
+                    $('pre code').each(function(i, block) {
+                        hljs.highlightBlock(block);
+                    });
+
+                },
+                error:function(response){
+                    btnObj.removeAttr('disabled');
+                    new PNotify({
+                           title: 'Ops Failed!',
+                           text: response.responseText,
+                           type: 'error',
+                           styling: 'bootstrap3'
+                    });
+                }
+            });
+        });
+
+
+
+
+
+
 
         function ChangeMenu(nid){
             var current_header = document.getElementById(nid);  //   鼠标选择的菜单的对象
