@@ -7,6 +7,12 @@
     <link href="/static/plugins/datatable/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
     <link href="/static/plugins/datatable/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
     <link href="/static/plugins/datatable/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+    <link href="/static/plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/plugins/highlight/styles/default.css">
+    <script src="/static/plugins/highlight/highlight.pack.js" type="text/javascript"></script>
+{#    <script>hljs.initHighlightingOnLoad();</script>#}
+
     <style type="text/css">
         #compile-editor-add {
 			width: 90%;
@@ -172,6 +178,9 @@
 
 {% block js %}
     <script src="/static/plugins/jstree/js/jstree.min.js"></script>
+    <script src="/static/plugins/bootstrap-select/bootstrap-select.js"></script>
+    <script src="/static/plugins/moment/min/moment.min.js"></script>
+    <script src="/static/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
     <script src="/static/plugins/datatable/datatables.net/js/jquery.dataTables.min.js"></script>
 	<script src="/static/plugins/datatable/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
@@ -283,15 +292,15 @@
                     let vIds = $(this).val();
                     let td = $(this).parent().parent().parent().find("td")
                     $("#dbTable").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> binlog查询</i>')
-                    {#$("#db_schema_btn").removeClass("disabled").text("查看").val(vIds)#}
-                    {#make_database_data(vIds,'table_name')#}
+                    $("#db_binlog_btn").removeClass("disabled").text("解析").val(vIds)
+			        make_database_data(vIds,"binlog_db_file")
 
                 });
 
 
 
 
-            }	;
+            };
 
 
             $("#db_query_btn").on('click', function() {
@@ -423,6 +432,81 @@
                     });
                 }
             });
+
+            /*
+            if ($("#binlog_time").length){
+                var cdate = new Date();
+                var startTime =  getFormatDate(0)
+                var endTime = getFormatDate(3600)
+                console.log(startTime,endTime)
+                $("#binlog_time").val(endTime+' - '+startTime)
+                $("#binlog_time").daterangepicker({
+                    "timePicker": true,
+                    "timePicker24Hour": true,
+                    "linkedCalendars": false,
+                    "autoUpdateInput": false,
+                    "locale": {
+                        format: "YYYY-MM-DD hh:mm:ss",
+                        applyLabel: "应用",
+                        cancelLabel: "取消",
+                        resetLabel: "重置",
+                    }
+                });
+            }
+            */
+
+            $('#binlog_time').daterangepicker({
+                timePicker: true,
+                startDate: moment().startOf('hour'),
+                endDate: moment().startOf('hour').add(32, 'hour'),
+                locale: {
+                  format: 'YYYY-MM-DD hh:mm:ss'
+                }
+              });
+
+
+
+            $("#db_binlog_btn").on('click', function() {
+                var btnObj = $(this);
+                btnObj.attr('disabled',true);
+                let vIds = $(this).val();
+                $.ajax({
+                    url:'/databases/manage/',
+                    type:"POST",
+                    data:{
+                        "db":vIds,
+                        "model":"parse_sql",
+                        "binlog_time":$("#binlog_time").val(),
+                        "binlog_table":$("#binlog_table").val(),
+                        "binlog_db_file":$("#binlog_db_file option:selected").val(),
+                    },  //提交参数
+                    success:function(response){
+                        btnObj.removeAttr('disabled');
+                        var binlogHtml = '<div id="binlog_result"><pre><code class="sql">';
+                        for (var i=0; i <response["data"].length; i++){
+                            binlogHtml +=  response["data"][i]+'<br>';
+                        };
+                        binlogHtml = binlogHtml + '</code></pre></div>';
+                        $("#binlog_result").html(binlogHtml);
+
+
+                        $('pre code').each(function(i, block) {
+                            console.log(block)
+                            hljs.highlightBlock(block);
+                        });
+                    },
+                    error:function(response){
+                        btnObj.removeAttr('disabled');
+                        new PNotify({
+                               title: 'Ops Failed!',
+                               text: response["msg"],
+                               type: 'error',
+                               styling: 'bootstrap3'
+                        });
+                    }
+                });
+            });
+
 
 
 
@@ -702,6 +786,18 @@
             });
         });
 
+
+
+        function getFormatDate(time){
+            var nowDate = new Date(new Date()-1000*time);
+            var year = nowDate.getFullYear();
+            var month = nowDate.getMonth() + 1 < 10 ? "0" + (nowDate.getMonth() + 1) : nowDate.getMonth() + 1;
+            var date = nowDate.getDate() < 10 ? "0" + nowDate.getDate() : nowDate.getDate();
+            var hour = nowDate.getHours()< 10 ? "0" + nowDate.getHours() : nowDate.getHours();
+            var minute = nowDate.getMinutes()< 10 ? "0" + nowDate.getMinutes() : nowDate.getMinutes();
+            var second = nowDate.getSeconds()< 10 ? "0" + nowDate.getSeconds() : nowDate.getSeconds();
+            return year + "-" + month + "-" + date+" "+ hour + ":" + minute + ":" + second;
+        }
 
 
 

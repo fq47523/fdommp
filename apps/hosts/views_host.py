@@ -31,7 +31,7 @@ def host(request):
 
 
 
-@login_required
+# @login_required
 def hostgroup(request):
     import redis
 

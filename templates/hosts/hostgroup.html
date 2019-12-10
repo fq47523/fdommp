@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
     <link rel="stylesheet" href="/static/css/bootstrap-table.css">
     <link rel="stylesheet" href="/static/plugins/nprogress/nprogress.css">
+    <link rel="stylesheet" href="/static/plugins/highlight/styles/default.css">
+    <script src="/static/plugins/highlight/highlight.pack.js" type="text/javascript"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
 
@@ -26,6 +29,14 @@
 
     </div>
     <div id="websocket_result"></div>
+
+
+    <pre><code class="sql">UPDATE `opsmanage`.`opsmanage_database_server_config` SET `id`=2, `db_env`='beta', `db_type`='MySQL', `db_business`=5, `db_mode`='single', `db_user`='root', `db_passwd`='redhat', `db_port`=3307, `db_version`='5.6', `db_mark`='hhdd', `db_rw`='r/w', `db_assets_id`=3 WHERE `id`=2 AND `db_env`='beta' AND `db_type`='MySQL' AND `db_business`=5 AND `db_mode`='single' AND `db_user`='root' AND `db_passwd`='redhat' AND `db_port`=3307 AND `db_version`='5.6' AND `db_mark`='uuiio' AND `db_rw`='r/w' AND `db_assets_id`=3 LIMIT 1; #start 892 end 1239 time 2019-12-01 14:24:18
+UPDATE `opsmanage`.`opsmanage_database_server_config` SET `id`=3, `db_env`='ga', `db_type`='MySQL', `db_business`=9, `db_mode`='single', `db_user`='root', `db_passwd`='redhat', `db_port`=3307, `db_version`='5.6', `db_mark`='ffgg', `db_rw`='read', `db_assets_id`=3 WHERE `id`=3 AND `db_env`='ga' AND `db_type`='MySQL' AND `db_business`=9 AND `db_mode`='single' AND `db_user`='root' AND `db_passwd`='redhat' AND `db_port`=3307 AND `db_version`='5.6' AND `db_mark`='asdsd' AND `db_rw`='read' AND `db_assets_id`=3 LIMIT 1; #start 507 end 861 time 2019-12-01 12:41:07
+UPDATE `opsmanage`.`opsmanage_database_server_config` SET `id`=2, `db_env`='beta', `db_type`='MySQL', `db_business`=5, `db_mode`='single', `db_user`='root', `db_passwd`='redhat', `db_port`=3307, `db_version`='5.6', `db_mark`='uuiio', `db_rw`='r/w', `db_assets_id`=3 WHERE `id`=2 AND `db_env`='beta' AND `db_type`='MySQL' AND `db_business`=5 AND `db_mode`='single' AND `db_user`='root' AND `db_passwd`='redhat' AND `db_port`=3307 AND `db_version`='5.6' AND `db_mark`='hhdd' AND `db_rw`='r/w' AND `db_assets_id`=3 LIMIT 1; #start 4 end 476 time 2019-12-01 12:41:01</code></pre>
+
+
+
 
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/js/bootstrap.js"></script>
@@ -135,6 +146,11 @@
         $(function () {
             var aa = window.location.host
             console.log(aa.replace(/:[\S]+/,':8090'))
+                /*
+                                    $('pre code').each(function(i, block) {
+                            hljs.highlightBlock(block);
+                        });
+                */
         })
 
 
