@@ -29,6 +29,7 @@ urlpatterns = [
     re_path("asset/server/(?P<id>[0-9]+)/", assets_api.AssetsServerDetail.as_view(), name='api-assetaction'),
     path("service/action/",service_api.ServiceAction.as_view()),
     path("db/manage/",db_api.db_list),
+    re_path('^db/manage/(?P<id>[0-9]+)/$', db_api.db_detail),
     re_path('^db/status/(?P<id>[0-9]+)/$', db_api.db_status),
     path('db/tree/', db_api.db_tree),
     path('db/user/list/', db_api.db_user_db_list),

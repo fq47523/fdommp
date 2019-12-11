@@ -2,6 +2,7 @@
 
 {% block link_1 %}
     <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/plugins/bootstrap-select/bootstrap-select.css">
     <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
     <link href="/static/plugins/datatable/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="/static/plugins/datatable/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
@@ -37,7 +38,7 @@
 
                 <div class="box">
                     <div class="box-header">
-                      <button  id="add_db" type="button" class="btn btn-primary" onclick="add_db()">add</button>
+                      <button  id="add_db" type="button" class="btn btn-primary" onclick="layer_add_db()">add</button>
 
                     </div>
                 </div>
@@ -92,7 +93,7 @@
                         <div class="form-group" >
                              <label class="col-sm-2 control-label" >环境类型<span class="required">*</span></label>
                              <div class="col-sm-10">
-                                 <select required="required" class="form-control select2" data-live-search="true"  data-size="10" data-width="100%" name="db_env" id="db_env" autocomplete="off">
+                                 <select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_env" id="db_env" autocomplete="off">
                                     <option value="beta" name="db_env" >测试</option>
                                     <option value="ga" name="db_env">生产</option>
                                  </select>
@@ -204,7 +205,7 @@
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.flash.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.html5.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.print.min.js"></script>
-{#    <script src="/static/plugins/select/bootstrap-select.js"></script>#}
+    <script src="/static/plugins/bootstrap-select/bootstrap-select.js"></script>
     <script>
         var language =  {
             "sProcessing" : "处理中...",
@@ -247,7 +248,7 @@
                     url:'/api/asset/business/tree/', //请求地址
                     type:"GET",  //提交类似
                     success:function(response){
-                        var binlogHtml = '<select required="required" class="form-control select2" data-live-search="true"  data-size="10" data-width="100%" name="db_business"  id="db_business" autocomplete="off" ><option selected="selected" value="">请选择一个进行操作</option>'
+                        var binlogHtml = '<select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_business"  id="db_business" autocomplete="off" ><option selected="selected" value="">请选择一个进行操作</option>'
                         var selectHtml = '';
                         for (var i=0; i <response.length; i++){
                             selectHtml += '<option value="'+ response[i]["id"] +'">'+ response[i]["paths"] +'</option>'
@@ -255,7 +256,7 @@
                         binlogHtml =  binlogHtml + selectHtml + '</select>';
 
                         $("#db_business").html(binlogHtml)
-                        {#$("#db_business").selectpicker('refresh');#}
+                        $("#db_business").selectpicker('refresh');
                     }
                 });
             }
@@ -324,31 +325,66 @@
                             "order": [[ 0, "ase" ]],
                             "autoWidth": false
                 });
-                $('#DatabaseListTable tbody').on('click', 'td.details-control', function () {
-                    var dataList = [];
-                    var tr = $(this).closest('tr');
-                    var row = table.row( tr );
-                    dbId = row.data()["id"];
-                    $.ajax({
-                        url : "/api/db/status/"+dbId+"/",
-                        type : "post",
-                        async : false,
-                        data : {"id":dbId},
-                        dataType : "json",
-                        success : function(result) {
-                            dataList = result.data;
-                        }
-                    });
-                    if ( row.child.isShown() ) {
-                        row.child.hide();
-                        tr.removeClass('shown');
-                    }
-                    else {
-                        row.child( format(dataList) ).show();
-                        tr.addClass('shown');
+            }
+
+            $('#DatabaseListTable tbody').on('click', 'td.details-control', function () {
+                var dataList = [];
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+                dbId = row.data()["id"];
+                $.ajax({
+                    url : "/api/db/status/"+dbId+"/",
+                    type : "post",
+                    async : false,
+                    data : {"id":dbId},
+                    dataType : "json",
+                    success : function(result) {
+                        dataList = result.data;
                     }
                 });
-            }
+                if ( row.child.isShown() ) {
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    row.child( format(dataList) ).show();
+                    tr.addClass('shown');
+                }
+            });
+
+
+            $('#DatabaseListTable tbody').on('click',"button[name='btn-database-edit']",function(){
+                layer_add_db()
+                var btnObj = $(this);
+                btnObj.attr('disabled',true);
+                var vIds = $(this).val();
+                $("#save_database_config").val(vIds);
+                $("#save_database_config").text("修改");
+                $.ajax({
+                    url : '/api/db/manage/'+ vIds + '/' ,
+                    type : 'get',
+                    async:false,
+                    success : function(response){
+                        btnObj.removeAttr('disabled');
+                        BusinessAssetsSelect(response["db_business"],response["db_assets_id"])
+                        DynamicSelect("db_env",response["db_env"])
+                        DynamicSelect("db_business",response["db_business"])
+                        DynamicSelect("db_mode",response["db_mode"])
+                        DynamicSelect("db_rw",response["db_rw"])
+                        $("#db_version").val(response["db_version"]);
+                        $("#db_type").val(response["db_type"]);
+                        $("#db_user").val(response["db_user"]);
+                        $("#db_port").val(response["db_port"]);
+                        $("#db_mark").val(response["db_mark"]);
+                        $('.selectpicker').selectpicker('refresh');
+                    },
+                    error:function(response){
+                        btnObj.removeAttr('disabled');
+                    }
+                });
+              });
+
+
 
 
 
@@ -358,6 +394,45 @@
         })
 
 
+        function DynamicSelect(ids,value){
+            $("#" + ids +" option").each(function(){
+                $(this).prop("selected",false);
+            })
+            $("#" + ids +" option[value='" + value +"']").prop("selected",true);
+        }
+
+
+
+
+        function BusinessAssetsSelect(node,ids){
+               if ( node > 0){
+                    $.ajax({
+                        dataType: "JSON",
+                        url:'/api/asset/server/', //请求地址
+                        type:"GET",  //提交类似
+                        success:function(response){
+                            var binlogHtml = '<select class="selectpicker" name="db_assets_id" id="db_assets_id" required><option  name="db_assets_id" value="">请选择服务器</option>'
+                            var selectHtml = '';
+                            for (var i=0; i <response.length; i++){
+                                if(ids==response[i]['asset']["id"]){
+                                    selectHtml += '<option selected=selected name="db_assets_id" value="'+ response[i]['asset']["id"] +'">' + response[i]["asset"]["manage_ip"] + '</option>'
+                                }else{
+                                    selectHtml += '<option name="db_assets_id" value="'+ response[i]['asset']["id"] +'">' + response[i]["asset"]["manage_ip"] + '</option>'
+                                }
+
+                            };
+                            binlogHtml =  binlogHtml + selectHtml + '</select>';
+                            $("#db_assets_id").html(binlogHtml)
+                            $('.selectpicker').selectpicker('refresh');
+                        },
+                    });
+               }
+        }
+
+
+
+
+
 
 
 
@@ -365,12 +440,14 @@
         function oBtBusinessSelect() {
 
            $('#db_host').empty();
+           var obj = document.getElementById("db_business");
+           var index = obj.selectedIndex;
+           var businessId = obj.options[index].value;
 
 
+           {#var sel_obj = $("#db_business").select2('val');#}
 
-           var sel_obj = $("#db_business").select2('val');
-            console.log(sel_obj)
-           if ( sel_obj > 0){
+           if ( businessId > 0){
                 $.ajax({
                     dataType: "JSON",
                     url:'/api/asset/server/', //请求地址
@@ -383,7 +460,7 @@
                         };
                         binlogHtml =  binlogHtml + selectHtml + '</select>';
                         $("#db_assets_id").html(binlogHtml)
-                        {#$('.selectpicker').selectpicker('refresh');#}
+                        $('.selectpicker').selectpicker('refresh');
                     },
                 });
            }
@@ -493,7 +570,7 @@
 
 
 
-        function add_db(){
+        function layer_add_db(){
             layer.open({
                     type: 1,
                     title: '修改主机信息',
@@ -506,7 +583,7 @@
         }
 
 
-
+        /*
         $("#db_business").select2({
             placeholder: 'host',
             multiple:false,
@@ -517,7 +594,7 @@
 
 
         });
-
+        */
 
         function requests(method,url,data){
             var ret = '';

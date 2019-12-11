@@ -238,7 +238,7 @@
             });
 
             $("#dbTree").click(function () {
-                 $('#dbChoice,#result,#dbTable,#schema_result,#table_name').empty()
+                 $('#dbChoice,#result,#dbTable,#schema_result,#table_name,#dbDmlBinlog,#binlog_db_file,#binlog_result').empty()
                  var position = 'last';
                  let select_node = $(this).jstree("get_selected",true)[0]["original"];
 
@@ -291,7 +291,7 @@
                     ChangeMenu('binlog_query')
                     let vIds = $(this).val();
                     let td = $(this).parent().parent().parent().find("td")
-                    $("#dbTable").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> binlog查询</i>')
+                    $("#dbDmlBinlog").html('<i  class="fa  fa-paper-plane" >数据库  <u class="red">'+ td.eq(1).text() +'</u> binlog查询</i>')
                     $("#db_binlog_btn").removeClass("disabled").text("解析").val(vIds)
 			        make_database_data(vIds,"binlog_db_file")
 
@@ -484,14 +484,14 @@
                         btnObj.removeAttr('disabled');
                         var binlogHtml = '<div id="binlog_result"><pre><code class="sql">';
                         for (var i=0; i <response["data"].length; i++){
-                            binlogHtml +=  response["data"][i]+'<br>';
+                            binlogHtml +=  '<div>'+response["data"][i] +'</div>';
                         };
                         binlogHtml = binlogHtml + '</code></pre></div>';
                         $("#binlog_result").html(binlogHtml);
 
 
-                        $('pre code').each(function(i, block) {
-                            console.log(block)
+                        $('pre code div').each(function(i, block) {
+
                             hljs.highlightBlock(block);
                         });
                     },
