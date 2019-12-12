@@ -94,6 +94,7 @@
                              <label class="col-sm-2 control-label" >环境类型<span class="required">*</span></label>
                              <div class="col-sm-10">
                                  <select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_env" id="db_env" autocomplete="off">
+                                     <option selected="selected" value="">请选择一个项目</option>
                                     <option value="beta" name="db_env" >测试</option>
                                     <option value="ga" name="db_env">生产</option>
                                  </select>
@@ -103,6 +104,7 @@
                              <label class="col-sm-2 control-label" >架构类型<span class="required">*</span></label>
                              <div class="col-sm-10">
                                  <select required="required" class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_mode" id="db_mode" autocomplete="off">
+                                     <option selected="selected" value="">请选择一个项目</option>
                                     <option value="single" name="db_mode" >单例</option>
                                     <option value="ms" name="db_mode" >主从</option>
                                     <option value="pxc" name="db_mode" >PXC</option>
@@ -131,6 +133,7 @@
                              <label class="col-sm-2 control-label" > 读写类型<span class="required">*</span></label>
                              <div class="col-sm-10">
                                  <select class="selectpicker form-control" data-live-search="true"  data-size="10" data-width="100%" name="db_rw"  id="db_rw" autocomplete="off">
+                                     <option selected="selected" value="">请选择一个项目</option>
                                     <option selected="selected" value="read">只读</option>
                                     <option  value="write">写入</option>
                                     <option  value="r/w">读写</option>
@@ -178,7 +181,7 @@
                         <legend></legend>
                         <div class="form-group">
                             <label class="col-sm-4 control-label"></label>
-                            <button type="reset" class="btn btn-default btn-group-sm">取消</button>
+{#                            <button type="reset" class="btn btn-default btn-group-sm">取消</button>#}
                             <button type="button" class="btn btn-default btn-group-sm" value="" id="save_database_config">添加</button>
                         </div>
                     </form>
@@ -354,7 +357,7 @@
 
 
             $('#DatabaseListTable tbody').on('click',"button[name='btn-database-edit']",function(){
-                layer_add_db()
+                layer_edit_db()
                 var btnObj = $(this);
                 btnObj.attr('disabled',true);
                 var vIds = $(this).val();
@@ -571,6 +574,33 @@
 
 
         function layer_add_db(){
+                {#$("#db_env option[value='']").prop("selected",true);#}
+                {#$('.selectpicker').selectpicker('refresh');#}
+
+            var ids = ['db_env','db_mode', 'db_business', 'db_assets_id', 'db_rw']
+            for (var i=0;i<ids.length;i++){
+                let id = ids[i]
+
+                $("#" + id +" option[value='']").prop("selected",true);
+            }
+            $('.selectpicker').selectpicker('refresh');
+
+            $("#db_type,#db_version,#db_user,#db_port,#db_passwd,#db_mark").val('')
+            layer.open({
+                    type: 1,
+                    title: '修改主机信息',
+                    closeBtn: 1,
+                    zIndex:33,
+                    area: ['800px', '400px'],
+                    shadeClose: true, //点击遮罩关闭
+                    content: $('#add_db_windows'),
+                })
+
+
+        }
+
+        function layer_edit_db(){
+
             layer.open({
                     type: 1,
                     title: '修改主机信息',
@@ -581,6 +611,9 @@
                     content: $('#add_db_windows'),
                 })
         }
+
+
+
 
 
         /*
