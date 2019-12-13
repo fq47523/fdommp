@@ -2,6 +2,7 @@
 
 {% block link_1 %}
     <link rel="stylesheet" href="/static/plugins/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="/static/plugins/jquery-confirm/jquery-confirm.min.css">
     <link rel="stylesheet" href="/static/plugins/bootstrap-select/bootstrap-select.css">
     <link rel="stylesheet" href="/static/plugins/select2/select2.min.css">
     <link href="/static/plugins/datatable/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
@@ -14,7 +15,7 @@
 
 {#    <link rel="stylesheet" href="/static/css/bootstrap-select.css">#}
     <style type="text/css">
-        #add_db_windows {
+        .on_hide {
             display: none;
         }
 
@@ -82,7 +83,7 @@
 
 
 
-    <section class="content" id="add_db_windows">
+    <section class="content on_hide" id="add_db_windows">
         <div class="row">
             <div class="col-xs-12">
 
@@ -195,11 +196,53 @@
         </div>
     </section>
 
+
+    <section class="content on_hide" id="relevance_db_windows">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box-body">
+                    <h4 class="modal-title" id="databaseImportModalLabel">导入数据库</h4>
+                    <div class="input-group col-xs-12">
+					        <div class="input-group-btn">
+					            <button type="button" class="btn btn-default" data-dismiss="modal" disabled>数据库名称</button>
+					        </div>
+					        <input id="server_database_input" type="text" class="form-control" placeholder="输入数据库名称">
+							<span class="input-group-btn">
+							    <button class="btn btn-success" id="server_database_submit" value="">添加</button>
+							</span>
+                    </div>
+                    <table width="100%" class="table table-striped table-bordered" id="server_database_list">
+                               <thead>
+									<tr>
+										<th>名称</th>
+										<th>大小(MB)</th>
+										<th class="text-center">操作</th>
+									</tr>
+                               </thead>
+                               <tbody>
+                               </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
 {% endblock %}
 
 
 {% block js %}
     <script src="/static/plugins/layer/layer.js"></script>
+    <script src="/static/plugins/jquery-confirm/jquery-confirm.min.js"></script>
     <script src="/static/plugins/select2/select2.full.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net/js/jquery.dataTables.min.js"></script>
 	<script src="/static/plugins/datatable/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -388,6 +431,155 @@
               });
 
 
+            $('#DatabaseListTable tbody').on('click',"button[name='btn-database-import']",function(){
+                layer_relevance_db()
+                var vIds = $(this).val();
+                var td = $(this).parent().parent().parent().find("td")
+                let server = td.eq(7).text()
+                let port = td.eq(9).text()
+                $("#databaseImportModalLabel").html('<h4 class="modal-title" id="databaseImportModalLabel"><u class="red">'+ server + ':' + port +'</u> 导入数据库</h4>')
+                $("#server_database_submit").val(vIds)
+                if ($('#server_database_list').hasClass('dataTable')) {
+                    dttable = $('#server_database_list').dataTable();
+                    dttable.fnClearTable();
+                    dttable.fnDestroy();
+                }
+                makeServerDatabaseTableList(vIds)
+              });
+
+
+            $('#DatabaseListTable tbody').on('click',"button[name='btn-database-delete']",function(){
+                var vIds = $(this).val();
+                var td = $(this).parent().parent().parent().find("td")
+                var port = td.eq(9).text()
+                var server = td.eq(7).text()
+                $.confirm({
+                    title: '删除确认',
+                    content:  '<strong>服务器</strong><code>' + server + ':' + port + '</code>数据库配置',
+                    type: 'red',
+                    buttons: {
+                             删除: function () {
+                        $.ajax({
+                            cache: true,
+                            type: "DELETE",
+                            url:'/api/db/manage/'+ vIds + '/' ,
+                            error: function(response) {
+                                new PNotify({
+                                    title: 'Ops Failed!',
+                                    text: "删除失败",
+                                    type: 'error',
+                                    styling: 'bootstrap3'
+                                });
+                            },
+                            success: function(response) {
+                                new PNotify({
+                                    title: 'Success!',
+                                    text: "删除成功",
+                                    type: 'success',
+                                    styling: 'bootstrap3'
+                                });
+                                RefreshTable('#DatabaseListTable', '/db/config/?type=get_all_db')
+                            }
+                        });
+                        },
+                        取消: function () {
+                            return true;
+                        },
+                    }
+                });
+            });
+
+
+
+
+
+            $('#server_database_list tbody').on('click',"button[name='btn-server-database-delete']",function(){
+                var vIds = $(this).val();
+                var td = $(this).parent().parent().parent().find("td")
+                let db_server = $("#server_database_submit").val()
+                $.confirm({
+                    title: '删除确认',
+                    content:  '<strong>数据库</strong><code>' + td.eq(0).text() + '</code>',
+                    type: 'red',
+                    buttons: {
+                             删除: function () {
+                        $.ajax({
+                            cache: true,
+                            type: "DELETE",
+                            url:'/api/db/server/'+ db_server +'/db/'+ vIds +'/' ,
+                            error: function(response) {
+                                new PNotify({
+                                    title: 'Ops Failed!',
+                                    text: "删除失败",
+                                    type: 'error',
+                                    styling: 'bootstrap3'
+                                });
+                            },
+                            success: function(response) {
+                                new PNotify({
+                                    title: 'Success!',
+                                    text: "删除成功",
+                                    type: 'success',
+                                    styling: 'bootstrap3'
+                                });
+                                if ($('#server_database_list').hasClass('dataTable')) {
+                                    dttable = $('#server_database_list').dataTable();
+                                    dttable.fnClearTable();
+                                    dttable.fnDestroy();
+                                }
+                                makeServerDatabaseTableList(db_server)
+                            }
+                        });
+                        },
+                        取消: function () {
+                            return true;
+                        },
+                    }
+                });
+              });
+
+
+
+            $("#server_database_submit").on('click', function() {
+                var vIds = $(this).val();
+                let dbname = $("#server_database_input").val()
+                let url = "/api/db/server/"+vIds+"/list/"
+                if (vIds.length && dbname.length){
+                    $.ajax({
+                        type: "POST",
+                        url:url,
+                        data:{
+                            "db_name":dbname,
+                        },
+                        error: function(response) {
+                            new PNotify({
+                                title: 'Ops Failed!',
+                                text: response.responseText,
+                                type: 'error',
+                                styling: 'bootstrap3'
+                            });
+                        },
+                        success: function(response) {
+                            new PNotify({
+                                title: 'Success!',
+                                text: '添加成功',
+                                type: 'success',
+                                styling: 'bootstrap3'
+                            });
+                            RefreshServerDatabaseTable('#server_database_list', url)
+                        }
+                    });
+                }else{
+                    $.confirm({
+                        title: '<strong>警告</strong>',
+                        typeAnimated: true,
+                        content: "没有选择数据库服务器，或者没有输入数据库名称~",
+                        type: 'red'
+                    });
+                }
+
+            });
+
 
 
 
@@ -397,12 +589,107 @@
         })
 
 
+        function makeServerDatabaseTableList(vIds){
+            var columns = [
+                           {"data": "db_name"},
+                           {
+                               "data": "db_size",
+                               "defaultContent": ""
+                           },
+                           ]
+           var columnDefs = [
+                                {
+                                targets: [2],
+                                render: function(data, type, row, meta) {
+                                    return '<div class="btn-group  btn-group-xs">' +
+                                               '<button type="button" name="btn-server-database-delete" value="'+ row.id +'" class="btn btn-default" aria-label="Justify"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>' +
+                                               '</button>' +
+                                               '</div>';
+                                },
+                                "className": "text-center",
+                                },
+                              ]
+            var buttons = [{
+                text: '<span class="fa fa-plus"></span>',
+                className: "btn-xs",
+                action: function ( e, dt, node, config ) {
+
+                }
+            }]
+            InitServerDatabaseDataTable('server_database_list',"/api/db/server/"+vIds+"/list/",buttons,columns,columnDefs);
+        };
+
+
+        function InitServerDatabaseDataTable(tableId,url,buttons,columns,columnDefs){
+            var data = requests('get',url)
+            oOverviewTable =$('#'+tableId).dataTable(
+                  {
+                        "dom": "Bfrtip",
+                        "buttons":buttons,
+                        "bScrollCollapse": false,
+                        "bRetrieve": true,
+                        "destroy": true,
+                        "data":	data,
+                        "columns": columns,
+                        "columnDefs" :columnDefs,
+                        "language" : language,
+                        "order": [[ 0, "ase" ]],
+                        "autoWidth": true
+                    });
+        };
+
+
+        function RefreshServerDatabaseTable(tableId, urlData){
+            $.getJSON(urlData, null, function( dataList ){
+              table = $(tableId).dataTable();
+              oSettings = table.fnSettings();
+
+              table.fnClearTable(this);
+
+              for (var i=0; i<dataList.length; i++)
+              {
+                table.oApi._fnAddData(oSettings, dataList[i]);
+              }
+
+              oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+              table.fnDraw();
+
+            });
+        }
+
+
+
+
+
+
+
         function DynamicSelect(ids,value){
             $("#" + ids +" option").each(function(){
                 $(this).prop("selected",false);
             })
             $("#" + ids +" option[value='" + value +"']").prop("selected",true);
         }
+
+        function RefreshTable(tableId, urlData){
+            $.getJSON(urlData, null, function( dataList )
+            {
+            table = $(tableId).dataTable();
+            oSettings = table.fnSettings();
+
+            table.fnClearTable(this);
+
+            for (var i=0; i<dataList["data"].length; i++)
+            {
+              table.oApi._fnAddData(oSettings, dataList["data"][i]);
+            }
+
+            oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+            table.fnDraw();
+
+            });
+        }
+
+
 
 
 
@@ -574,8 +861,6 @@
 
 
         function layer_add_db(){
-                {#$("#db_env option[value='']").prop("selected",true);#}
-                {#$('.selectpicker').selectpicker('refresh');#}
 
             var ids = ['db_env','db_mode', 'db_business', 'db_assets_id', 'db_rw']
             for (var i=0;i<ids.length;i++){
@@ -597,7 +882,7 @@
                 })
 
 
-        }
+        };
 
         function layer_edit_db(){
 
@@ -610,7 +895,20 @@
                     shadeClose: true, //点击遮罩关闭
                     content: $('#add_db_windows'),
                 })
-        }
+        };
+
+        function layer_relevance_db(){
+            layer.open({
+                    type: 1,
+                    title: '修改主机信息',
+                    closeBtn: 1,
+                    zIndex:33,
+                    area: ['800px', '400px'],
+                    shadeClose: true, //点击遮罩关闭
+                    content: $('#relevance_db_windows'),
+                })
+        };
+
 
 
 

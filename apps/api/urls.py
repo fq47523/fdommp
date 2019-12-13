@@ -33,8 +33,8 @@ urlpatterns = [
     re_path('^db/status/(?P<id>[0-9]+)/$', db_api.db_status),
     path('db/tree/', db_api.db_tree),
     path('db/user/list/', db_api.db_user_db_list),
-
-
+    re_path('^db/server/(?P<id>[0-9]+)/list/$', db_api.db_server_dblist),
+    re_path('^db/server/(?P<sid>[0-9]+)/db/(?P<id>[0-9]+)/$', db_api.db_server_db_detail),
 
 
 ]

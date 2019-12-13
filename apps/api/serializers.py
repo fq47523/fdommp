@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from assets.models import Asset,Server
-from databases.models import DataBase_Server_Config
+from databases.models import (DataBase_Server_Config,
+                              Database_Detail
+                             )
 
 
 
@@ -54,3 +56,12 @@ class DataBaseServerSerializer(serializers.ModelSerializer):
 
     def get_detail(self, obj):
         return obj.to_json()
+
+
+class DatabaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Database_Detail
+        fields = ('id', 'db_name', 'db_size')
+
+    def create(self, validated_data):
+        return Database_Detail.objects.create(db_server=self.context["db_server"], **validated_data)
