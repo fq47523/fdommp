@@ -21,7 +21,7 @@ class Index(LoginRequiredMixin,View):
 
     def get(self, request, *args, **kwagrs):
 
-        return render(request, 'accounts/index.html')
+        return render(request, 'index.html')
 
 
 
@@ -51,9 +51,9 @@ def login(request):
         else:
             if request.method == "POST":
 
-                return render(request, 'accounts/login.html', {"login_error_info": "用户名或者密码错误", "username":username}, )
+                return render(request, 'login.html', {"login_error_info": "用户名或者密码错误", "username":username}, )
             else:
-                return render(request, 'accounts/login.html')
+                return render(request, 'login.html')
 
 @login_required
 def logout(request):

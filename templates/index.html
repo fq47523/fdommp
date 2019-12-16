@@ -256,7 +256,7 @@ desired effect
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">导航栏</li>
         <!-- Optionally, you can add icons to the links -->
-        <li><a id='dash' href="#" murl='{% url 'accounts:dashboard' %}' onclick="reqpage(this)"><i class="fa fa-dashboard" ></i> <span>仪表盘</span></a></li>
+        <li><a id='dash' href="#" murl='{% url 'dashboard:dashboard' %}' onclick="reqpage(this)"><i class="fa fa-dashboard" ></i> <span>仪表盘</span></a></li>
 
           <li class="treeview">
           <a href="#">
@@ -456,7 +456,7 @@ desired effect
              $('#myframe').attr('src',murl);
         }
 
-    }
+    };
 
     $(function () {reqpage($('#dash'))});
 
@@ -468,13 +468,13 @@ desired effect
 <script>
   // 计算页面的实际高度，iframe自适应会用到
   function calcPageHeight(doc) {
-      var cHeight = Math.max(doc.body.clientHeight, doc.documentElement.clientHeight)
-      var sHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight)
-      var height  = Math.max(cHeight, sHeight)
+      var cHeight = Math.max(doc.body.clientHeight, doc.documentElement.clientHeight);
+      var sHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+      var height  = Math.max(cHeight, sHeight);
       return height
-  }
+  };
   //根据ID获取iframe对象
-  var ifr = document.getElementById('myframe')
+  var ifr = document.getElementById('myframe');
   ifr.onload = function() {
   	  //解决打开高度太高的页面后再打开高度较小页面滚动条不收缩
   	  ifr.style.height='0px';
@@ -484,7 +484,7 @@ desired effect
       	height = 850;
       }
       ifr.style.height = height + 'px'
-  }
+  };
 </script>
 </body>
 </html>

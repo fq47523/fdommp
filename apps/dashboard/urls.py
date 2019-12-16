@@ -15,9 +15,9 @@ Including another URLconf
 """
 
 from django.urls import path
-from accounts import views
+from dashboard import views
 
-app_name = 'accounts'
+app_name = 'dashboard'
 
 urlpatterns = [
     # path('login/', views.login, name='login'),

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'accounts',
+    'dashboard',
     'hosts',
     'api',
     'service',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'webssh',
     'tasks',
     'assets',
+    'databases',
 
 ]
 

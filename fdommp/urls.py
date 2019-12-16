@@ -24,7 +24,7 @@ urlpatterns = [
     re_path('^$', ul_view.Index.as_view()),
     re_path('^login/$', ul_view.login),
     re_path('^logout/$', ul_view.logout),
-    path('accounts/', include('accounts.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('hosts/', include('hosts.urls')),
     path('service/', include('service.urls')),
     path('api/', include('api.urls')),
