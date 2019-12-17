@@ -40,11 +40,20 @@ from assets.models import Tag,Asset,Server
 from hosts.models import Service
 
 
-from utils.deploy.git import GitTools
+# from utils.deploy.git import GitTools
+#
+# print (GitTools('/home/fuqing/PycharmProjects/fdommp').tag())
 
-print (GitTools('/home/fuqing/PycharmProjects/fdommp').tag())
+import subprocess,json
+
+ret = subprocess.getstatusoutput("echo 'select * from opsmanage.auth_user' | /opt/soar -online-dsn 'root:redhat@192.168.79.134:3307/opsmanage' -report-type json")
+print (json.loads(ret[1]))
+# print (ret[1].split('\n'))
 
 
 
-
-
+# ret = subprocess.Popen("echo 'select * from film' | /opt/soar",shell=True,stdout=subprocess.PIPE)
+# dd = ret.stdout.read().decode()
+# cc = dd.split('\n')
+# for i in cc:
+#     print (i)
