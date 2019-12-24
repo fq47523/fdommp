@@ -3,6 +3,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import render
 from .dao import DBManage
+import json
+
+
+#soar
+from conf.soarconfig  import HOST
+from conf.soarconfig import PORT
+from conf.soarconfig import DEBUG
+# from core.check import check_env
+from databases.soar.common import soar_result
+from databases.soar.common import soar_args_check
+from databases.soar.common import open_brower
+from databases.soar.common import parse_dsn
+from databases.soar.common import runcmd
+from databases.soar.common import req_parse2cmd_parse
+from databases.soar.argcrypto import decrypt
 
 
 
@@ -32,3 +47,32 @@ class DatabaseQuery(LoginRequiredMixin, DBManage, View):
     # @method_decorator_adaptor(permission_required, "Databases.databases_query_database_server_config", "/403/")
     def get(self, request, *args, **kwagrs):
         return render(request, 'database/db_query.html', {"user": request.user})
+
+# SOAR
+def SoarIndex(request):
+    return render(request,'database/db_soar.html')
+
+def SoarApi(request):
+    arg = request.json
+    if 'data' not in arg or 'key' not in arg:
+        return json.dumps({
+            "result": 'data or key is None',
+            "status": False
+        })
+
+    try:
+        args = json.loads(decrypt(arg['data'], arg['key']))
+    except Exception as e:
+        return json.dumps({
+            "result": str(e),
+            "status": False
+        })
+    if DEBUG:
+        print(args)
+
+    check = soar_args_check(args)
+    if check:
+        return check
+    result = soar_result(args)
+
+    return result

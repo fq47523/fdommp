@@ -269,3 +269,16 @@ class Custom_High_Risk_SQL(models.Model):
         verbose_name = '数据库管理'
         verbose_name_plural = '自定义高危SQL表' 
 
+class Soar_Config(models.Model):
+    name = models.CharField(max_length=200, unique=True, verbose_name='配置名称')
+    onlinedsn = models.CharField(max_length=200, verbose_name='线上环境')
+    testdsn = models.CharField(max_length=200, verbose_name='测试环境')
+    allowonlineastest = models.BooleanField(default='',verbose_name='线上环境作为测试环境')
+    blacklist = models.CharField(max_length=500, verbose_name='黑名单列表')
+    sampling = models.BooleanField(default='',verbose_name='数据采样')
+    tableallowengines = models.CharField(max_length=30, verbose_name='数据库引擎',default='InnoDB')
+
+    class Meta:
+        db_table = 'fdommp_soar_config'
+        verbose_name = '数据库管理'
+        verbose_name_plural = 'soar配置项'
