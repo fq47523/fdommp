@@ -16,7 +16,8 @@ PORT = 5077
 
 # 根目录
 BASE_DIR = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'soarfile'
-print (BASE_DIR)
+STATIC_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + 'static'
+print (STATIC_dir)
 # 临时目录
 TMP_DIR = BASE_DIR + os.sep + 'tmp' + os.sep
 SOAR_PATH = BASE_DIR + os.sep + 'soar' + os.sep
@@ -25,9 +26,9 @@ SOAR_PATH = BASE_DIR + os.sep + 'soar' + os.sep
 IS_OPEN_BROWESER = True  # True False
 
 # 私钥文件
-RSA_PRIVATE_DIR = BASE_DIR + os.sep + 'data' + os.sep + 'private.rsa'
+RSA_PRIVATE_DIR = BASE_DIR + os.sep + 'private.rsa'
 # 公钥文件
-RSA_PUBLIC_DIR = BASE_DIR + os.sep + 'static' + os.sep + 'data' + os.sep + 'public.rsa'
+RSA_PUBLIC_DIR = STATIC_dir + os.sep  + 'rsa' + os.sep + 'public.rsa'
 
 # 是否打开调试模式
 DEBUG = False

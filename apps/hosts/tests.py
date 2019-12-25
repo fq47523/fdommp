@@ -57,3 +57,7 @@ print (json.loads(ret[1]))
 # cc = dd.split('\n')
 # for i in cc:
 #     print (i)
+
+arg = {'data':11,'key':22}
+if 'data' not in arg or 'key' not in arg:
+    print (11)

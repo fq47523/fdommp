@@ -2,7 +2,7 @@
 #coding:utf-8
 import logging.config,os
 pwd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print (pwd)
+
 logging.config.fileConfig("{}/conf/logger.ini".format(pwd))
 logger = logging.getLogger("fdommp")
 

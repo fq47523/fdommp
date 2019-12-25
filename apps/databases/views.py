@@ -1,6 +1,6 @@
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render
 from .dao import DBManage
 import json
@@ -52,27 +52,36 @@ class DatabaseQuery(LoginRequiredMixin, DBManage, View):
 def SoarIndex(request):
     return render(request,'database/db_soar.html')
 
-def SoarApi(request):
-    arg = request.json
-    if 'data' not in arg or 'key' not in arg:
-        return json.dumps({
-            "result": 'data or key is None',
-            "status": False
-        })
+def SoarCmd(request):
+    if request.method == 'POST':
+        arg = json.loads(request.body.decode('utf-8'))
+        print ('ss:',arg['data'])
+        if 'data' not in arg or 'key' not in arg:
+            return JsonResponse({
+                "result": 'data or key is None',
+                "status": False
+            })
 
-    try:
-        args = json.loads(decrypt(arg['data'], arg['key']))
-    except Exception as e:
-        return json.dumps({
-            "result": str(e),
-            "status": False
-        })
-    if DEBUG:
-        print(args)
+        try:
+            args = json.loads(decrypt(arg['data'], arg['key']))
+        except Exception as e:
+            return JsonResponse({
+                "result": str(e),
+                "status": False
+            })
 
-    check = soar_args_check(args)
-    if check:
-        return check
-    result = soar_result(args)
+        if DEBUG:
+            print(args)
 
-    return result
+        check = soar_args_check(args)
+        if check:
+            return check
+        result = soar_result(args)
+
+        return HttpResponse(result,content_type='application/json')
+
+# def SoarCmd(request):
+#     if request.method == 'POST':
+#         print (request.body.decode('utf-8'))
+#
+#         return JsonResponse({})

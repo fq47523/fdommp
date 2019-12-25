@@ -2,6 +2,7 @@
 
 {% block link_1 %}
     <link rel="stylesheet" href="/static/plugins/codemirror/codemirror.css">
+    <script src="/static/plugins/highlight/highlight.pack.js" type="text/javascript"></script>
     <style>
       /*公共样式*/
       .w-100{width: 100px !important;}
@@ -79,6 +80,7 @@
                           <li role="presentation" v-bind:class="{active:curRouter==router.config}"><a href="#/config">SOAR配置</a></li>
                         </ul>
                       </header>
+                        <span>[[curId]]</span>
                       <!--导航-->
                       <!--sql 分析页面-->
                       <div class="content" v-show="curRouter==router.analysis">
@@ -329,6 +331,7 @@
     <script src="/static/soar/jsencrypt.js"></script>
     <script src="/static/soar/cursor-position.js"></script>
     <script src="/static/soar/director.min.js"></script>
+    <script src="/static/soar/crypto-js/crypto-js.js"></script>
     <script src="/static/plugins/codemirror/codemirror.js"></script>
     <script>
         (function (){
@@ -339,7 +342,8 @@
         };
         //请求的 api
         var api = {
-         soar : '/soarapi',  //soar sql 分析优化接口
+         soarconflist:'/api/db/soar/list/',
+         soar : '/databases/soarcmd/',  //soar sql 分析优化接口
          testConnect : '/test-connect',  //测试数据库连接
          download : '/soar-download',  //导出接口
          version : '/soar-version'  //获取版本信息
@@ -440,8 +444,8 @@
           data : function (){
             //初始化配置
             var configs = this.getSoarConfig();
-            console.log(configs)
-            var curId = Number(localStorage.getItem(cacheKey.configSelect)) || 0;
+            var curId = '';
+            {#var curId = Number(localStorage.getItem(cacheKey.configSelect)) || 0;#}
             var logLevel = Number(localStorage.getItem(cacheKey.logLevel)) || 0;
             var editorHeight = this.resizeEditor() + 'px';
             var dropdown = {};
@@ -543,22 +547,8 @@
             },
             //获取 soar 配置项列表， 如果没有则初始化一条默认，配置
             getSoarConfig : function (){
-              var configs = localStorage.getItem(cacheKey.soar);
-              try {
-                if (configs) configs = JSON.parse(configs);
-              } catch (e) {
-                configs = null;
-              }
-              if (!$.isArray(configs) || configs.length == 0) {
-                configs = [];
-                configs.push({
-                  'name': '默认配置',
-                  'online-dsn':'',
-                  'test-dsn':''
-                });
-                localStorage.setItem(cacheKey.soar, JSON.stringify(configs));
-              }
-              return configs;
+                var data = this.datarequest('get',api.soarconflist,{})
+                return data
             },
             //存储soar配置项列表
             saveSoarConfig : function (configs){
@@ -639,7 +629,7 @@
             },
             //加载公钥
             loadPublicKey : function(callback){
-              $.get('data/public.rsa?t=' + new Date().getTime(), function (data){
+              $.get('/static/rsa/public.rsa?t=' + new Date().getTime(), function (data){
                 encrypt.setPublicKey(data);
                 if ($.isFunction(callback)) callback();
               });
@@ -695,6 +685,7 @@
             },
             //请求封装
             request : function(config, success, error){
+                console.log(config)
               var _this = this;
               config.data = _this.trimObj(config.data);
               this.loadPublicKey(function (){
@@ -703,6 +694,7 @@
                 var loadIndex;
                 //是否显示加载动画
                 if (config.isLoading) loadIndex = layer.load(2, {offset:'30%'});  //打开加载动画
+                  console.log(config.url)
                 $.ajax({
                   url : config.url,  //请求url
                   dataType : 'json',  //数据格式
@@ -727,6 +719,23 @@
                 });
               });
             },
+
+            datarequest:function(method,url,data){
+                var ret = '';
+                $.ajax({
+                    async:false,
+                    url:url, //请求地址
+                    type:method,  //提交类似
+                    success:function(response){
+                         ret = response;
+                    },
+                    error:function(data){
+                        ret = {};
+                    }
+                });
+                return 	ret
+            },
+
             //根据sql分析选项， 进行补贴的展示
             sqlAnalysis:function(type){
               var query = this.sqlEditor.getValue();
@@ -898,7 +907,7 @@
             soarEdit : function (id){
               this.itemConfig = {};
               if (id >= 0) this.itemConfig = $.extend(this.itemConfig, this.configs[id]);
-              this.initConfig();
+              {#this.initConfig();#}
               layer.open({
                 type: 1,
                 title: 'SOAR 配置编辑',

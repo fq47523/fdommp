@@ -11,5 +11,5 @@ urlpatterns = [
     path('query/', views.DatabaseQuery.as_view(),name='db_query'),
     # url(r'^execute/histroy/$', views.DatabaseExecuteHistroy.as_view()),
     path('soarindex/',views.SoarIndex,name='db_soarindex'),
-    path('soarapi/',views.SoarApi,name='db_soarapi')
+    path('soarcmd/',views.SoarCmd,name='db_soarcmd')
 ]
