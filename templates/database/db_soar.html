@@ -80,7 +80,7 @@
                           <li role="presentation" v-bind:class="{active:curRouter==router.config}"><a href="#/config">SOAR配置</a></li>
                         </ul>
                       </header>
-                        <span>[[curId]]</span>
+
                       <!--导航-->
                       <!--sql 分析页面-->
                       <div class="content" v-show="curRouter==router.analysis">
@@ -444,6 +444,7 @@
           data : function (){
             //初始化配置
             var configs = this.getSoarConfig();
+            var saveconfigs = ''
             var curId = '';
             {#var curId = Number(localStorage.getItem(cacheKey.configSelect)) || 0;#}
             var logLevel = Number(localStorage.getItem(cacheKey.logLevel)) || 0;
@@ -470,6 +471,7 @@
               curRouter : '',   //当前路由
               configs : configs,    //soar 配置列表
               curId : curId,    //当前选择的配置项
+              saveconfigs:saveconfigs,
               editorHeight : editorHeight,  //编辑器高度
               itemConfig : {},  //当前编辑配置详情
               editId : -1,  //当前编辑配置id
@@ -552,7 +554,8 @@
             },
             //存储soar配置项列表
             saveSoarConfig : function (configs){
-              localStorage.setItem(cacheKey.soar, JSON.stringify(configs));
+              {#localStorage.setItem(cacheKey.soar, JSON.stringify(configs));#}
+              {#  this.datarequest('')#}
             },
             //去除空格
             trimObj : function (obj) {
@@ -724,13 +727,16 @@
                 var ret = '';
                 $.ajax({
                     async:false,
+                    dataType : 'json',
+                    contentType : 'application/json;charset=UTF-8',
                     url:url, //请求地址
                     type:method,  //提交类似
+                    data : JSON.stringify(data),
                     success:function(response){
                          ret = response;
                     },
-                    error:function(data){
-                        ret = {};
+                    error:function(response){
+                        ret = response;
                     }
                 });
                 return 	ret
@@ -907,7 +913,7 @@
             soarEdit : function (id){
               this.itemConfig = {};
               if (id >= 0) this.itemConfig = $.extend(this.itemConfig, this.configs[id]);
-              {#this.initConfig();#}
+              this.initConfig();
               layer.open({
                 type: 1,
                 title: 'SOAR 配置编辑',
@@ -917,6 +923,7 @@
                   $('#soar-edit-tpl').hide();
                 }
               });
+
               this.editId = id;
             },
             //soar 配置编辑帮助提示弹窗打开
@@ -944,13 +951,15 @@
               }
               this.itemConfig = this.trimObj(this.itemConfig);
               if (this.editId < 0) {
-                this.configs.push(this.itemConfig);
+                this.saveconfigs = this.itemConfig;
               } else {
-                Vue.set(this.configs, this.editId, $.extend({}, this.itemConfig));
+                {#Vue.set(this.configs, this.editId, $.extend({}, this.itemConfig));#}
+                  console.log(this.editId, $.extend({}, this.itemConfig))
               }
               {#this.saveSoarConfig(this.configs);#}
-                console.log(this.configs)
-              layer.successMsg('保存成功');
+                console.log(this.saveconfigs)
+                let ret = this.datarequest('POST',api.soarconflist,this.saveconfigs)
+              layer.successMsg(ret.msg);
               return true;
             },
             //删除配置

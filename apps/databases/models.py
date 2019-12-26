@@ -274,9 +274,9 @@ class Soar_Config(models.Model):
     onlinedsn = models.CharField(max_length=200, verbose_name='线上环境')
     testdsn = models.CharField(max_length=200, verbose_name='测试环境')
     allowonlineastest = models.NullBooleanField(verbose_name='线上环境作为测试环境')
-    blacklist = models.CharField(max_length=500, default='',verbose_name='黑名单列表')
+    blacklist = models.CharField(max_length=500, blank=True, null=True,verbose_name='黑名单列表')
     sampling = models.NullBooleanField(default='',verbose_name='数据采样')
-    tableallowengines = models.CharField(max_length=30, verbose_name='数据库引擎',default='InnoDB')
+    tableallowengines = models.CharField(max_length=30, blank=True, null=True,verbose_name='数据库引擎',default='InnoDB')
 
     class Meta:
         db_table = 'fdommp_soar_config'
@@ -285,6 +285,7 @@ class Soar_Config(models.Model):
 
     def to_json(self):
         json_format = {
+            "id":self.id,
             "name": self.name,
             "online-dsn": self.onlinedsn,
             "test-dsn": self.testdsn,

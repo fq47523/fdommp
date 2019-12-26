@@ -55,7 +55,7 @@ def SoarIndex(request):
 def SoarCmd(request):
     if request.method == 'POST':
         arg = json.loads(request.body.decode('utf-8'))
-        print ('ss:',arg['data'])
+
         if 'data' not in arg or 'key' not in arg:
             return JsonResponse({
                 "result": 'data or key is None',
@@ -75,7 +75,7 @@ def SoarCmd(request):
 
         check = soar_args_check(args)
         if check:
-            return check
+            return HttpResponse(check,content_type='application/json')
         result = soar_result(args)
 
         return HttpResponse(result,content_type='application/json')

@@ -46,8 +46,8 @@ from hosts.models import Service
 
 import subprocess,json
 
-ret = subprocess.getstatusoutput("echo 'select * from opsmanage.auth_user' | /opt/soar -online-dsn 'root:redhat@192.168.79.134:3307/opsmanage' -report-type json")
-print (json.loads(ret[1]))
+# ret = subprocess.getstatusoutput("echo 'select * from opsmanage.auth_user' | /opt/soar -online-dsn 'root:redhat@192.168.79.134:3307/opsmanage' -report-type json")
+# print (json.loads(ret[1]))
 # print (ret[1].split('\n'))
 
 
@@ -58,6 +58,5 @@ print (json.loads(ret[1]))
 # for i in cc:
 #     print (i)
 
-arg = {'data':11,'key':22}
-if 'data' not in arg or 'key' not in arg:
-    print (11)
+ddd = {'aa':'cc'}
+print (ddd.get('aa').capitalize())

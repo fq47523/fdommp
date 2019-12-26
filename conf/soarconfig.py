@@ -17,7 +17,7 @@ PORT = 5077
 # 根目录
 BASE_DIR = os.path.dirname(os.path.realpath(__file__)) + os.sep + 'soarfile'
 STATIC_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + 'static'
-print (STATIC_dir)
+
 # 临时目录
 TMP_DIR = BASE_DIR + os.sep + 'tmp' + os.sep
 SOAR_PATH = BASE_DIR + os.sep + 'soar' + os.sep
