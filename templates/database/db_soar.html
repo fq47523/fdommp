@@ -161,7 +161,7 @@
                               <td class="text-center">[[filterDsn(item['test-dsn'])||'--']]</td>
                               <td class="text-center">
                                 <span class="glyphicon glyphicon-pencil ponter" v-on:click="soarEdit(index)"></span>
-                                <span v-show="index!=0||configs.length>1" class="ml-5 glyphicon glyphicon-trash ponter" v-on:click="soarDel(index)"></span>
+                                <span v-show="index!=0||configs.length>1" class="ml-5 glyphicon glyphicon-trash ponter" v-on:click="soarDel(item.id)"></span>
                                 <span class="ml-5 glyphicon glyphicon-copy ponter"v-on:click="soarCopy(index)" title="点击复制"></span>
                               </td>
                             </tr>
@@ -327,12 +327,14 @@
 {% block js %}
     <script src="/static/js/vue.min.js"></script>
     <script src="/static/layui/layui.all.js"></script>
+    <script src="/static/plugins/codemirror/codemirror.js"></script>
     <script src="/static/soar/showdown.js"></script>
     <script src="/static/soar/jsencrypt.js"></script>
     <script src="/static/soar/cursor-position.js"></script>
     <script src="/static/soar/director.min.js"></script>
     <script src="/static/soar/crypto-js/crypto-js.js"></script>
-    <script src="/static/plugins/codemirror/codemirror.js"></script>
+    <script src="/static/soar/show-hint.js"></script>
+
     <script>
         (function (){
         // 设置soar 配置默认选项
@@ -343,6 +345,7 @@
         //请求的 api
         var api = {
          soarconflist:'/api/db/soar/list/',
+         soarconfdetail:'/api/db/soar/detail/',
          soar : '/databases/soarcmd/',  //soar sql 分析优化接口
          testConnect : '/test-connect',  //测试数据库连接
          download : '/soar-download',  //导出接口
@@ -550,6 +553,7 @@
             //获取 soar 配置项列表， 如果没有则初始化一条默认，配置
             getSoarConfig : function (){
                 var data = this.datarequest('get',api.soarconflist,{})
+                console.log(data)
                 return data
             },
             //存储soar配置项列表
@@ -725,6 +729,7 @@
 
             datarequest:function(method,url,data){
                 var ret = '';
+
                 $.ajax({
                     async:false,
                     dataType : 'json',
@@ -906,7 +911,7 @@
             //初始化配置
             initConfig : function (){
               for(var i in defaultConfig){
-                if (!this.itemConfig[i]) this.itemConfig[i] = defaultConfig[i];
+                if (this.itemConfig[i] == null) this.itemConfig[i] = defaultConfig[i];
               }
             },
             //soar 编辑弹窗打开
@@ -952,23 +957,34 @@
               this.itemConfig = this.trimObj(this.itemConfig);
               if (this.editId < 0) {
                 this.saveconfigs = this.itemConfig;
+                let ret = this.datarequest('POST',api.soarconflist,this.saveconfigs)
+                layer.successMsg(ret.msg);
               } else {
                 {#Vue.set(this.configs, this.editId, $.extend({}, this.itemConfig));#}
                   console.log(this.editId, $.extend({}, this.itemConfig))
+                  let ret = this.datarequest('PUT',api.soarconfdetail,$.extend({}, this.itemConfig))
+                  layer.successMsg(ret.msg);
               }
               {#this.saveSoarConfig(this.configs);#}
-                console.log(this.saveconfigs)
-                let ret = this.datarequest('POST',api.soarconflist,this.saveconfigs)
-              layer.successMsg(ret.msg);
+
+
+
               return true;
             },
             //删除配置
             soarDel : function(id){
               layer.confirm('确定删除？', function(index){
-                vueApp.configs.splice(id, 1);
-                vueApp.saveSoarConfig(vueApp.configs);
-                layer.close(index);
-                layer.warnMsg('删除成功');
+                let ret = vueApp.datarequest('DELETE',api.soarconfdetail,{'id':id})
+                  console.log(ret)
+
+                if (ret.status == 200){
+                    layer.close(index);
+                    layer.warnMsg('删除成功');
+                }else {
+                    layer.close(index);
+                    layer.warnMsg('删除失败');
+                }
+
               });
             },
             //复制配置项

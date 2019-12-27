@@ -58,5 +58,15 @@ import subprocess,json
 # for i in cc:
 #     print (i)
 
-ddd = {'aa':'cc'}
-print (ddd.get('aa').capitalize())
+from databases.models import Soar_Config
+req = {'id': 1, 'name': 'ddd', 'online-dsn': 'hh', 'test-dsn': 'hh', 'allow-online-as-test': 'false', 'sampling': '', 'blacklist': None}
+
+Soar_Config.objects.filter(id=req.get('id')).update(
+    name=req.get('name'),
+    onlinedsn=req.get('online-dsn'),
+    testdsn=req.get('test-dsn'),
+    allowonlineastest=req.get('allow-online-as-test').capitalize(),
+    blacklist=req.get('blacklist'),
+    sampling=req.get('sampling').capitalize(),
+    tableallowengines=req.get('tableallowengines'),
+)

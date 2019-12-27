@@ -36,6 +36,6 @@ urlpatterns = [
     re_path('^db/server/(?P<id>[0-9]+)/list/$', db_api.db_server_dblist),
     re_path('^db/server/(?P<sid>[0-9]+)/db/(?P<id>[0-9]+)/$', db_api.db_server_db_detail),
     path('db/soar/list/',soar_api.SoarList.as_view()),
-
+    path('db/soar/detail/',soar_api.SoarDetail.as_view()),
 
 ]
