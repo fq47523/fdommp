@@ -14,9 +14,9 @@ from conf.soarconfig import DEBUG
 from databases.soar.common import soar_result
 from databases.soar.common import soar_args_check
 from databases.soar.common import open_brower
-from databases.soar.common import parse_dsn
-from databases.soar.common import runcmd
-from databases.soar.common import req_parse2cmd_parse
+
+
+
 from databases.soar.argcrypto import decrypt
 
 
@@ -80,8 +80,4 @@ def SoarCmd(request):
 
         return HttpResponse(result,content_type='application/json')
 
-# def SoarCmd(request):
-#     if request.method == 'POST':
-#         print (request.body.decode('utf-8'))
-#
-#         return JsonResponse({})
+

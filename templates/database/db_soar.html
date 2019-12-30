@@ -288,7 +288,7 @@
                             <div v-if="importConfig.type==1" class="form-group">
                               <label class="col-xs-4 control-label">导入内容</label>
                                 <div class="col-xs-7">
-                                  <textarea rows="3" class="form-control" v-model="importConfig.content"></textarea>
+                                  <textarea rows="3" class="form-control" v-model="importConfig.content" placeholder='[{"name":"字符串","online-dsn":"user:password@host:port/database","test-dsn":"同online-dsn","allow-online-as-test":布尔,"sampling":布尔,"blacklist":"字符串"}]'></textarea>
                                 </div>
                               <div class="col-xs-1"></div>
                             </div>
@@ -347,9 +347,10 @@
          soarconflist:'/api/db/soar/list/',
          soarconfdetail:'/api/db/soar/detail/',
          soar : '/databases/soarcmd/',  //soar sql 分析优化接口
-         testConnect : '/test-connect',  //测试数据库连接
+         testConnect : '/api/db/soar/testconnect/',  //测试数据库连接
          download : '/soar-download',  //导出接口
-         version : '/soar-version'  //获取版本信息
+         version : '/api/db/soar/version/',  //获取版本信息
+         importConfig:'/api/db/soar/importconfig/',
         };
         //路由
         var r = {
@@ -892,14 +893,16 @@
                 } catch (e) {
                   return layer.errorMsg('导入内容格式不正确');
                 }
-                var configs = vueApp.getSoarConfig();
-                if (vueApp.importConfig.cover == 1) configs = [];
+                var configs = [];
+                if (vueApp.importConfig.cover == 1) configs = ['cover',];
                 arr.forEach(function (item){
                   item = vueApp.trimObj(item);
                   configs.push(item);
                 });
-                vueApp.saveSoarConfig(configs);
-                vueApp.configs = configs;
+                {#vueApp.saveSoarConfig(configs);#}
+                {#vueApp.configs = configs;#}
+                let ret = vueApp.datarequest('POST',api.importConfig,configs)
+                  console.log('import:',ret.status)
                 layer.successMsg('导入成功',{time:1000});
               }
             },

@@ -59,14 +59,9 @@ import subprocess,json
 #     print (i)
 
 from databases.models import Soar_Config
-req = {'id': 1, 'name': 'ddd', 'online-dsn': 'hh', 'test-dsn': 'hh', 'allow-online-as-test': 'false', 'sampling': '', 'blacklist': None}
 
-Soar_Config.objects.filter(id=req.get('id')).update(
-    name=req.get('name'),
-    onlinedsn=req.get('online-dsn'),
-    testdsn=req.get('test-dsn'),
-    allowonlineastest=req.get('allow-online-as-test').capitalize(),
-    blacklist=req.get('blacklist'),
-    sampling=req.get('sampling').capitalize(),
-    tableallowengines=req.get('tableallowengines'),
-)
+dd = [{'name': 'ffddd', 'online-dsn': 'root:redhat@192.168.79.134:3307/opsmanage', 'test-dsn': 'root:redhat@192.168.79.134:3307/opsmanage', 'allow-online-as-test': False, 'sampling': True, 'blacklist': ''}]
+ddd = []
+for i in dd:
+    ddd.append()
+Soar_Config.objects.bulk_create(dd)

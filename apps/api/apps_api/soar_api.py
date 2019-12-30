@@ -2,8 +2,13 @@ from databases.models import Soar_Config
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-import json
+import json,pymysql
 from rest_framework.decorators import api_view
+
+from databases.soar.common import runcmd
+from databases.soar.common import req_parse2cmd_parse
+from databases.soar.common import parse_dsn
+from databases.soar.argcrypto import decrypt
 
 
 class SoarList(APIView):
@@ -48,3 +53,55 @@ class SoarDetail(APIView):
         print (req)
         Soar_Config.objects.filter(id=req.get('id')).delete()
         return Response({'status': status.HTTP_200_OK, 'msg': '删除成功'})
+
+@api_view(['GET'])
+def soarcmd(request):
+    result = runcmd(req_parse2cmd_parse({'version' : 'true'}))
+    return Response({'result': result, 'status': True})
+
+@api_view(['POST'])
+def testconnect(request):
+    arg = request.data
+    if  'data' not in arg or 'key' not in arg:
+        return json.dumps({
+            "result": 'data or key is None',
+            "status": False
+        })
+
+    try:
+        dsn = json.loads(decrypt(arg['data'],arg['key']))['dsn']
+    except Exception as e:
+        return json.dumps({
+            "result": str(e),
+            "status": False
+        })
+    try:
+        res = parse_dsn(dsn)
+        pymysql.connect(
+            host = res['host'],
+            port = int(res['port']),
+            user = res['user'],
+            passwd = res['pwd'],
+            db = res['db'],
+        )
+        status = True
+        result = '连接成功'
+    except Exception as e:
+        status = False
+        result = str(e)
+    return Response({'result':result, 'status':status})
+
+@api_view(['POST'])
+def importConfig(request):
+    req = request.data
+    print (req,type(req))
+    try:
+        if 'cover' in req:
+            del req[0]
+            Soar_Config.objects.bulk_create(req)
+        else:
+            Soar_Config.objects.bulk_create(req)
+    except Exception as e:
+        return Response({'status': status.HTTP_401_UNAUTHORIZED, 'msg': str(e)})
+
+    return Response({'status':status.HTTP_200_OK,'msg':'导入成功'})
