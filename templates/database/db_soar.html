@@ -554,7 +554,7 @@
             //获取 soar 配置项列表， 如果没有则初始化一条默认，配置
             getSoarConfig : function (){
                 var data = this.datarequest('get',api.soarconflist,{})
-                console.log(data)
+
                 return data
             },
             //存储soar配置项列表
@@ -902,8 +902,15 @@
                 {#vueApp.saveSoarConfig(configs);#}
                 {#vueApp.configs = configs;#}
                 let ret = vueApp.datarequest('POST',api.importConfig,configs)
-                  console.log('import:',ret.status)
-                layer.successMsg('导入成功',{time:1000});
+
+                if (ret.status != 200){
+                    layer.successMsg('导入失败',{time:1000});
+                }else {
+                    vueApp.configs = vueApp.getSoarConfig();
+                    console.log('ss:',ss)
+                    layer.successMsg('导入成功',{time:1000});
+                }
+
               }
             },
             //清除结果展示
@@ -958,13 +965,15 @@
                 }
               }
               this.itemConfig = this.trimObj(this.itemConfig);
-              if (this.editId < 0) {
+              if (this.editId < 0) { //新增保存
                 this.saveconfigs = this.itemConfig;
                 let ret = this.datarequest('POST',api.soarconflist,this.saveconfigs)
                 layer.successMsg(ret.msg);
-              } else {
+                this.configs = this.getSoarConfig()
+                layer.close(layer.index);
+              } else {  //编辑保存
                 {#Vue.set(this.configs, this.editId, $.extend({}, this.itemConfig));#}
-                  console.log(this.editId, $.extend({}, this.itemConfig))
+
                   let ret = this.datarequest('PUT',api.soarconfdetail,$.extend({}, this.itemConfig))
                   layer.successMsg(ret.msg);
               }
@@ -976,12 +985,14 @@
             },
             //删除配置
             soarDel : function(id){
+                console.log('id:',id)
               layer.confirm('确定删除？', function(index){
                 let ret = vueApp.datarequest('DELETE',api.soarconfdetail,{'id':id})
-                  console.log(ret)
+
 
                 if (ret.status == 200){
                     layer.close(index);
+                    vueApp.configs = vueApp.getSoarConfig()
                     layer.warnMsg('删除成功');
                 }else {
                     layer.close(index);

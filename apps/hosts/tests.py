@@ -63,5 +63,12 @@ from databases.models import Soar_Config
 dd = [{'name': 'ffddd', 'online-dsn': 'root:redhat@192.168.79.134:3307/opsmanage', 'test-dsn': 'root:redhat@192.168.79.134:3307/opsmanage', 'allow-online-as-test': False, 'sampling': True, 'blacklist': ''}]
 ddd = []
 for i in dd:
-    ddd.append()
-Soar_Config.objects.bulk_create(dd)
+    ddd.append(Soar_Config(
+        name=i.get('name'),
+        onlinedsn=i.get('online-dsn'),
+        testdsn=i.get('test-dsn'),
+        allowonlineastest=i.get('allow-online-as-test'),
+        sampling=i.get('sampling'),
+        blacklist=i.get('blacklist')
+    ))
+Soar_Config.objects.bulk_create(ddd)

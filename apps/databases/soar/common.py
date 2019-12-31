@@ -68,6 +68,7 @@ def runcmd(cmd):
     out_temp = tempfile.SpooledTemporaryFile(max_size=10 * 1000 * 1000)
     sql_tmp_dir = TMP_DIR + os.sep
     try:
+        print ('cmd:',cmd)
         fileno = out_temp.fileno()
         p = subprocess.Popen(cmd, shell=False,cwd=sql_tmp_dir, stdout=fileno,
                              stderr=fileno,universal_newlines=True)

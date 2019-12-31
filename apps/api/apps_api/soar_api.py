@@ -94,13 +94,33 @@ def testconnect(request):
 @api_view(['POST'])
 def importConfig(request):
     req = request.data
+    DataList = []
     print (req,type(req))
     try:
         if 'cover' in req:
             del req[0]
-            Soar_Config.objects.bulk_create(req)
+            Soar_Config.objects.all().delete()
+            for i in req:
+                DataList.append(Soar_Config(
+                    name=i.get('name'),
+                    onlinedsn=i.get('online-dsn'),
+                    testdsn=i.get('test-dsn'),
+                    allowonlineastest=i.get('allow-online-as-test'),
+                    sampling=i.get('sampling'),
+                    blacklist=i.get('blacklist')
+                ))
+            Soar_Config.objects.bulk_create(DataList)
         else:
-            Soar_Config.objects.bulk_create(req)
+            for i in req:
+                DataList.append(Soar_Config(
+                    name=i.get('name'),
+                    onlinedsn=i.get('online-dsn'),
+                    testdsn=i.get('test-dsn'),
+                    allowonlineastest=i.get('allow-online-as-test'),
+                    sampling=i.get('sampling'),
+                    blacklist=i.get('blacklist')
+                ))
+            Soar_Config.objects.bulk_create(DataList)
     except Exception as e:
         return Response({'status': status.HTTP_401_UNAUTHORIZED, 'msg': str(e)})
 
