@@ -627,9 +627,10 @@
             //将 soar 配置合并到请求中
             mergeConfig : function (data){
               var config = this.configs[this.curId] || this.configs[0] || {};
+              console.log('cccc:',config)
               for (var i in config) {
-                if (i == 'name') continue;
-                if (!config[i] || !config[i].trim || (config[i].trim()) == '') continue;
+                if (i == 'name' || i =='id') continue;
+                if (!config[i] || (config[i].trim) == '') continue;
                 data[i] = config[i];
               }
               if (this.logLevel != 0) data['log-level'] = this.logLevel;
@@ -777,6 +778,7 @@
               }
               data.query = query;
               data = this.mergeConfig(data);
+              console.log('me:',data)
               //提交请求， 根据具体api酌情修改
               this.request({url:api.soar, data:data, isLoading:true}, function(json){
                 if (type == 5) {

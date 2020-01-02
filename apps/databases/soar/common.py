@@ -129,6 +129,7 @@ def save_tmp_blacklist(args,blacklist_tmp_file):
             f.write('\n')
 
 def soar_result(args):
+    print ('inargs:',args)
     '''
     传入请求参数，正确返回执行的结果，错误返回错误信息
     :param args:
@@ -157,8 +158,9 @@ def soar_result(args):
     cmd_args['config'] = conf_tmp_file # soar 规定 -config 必须作为第一个参数
     cmd_args['query'] = args['query']
     args.pop('query')
-
+    print ('args:',args)
     save_tmp_conf(args, conf_tmp_file)
+    print ('cmdargs:',cmd_args)
     cmd_line = req_parse2cmd_parse(cmd_args)
 
     if DEBUG:
