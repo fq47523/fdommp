@@ -2,8 +2,10 @@ from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
 from .dao import DBManage
-import json
+import json,time
 
 
 #soar
@@ -49,6 +51,7 @@ class DatabaseQuery(LoginRequiredMixin, DBManage, View):
         return render(request, 'database/db_query.html', {"user": request.user})
 
 # SOAR
+
 def SoarIndex(request):
     return render(request,'database/db_soar.html')
 
@@ -80,4 +83,41 @@ def SoarCmd(request):
 
         return HttpResponse(result,content_type='application/json')
 
+@csrf_exempt
+def soardownload(request):
+    if request.method == 'POST':
+        arg = json.loads(request.body.decode('utf-8'))
+        if 'data' not in arg or 'key' not in arg:
+            return json.dumps({
+                "result": 'data or key is None',
+                "status": False
+            })
 
+        try:
+            args = json.loads(decrypt(arg['data'], arg['key']))
+        except Exception as e:
+            return json.dumps({
+                "result": str(e),
+                "status": False
+            })
+        if DEBUG:
+            print(args)
+
+        check = soar_args_check(args)
+        if check:
+            return check
+        result = soar_result(args)
+        map = json.loads(result)
+        resp = HttpResponse(map['result'])
+        # 设置时间戳
+        nowTime = time.time()
+        timeArray = time.localtime(nowTime)
+        otherStyleTime = time.strftime("%Y%m%d%H%M%S", timeArray)
+        # 后缀名
+        suffixMap = {'html' : 'html', 'json' : 'json', 'markdown' : 'md'}
+        suffix = 'html'
+        # 设置 http 头
+        resp['Content-Type'] = 'application/force-download'
+        if 'report-type' in args and args['report-type'] in suffixMap : suffix = suffixMap[args['report-type']]
+        resp['Content-Disposition'] = 'filename=soar_%s.%s' % (otherStyleTime, suffix)
+        return resp

@@ -334,6 +334,7 @@
     <script src="/static/soar/director.min.js"></script>
     <script src="/static/soar/crypto-js/crypto-js.js"></script>
     <script src="/static/soar/show-hint.js"></script>
+    <script src="/static/soar/jquery.print.js"></script>
 
     <script>
         (function (){
@@ -348,7 +349,7 @@
          soarconfdetail:'/api/db/soar/detail/',
          soar : '/databases/soarcmd/',  //soar sql 分析优化接口
          testConnect : '/api/db/soar/testconnect/',  //测试数据库连接
-         download : '/soar-download',  //导出接口
+         download : '/databases/soardownload/',  //导出接口
          version : '/api/db/soar/version/',  //获取版本信息
          importConfig:'/api/db/soar/importconfig/',
         };
@@ -677,7 +678,7 @@
                 data = _this.encryptData(data);
                 var form = $('<form>');   //定义一个form表单
                 form.attr('style', 'display:none');  //隐藏表单
-                form.attr('method', 'post'); //post 方法
+                form.attr('method', 'POST'); //post 方法
                 form.attr('action', url);  //设置url
                 // form 表单中添加查询参数
                 for(var i in data){

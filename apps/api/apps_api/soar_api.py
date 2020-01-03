@@ -1,9 +1,10 @@
 from databases.models import Soar_Config
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework import status
 import json,pymysql
-from rest_framework.decorators import api_view
+
 
 from databases.soar.common import runcmd
 from databases.soar.common import req_parse2cmd_parse
@@ -91,6 +92,7 @@ def testconnect(request):
         result = str(e)
     return Response({'result':result, 'status':status})
 
+
 @api_view(['POST'])
 def importConfig(request):
     req = request.data
@@ -125,3 +127,5 @@ def importConfig(request):
         return Response({'status': status.HTTP_401_UNAUTHORIZED, 'msg': str(e)})
 
     return Response({'status':status.HTTP_200_OK,'msg':'导入成功'})
+
+

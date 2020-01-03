@@ -40,4 +40,5 @@ urlpatterns = [
     path('db/soar/version/',soar_api.soarcmd),
     path('db/soar/testconnect/',soar_api.testconnect),
     path('db/soar/importconfig/',soar_api.importConfig),
+
 ]
