@@ -84,11 +84,11 @@ def SoarCmd(request):
         return HttpResponse(result,content_type='application/json')
 
 @csrf_exempt
-def soardownload(request):
+def SoarDownload(request):
     if request.method == 'POST':
-        arg = json.loads(request.body.decode('utf-8'))
+        arg = {'data':request.POST.get('data'),'key':request.POST.get('key')}
         if 'data' not in arg or 'key' not in arg:
-            return json.dumps({
+            return JsonResponse({
                 "result": 'data or key is None',
                 "status": False
             })
@@ -96,7 +96,7 @@ def soardownload(request):
         try:
             args = json.loads(decrypt(arg['data'], arg['key']))
         except Exception as e:
-            return json.dumps({
+            return JsonResponse({
                 "result": str(e),
                 "status": False
             })

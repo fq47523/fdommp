@@ -838,6 +838,7 @@
                 data.query = query;
                 data['report-type'] = type || '';
                 data = this.mergeConfig(data);
+                console.log(api.download,data)
                 this.postDownload(api.download, data);
               }
             },
