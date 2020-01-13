@@ -66,7 +66,8 @@ def runcmd(cmd):
     :return:
     '''
     out_temp = tempfile.SpooledTemporaryFile(max_size=10 * 1000 * 1000)
-    sql_tmp_dir = TMP_DIR + os.sep
+    sql_tmp_dir = TMP_DIR
+    print ('sql_tmp_dir :',sql_tmp_dir)
     try:
         print ('cmd:',cmd)
         fileno = out_temp.fileno()

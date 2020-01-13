@@ -58,7 +58,5 @@ import subprocess,json
 # for i in cc:
 #     print (i)
 
-dd = {'aa':1,'bb':2}
-for i in dd:
-    if i == 'aa' or (i == ''): continue
-    print (i)
+import subprocess
+print (subprocess.getstatusoutput('ls -lh'))
