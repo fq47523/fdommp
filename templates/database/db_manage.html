@@ -306,6 +306,7 @@
 
             if ($("#DatabaseListTable").length) {
                 var response = requests('get','/api/db/manage/',{})
+                console.log('rrr:',response)
                 {#makeDatabaseSelect("db_server",response)#}
                 var columns = [
                                 {

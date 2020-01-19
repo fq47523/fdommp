@@ -980,6 +980,8 @@
 
                   let ret = this.datarequest('PUT',api.soarconfdetail,$.extend({}, this.itemConfig))
                   layer.successMsg(ret.msg);
+                  this.configs = this.getSoarConfig()
+                  layer.close(layer.index);
               }
               {#this.saveSoarConfig(this.configs);#}
 

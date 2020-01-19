@@ -52,11 +52,11 @@ import subprocess,json
 
 
 
-# ret = subprocess.Popen("echo 'select * from film' | /opt/soar",shell=True,stdout=subprocess.PIPE)
-# dd = ret.stdout.read().decode()
-# cc = dd.split('\n')
-# for i in cc:
-#     print (i)
+ret = subprocess.Popen("echo 'select * from film' | /opt/soar",shell=True,stdout=subprocess.PIPE)
+dd = ret.stdout.read().decode()
+cc = dd.split('\n')
+for i in cc:
+    print (i)
 
 import subprocess
 print (subprocess.getstatusoutput('ls -lh'))
