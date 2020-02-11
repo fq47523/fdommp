@@ -2,6 +2,7 @@ import json,os
 import subprocess
 from assets import models
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from django.core import serializers
 
 
@@ -106,7 +107,7 @@ class AnsibleAssetsSetup(object):
     def ansible_assets_collect(self,request):
 
         p = os.path.dirname(os.path.realpath(__file__)) + '/assetsdetail/'
-        cmd = 'ansible -i /home/fuqing/hosts -m setup --tree {} all'.format(p)
+        cmd = 'ansible -i {hostconf} -m setup --tree {hostfile} all'.format(hostconf=settings.FD_ANSIBLE_HOSTS_FILE,hostfile=p)
         r = subprocess.getstatusoutput(cmd)
         # print (p)
         # print (os.listdir(p))

@@ -158,7 +158,7 @@
 
         function assetsync() {
 
-            layer.confirm('这将同步ansible下的所有主机资产,完成可能需要一点时间!', {
+            layer.confirm('将同步：/代码路径/conf/ansible_hosts中的主机，确保配置正确！！', {
                 btn: ['提交','取消'] //按钮
             }, function(){
                 $.post('{% url 'assets:assets_sync' %}?action=sync_asset_all')
