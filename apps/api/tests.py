@@ -5,7 +5,7 @@ from django.test import TestCase
 import requests
 import json
 
-# putong
+# api
 
 action = 'POST'
 url1 = 'http://192.168.79.134:8080/api/service/action/'
