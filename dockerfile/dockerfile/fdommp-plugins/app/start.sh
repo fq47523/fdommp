@@ -14,5 +14,5 @@ supervisord -c /mnt/supervisord.conf
 
 
 #uwsgi --ini /mnt/fdommp/uwsgi-prod.ini --uid 2001 --gid 2001
-uwsgi --ini /mnt/fdommp/uwsgi-prod.ini --uid 2001 --gid 2001
+uwsgi --ini /mnt/fdommp/uwsgi-prod.ini
 
