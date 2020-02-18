@@ -31,7 +31,7 @@ def db_list(request,format=None):
 
 
     if request.method == 'POST':
-        print (request.data)
+        print (1111,request.data)
 
         try:
             database = DataBase_Server_Config.objects.create(**request.data)
@@ -40,7 +40,7 @@ def db_list(request,format=None):
         try:
             snippet = DataBase_Server_Config.objects.get(id=database.id)
             serializer = serializers.DataBaseServerSerializer(snippet)
-        except DataBase_Server_Config.DoesNotExist:
+        except DataBase_Server_Config.DoesNotExist as ex:
             logger.error(msg="添加数据库失败: {ex}".format(ex=str(ex)))
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
@@ -54,7 +54,7 @@ def db_detail(request, id,format=None):
     
     if request.method == 'GET':
         try:  
-            snippet = DataBase_Server_Config.objects.get(id=id)
+
             serializer = serializers.DataBaseServerSerializer(snippet)
         except  DataBase_Server_Config.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND) 

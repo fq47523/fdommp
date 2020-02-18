@@ -179,7 +179,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label"></label>
 {#                            <button type="reset" class="btn btn-default btn-group-sm">取消</button>#}
-                            <button type="button" class="btn btn-default btn-group-sm" value="" id="save_database_config">添加</button>
+                            <button type="button" class="btn btn-default btn-group-sm" value="" id="save_database_config"></button>
                         </div>
                     </form>
 
@@ -248,6 +248,7 @@
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.html5.min.js"></script>
     <script src="/static/plugins/datatable/datatables.net-buttons/js/buttons.print.min.js"></script>
     <script src="/static/plugins/bootstrap-select/bootstrap-select.js"></script>
+    <script src="/static/layui/layui.all.js"></script>
     <script>
         var language =  {
             "sProcessing" : "处理中...",
@@ -475,7 +476,7 @@
                                     type: 'success',
                                     styling: 'bootstrap3'
                                 });
-                                RefreshTable('#DatabaseListTable', '/db/config/?type=get_all_db')
+                                RefreshTable('#DatabaseListTable', '/api/db/manage/')
                             }
                         });
                         },
@@ -675,9 +676,9 @@
 
             table.fnClearTable(this);
 
-            for (var i=0; i<dataList["data"].length; i++)
+            for (var i=0; i<dataList.length; i++)
             {
-              table.oApi._fnAddData(oSettings, dataList["data"][i]);
+              table.oApi._fnAddData(oSettings, dataList[i]);
             }
 
             oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
@@ -780,7 +781,7 @@
                 }
 
             };
-            if (vIds > 0){
+            if (vIds > 0){  //编辑
                 $.ajax({
                     url:'/api/db/manage/'+ vIds +'/', //请求地址
                     type:"PUT",  //提交类似
@@ -800,7 +801,9 @@
                     }),
                     success:function(response){
                         btnObj.removeAttr('disabled');
-                        RefreshTable('#DatabaseListTable', '/db/config/?type=get_all_db')
+
+                        layer.close(layer.index);
+                        RefreshTable('#DatabaseListTable', '/api/db/manage/')
 
                     },
                     error:function(response){
@@ -813,7 +816,7 @@
                            });
                     }
                 })
-            }else{
+            }else{  //新增
                 $.ajax({
                     url:'/api/db/manage/', //请求地址
                     type:"POST",  //提交类似
@@ -833,7 +836,9 @@
                     }),
                     success:function(response){
                         btnObj.removeAttr('disabled');
-                        RefreshTable('#DatabaseListTable', '/db/config/?type=get_all_db')
+
+                        layer.close(layer.index);
+                        RefreshTable('#DatabaseListTable', '/api/db/manage/')
 
                     },
                     error:function(response){
@@ -867,7 +872,8 @@
             }
             $('.selectpicker').selectpicker('refresh');
 
-            $("#db_type,#db_version,#db_user,#db_port,#db_passwd,#db_mark").val('')
+            $("#db_type,#db_version,#db_user,#db_port,#db_passwd,#db_mark,#save_database_config").val('')
+            $("#save_database_config").text('添加')
             layer.open({
                     type: 1,
                     title: '修改主机信息',

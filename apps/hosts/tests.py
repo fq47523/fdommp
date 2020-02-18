@@ -51,12 +51,6 @@ import subprocess,json
 # print (ret[1].split('\n'))
 
 
-
-ret = subprocess.Popen("echo 'select * from film' | /opt/soar",shell=True,stdout=subprocess.PIPE)
-dd = ret.stdout.read().decode()
-cc = dd.split('\n')
-for i in cc:
-    print (i)
-
-import subprocess
-print (subprocess.getstatusoutput('ls -lh'))
+from databases import models
+dd = {'db_env': 'ga', 'db_type': 'mysql', 'db_version': '5.7', 'db_business': '2', 'db_assets_id': '25', 'db_user': 'root', 'db_passwd': 'fdommp', 'db_port': '3307', 'db_mark': 'lll', 'db_rw': 'r/w', 'db_mode': 'single'}
+models.DataBase_Server_Config.objects.create(**dd)
