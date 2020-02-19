@@ -109,9 +109,11 @@ class DBManage():
 
     def __get_db(self, request):
         try:
+
             db_info = Database_Detail.objects.get(id=int(request.POST.get('db')))
             dbServer = db_info.db_server.to_connect()
             dbServer["db_name"] = db_info.db_name
+            print (dbServer)
             return dbServer
         except Exception as ex:
             logger.error(msg="获取DB实例失败: {ex}".format(ex=ex))
@@ -185,6 +187,7 @@ class DBManage():
     def table_schema(self, request):
         # if not self.__check_user_perms(request,'databases.databases_schema_database_server_config'):return "您没有权限操作此项"
         table_data = {}
+
         dbInfo = self.__get_db(request)
         dbRbt = self.__get_db_server(request)
         grant_tables = self.__check_user_db_tables(request)
@@ -213,7 +216,7 @@ class DBManage():
             conn_setting = {'host': dbServer.get("ip"), 'port': dbServer.get("db_port"),
                             'user': dbServer.get("db_user"), 'passwd': dbServer.get("db_passwd"),
                             'charset': 'utf8'}
-            print(conn_setting)
+            print('1111',conn_setting)
             print(dbServer.get("db_name"), timeRange[0], timeRange[1])
             binlog2sql = Binlog2sql(connection_settings=conn_setting,
                                     back_interval=1.0, only_schemas=dbServer.get("db_name"),
@@ -306,7 +309,7 @@ class DBManage():
                                  'db_business').annotate(dcount=Count('db_business'))]
 
         business_list = []
-        print(Business_Tree_Assets.objects.filter(id__in=user_business))
+
         for business in Business_Tree_Assets.objects.filter(id__in=user_business):
             business_list += self.business_paths_id_list(business)
 
@@ -320,7 +323,7 @@ class DBManage():
         dataList = []
         for n in root_nodes:
             dataList.append(self.recursive_node_to_dict(n, request, user_db_server_list))
-            print (dataList)
+
         return dataList
 
 
