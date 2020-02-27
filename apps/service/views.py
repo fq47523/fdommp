@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from hosts import models
 from assets.models import Asset
 from hosts.models import Service
+from dao.base import APBase
 from service.modelform.service_modelform import Service_MF
 from utils._BT_pagination import BtPaging
 from utils._Check_service_status import ServiceHealth
@@ -70,7 +71,7 @@ def server_add(request):
 def server_operation(request,sid,type):
     '''服务编辑'''
     if request.method == "GET":
-        if  type == '1':  #服务编辑page
+        if  type == '1':  #服务编辑
             Service_obj = models.Service.objects.filter(s_id=sid).first()
 
             Service_MF_I = Service_MF(instance=Service_obj)
@@ -164,9 +165,7 @@ def server_control_action(request):
             pass
         else:
             from tasks.tasks import control_host_server
-            import redis
-            pool = redis.ConnectionPool(decode_responses=True)
-            rr = redis.Redis(connection_pool=pool)
+            rr = APBase.getRedisConnection()
             try:
 
                 r = control_host_server.delay(ip, action, server)
@@ -249,12 +248,10 @@ def server_control_action(request):
 @login_required
 def server_control_action_result(request):
     '''启停服务log'''
-    import redis
-    pool = redis.ConnectionPool(decode_responses=True)
-    rr = redis.Redis(connection_pool=pool)
+    rr = APBase.getRedisConnection()
     ip = request.GET.get('ip')
     server = request.GET.get('server')
-    print (ip,server)
+
     rr_result_uuid = rr.get('ServerCenter-{}-{}'.format(ip,server))
     from celery.result import AsyncResult
     try:

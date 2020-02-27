@@ -177,8 +177,22 @@
         };
 
         function conf_init(conf_id,ip,server_type,name,path) {
+            layer.confirm('确定下发？',function (index) {
+                let ld = layer.load(1)
+                $.post('{% url 'confd:confd_init' %}',{"conf_id":conf_id,"host_ip":ip,"server_type":server_type,"conf_name":name,"conf_path":path},function(ret){
+                    if (ret.rcode == 200){
+                        layer.close(ld);
+                        layer.close(index);
+                        refreshes_parent_table();
+                        layer.msg('下发成功');
+                    }else {
+                        layer.close(ld);
+                        layer.close(index);
+                        layer.msg('下发失败');
+                    }
+                })
+            })
 
-            $.post('{% url 'confd:confd_init' %}',{"conf_id":conf_id,"host_ip":ip,"server_type":server_type,"conf_name":name,"conf_path":path})
 
         };
 

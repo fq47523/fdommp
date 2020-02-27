@@ -207,7 +207,7 @@ def confd_init(request):
             confd_init_status['rcode'] = 500
             confd_init_status['msg'] = '网络或路径错误'
 
-        return HttpResponse(200)
+        return JsonResponse(confd_init_status)
 
 @login_required
 def confd_rollback(request):

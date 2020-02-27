@@ -196,12 +196,15 @@ STATICFILES_DIRS = (
 # customize
 FD_CELERY_BROKER = 'redis://127.0.0.1:6379/5'
 FD_CELERY_BACKEND = 'redis://127.0.0.1:6379/6'
-
+FD_REDIS_POOL = {'ip':'127.0.0.1','prot':6379}
 FD_ES_IP = '192.168.79.141'
 FD_ES_PORT = 9200
 
 FD_ZABBIX_API_URL = 'http://192.168.79.133/api_jsonrpc.php'
+FD_ZABBIX_USER = 'admin'
+FD_ZABBIX_PASSWD = 'zabbix'
 
-FD_ANSIBLE_HOSTS_FILE = BASE_DIR+'/apps/hosts/ansible_hosts'
 
-FD_SERVER_SHELL_SCRIPT = BASE_DIR+'/apps/service/server.sh'
+FD_ANSIBLE_HOSTS_FILE = BASE_DIR+'/conf/ansible_hosts'
+
+FD_SERVER_SHELL_SCRIPT = BASE_DIR+'/conf/server.sh'

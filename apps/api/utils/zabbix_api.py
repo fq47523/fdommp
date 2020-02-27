@@ -6,8 +6,8 @@ from django.conf import settings
 class Zabbix_API(object):
     def __init__(self):
         self.url = settings.FD_ZABBIX_API_URL
-        self.user = 'admin'
-        self.pwd = 'zabbix'
+        self.user = settings.FD_ZABBIX_USER
+        self.pwd = settings.FD_ZABBIX_PASSWD
         self.token_id = 'e253f73ca7559cc82674241f807afbe3'
 
     def  UserLogin(self):
