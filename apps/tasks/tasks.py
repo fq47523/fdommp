@@ -93,9 +93,11 @@ def get_hosts_status():
     获取zabbix客户端中主机的存活，cpu，men，disk使用量,并写入数据库
     :return:
     '''
-    zabbix_init = Zabbix_API()
-    hostid_list = zabbix_init.host_get()
-
+    try:
+        zabbix_init = Zabbix_API()
+        hostid_list = zabbix_init.host_get()
+    except Exception as e:
+        return str(e)
 
     for host_dict in hostid_list:
         host_obj = Asset.objects.filter(manage_ip=host_dict['interfaces'][0]['ip']).first()

@@ -1,0 +1,14 @@
+only-syntax-check: true
+online-dsn:
+  addr: '192.168.79.134:3307'
+  schema: 'opsmanage'
+  user: 'root'
+  password: 'redhat'
+  disable: false
+test-dsn:
+  addr: '192.168.79.134:3307'
+  schema: 'opsmanage'
+  user: 'root'
+  password: 'redhat'
+  disable: false
+max-pretty-sql-length: 10240
