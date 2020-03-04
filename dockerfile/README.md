@@ -31,14 +31,18 @@
   >{"registry-mirrors": ["https://XXXXXXX.mirror.aliyuncs.com"]}
 
 构建镜像
-  * 下载fdommp-dockerfile 到你的任意目录
-  * 运行./init.py  (默认手动下载代码zip文件到"你的路径/dockerfile/fdommp-master.zip",或修改注释自动下载)
-  * app镜像可能需要一段时间
-  
+  * 代码路径/fdommp/dockerfile/build.sh  
+  * 注意要在dockerfile下执行build,镜像中有上下文需求
+
+修改路径
+  * docker-compose.yml中的app,nginx本地代码卷挂载,容器路径不需要修改
+  * ../conf/logger.ini中的日志路径为'/mnt/fdommp/logs/fdommp.log'
+
 运行容器<br>
-  >docker run --name fd-db -d --net fd-net -p 3307:3306 fdommp-db <br> 
-  >docker run --name fd-app -d --net fd-net fdommp-app <br> 
-  >docker run --name fd-nginx -d --net fd-net -p 8080:80 fdommp-nginx  <br> 
+  > docker-compose up -d <br> 
   
-或其他编排工具管理
+已知问题
+  * 首次启动后app容器需要多重启一次,因为mysql还未启动完成
+  * 
   
+使用你的地址＋8080端口,账户密码同为admin
