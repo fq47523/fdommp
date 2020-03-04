@@ -39,7 +39,7 @@
   * ../conf/logger.ini中的日志路径为'/mnt/fdommp/logs/fdommp.log'
 
 运行容器<br>
-  > docker-compose up -d <br> 
+  * docker-compose up -d <br> 
   
 已知问题
   * 首次启动后app容器需要多重启一次,因为mysql还未启动完成
