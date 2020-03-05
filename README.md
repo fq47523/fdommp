@@ -55,7 +55,7 @@
 * 资产删除时某些服务不能自动删除（crontab任务，服务任务及其他）
 * 有些功能依赖zabbix，否则无法使用
 * 前端没有统一按钮、弹窗、布局等
-* 平台运行日志只有部署显示
+* 平台运行日志只有部分可以查询
 * 部分代码没有将<script></script>移到独立js文件
 * ansible配置文件没有进库
 * 有些功能或代码块耦合度太高
@@ -64,3 +64,7 @@
 	
 感谢作者
 ==
+[welliamcao](https://github.com/welliamcao/OpsManage)
+
+
+
