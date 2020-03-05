@@ -4,9 +4,16 @@
 
 技术序列
 ==
+##前端
+  * Bootstrap/JQuery/VUE
+##后台
+  * Django/python3.6+
 
 运行环境
 ==
+##容器运行
+  * Docker version 19.03.2 ++
+  * docker-compose version 1.8.0 ++
 
 项目截图
 ==
