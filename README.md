@@ -8,6 +8,11 @@
   * Bootstrap/JQuery/VUE
 ### 后台
   * Django/python3.6+
+### 数据
+  * Mysql 5.6 ++
+  * Redis 3.2 ++
+### 依赖
+  * ElasticSearch，Logstash，Kafka，Filebeat，Zabbix
 
 运行环境
 ==
@@ -35,7 +40,7 @@
       * 集成SOAR相关功能
   ### 日志管理
       * 平台运行日志
-      * java-app错误日志
+      * 基于ELF的错误日志
       
       
   
@@ -47,6 +52,15 @@
 
 已知问题
 ==
+* 资产删除时某些服务不能自动删除（crontab任务，服务任务及其他）
+* 有些功能依赖zabbix，否则无法使用
+* 前端没有统一按钮、弹窗、布局等
+* 平台运行日志只有部署显示
+* 部分代码没有将<script></script>移到独立js文件
+* ansible配置文件没有进库
+* 有些功能或代码块耦合度太高
+* 其他隐藏问题
+
 	
 感谢作者
 ==
