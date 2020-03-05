@@ -51,7 +51,7 @@ import subprocess,json
 # print (ret[1].split('\n'))
 
 from django.contrib import auth
-from django.contrib.auth.models import User
-user = User.objects.get(username='admin')
-user.set_password('admin')
-user.save()
+# from django.contrib.auth.models import User
+# user = User.objects.get(username='admin')
+# user.set_password('admin')
+# user.save()
