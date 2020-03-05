@@ -14,7 +14,19 @@
 ### 容器运行
   * Docker version 19.03.2 ++
   * docker-compose version 1.8.0 ++
-
+  
+功能清单
+==
+  ### 资产管理
+      * 服务端拉取数据（手自一体），客户部部署脚本推送
+  ### 主机管理
+      * 运行情况
+      * 网页SSH，SHELL,PLAYBOOK,动态CRONTAB
+  ### 服务管理
+      * 服务的状态
+      * 服务的启停
+      
+  
 项目截图
 ==
 ![image](https://github.com/fq47523/fdommp/blob/master/FDpic/index.png)
