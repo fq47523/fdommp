@@ -19,7 +19,8 @@
 ### 容器运行
   * Docker version 19.03.2 ++
   * docker-compose version 1.8.0 ++
-  
+  * [安装传送门](https://github.com/fq47523/fdommp/tree/master/dockerfile)
+
 功能清单
 ==
   ### 资产管理
