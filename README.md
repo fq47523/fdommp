@@ -17,7 +17,7 @@
 
 项目截图
 ==
-![image](https://github.com/fq47523/fdommp/blob/master/static/FDpic/index.png)
+![image](https://github.com/fq47523/fdommp/blob/master/FDpic/index.png)
 
 已知问题
 ==
