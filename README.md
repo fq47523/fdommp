@@ -18,6 +18,8 @@
 项目截图
 ==
 ![image](https://github.com/fq47523/fdommp/blob/master/FDpic/index.png)
+![image](https://github.com/fq47523/fdommp/blob/master/FDpic/soar.png)
+![image](https://github.com/fq47523/fdommp/blob/master/FDpic/eslog.png)
 
 已知问题
 ==
